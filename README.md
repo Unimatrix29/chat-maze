@@ -1,4 +1,33 @@
-# Chat Leap
+# Chat Leap: The LLM Challenge 
+The idea is a retro jump an run game with simple controlls like: Left, Right, Jump and a twist: 
+Users will not controll the game with those comands directly. They will have to chat with a LLM (like chatGPT) which is primed to only answer with the right commands if the users formulate the messeage in the corect tone. For example they would have to aske nicely for the command Left. 
+
+## Example Folder Strukture
+<pre>
+.
+├── src                    <-- all source code will be found in the src folder 
+│   ├── file11.ext
+│   └── file12.ext
+├── docu                   <-- all documentation files will be found in the docu folder 
+│   ├── file21.ext
+│   ├── file22.ext
+│   └── file23.ext
+└── README.md               <-- this will be updated to be a readme for otheres who want to use/install the project for now it will be a guideline for the team
+
+
+</pre>
+
+## Commits, Branches and Issus: Some foundermental rules
+
+
+
+
+
+
+
+
+
+
 
 
 
