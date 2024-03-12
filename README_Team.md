@@ -190,7 +190,7 @@ Aus User Stories abgeleitete Tickets skizzieren spezifische Aufgaben und bilden 
 
 ### Branches
 
-Erstellen Sie für jedes Ticket einen neuen Branch mit dem Format: `[Ticket-ID]-[Ticket Name]`, wobei Leerzeichen durch Bindestriche ersetzt werden. Beispielsweise wäre der Name des Branches für das obige Ticket `166-JWT-Authentifizierung-im-Frontend-integrieren`. Diese Benennungskonvention erleichtert die Automatisierung in GitLab. Sobald Ihre Aufgabe abgeschlossen ist, initiieren Sie eine Merge-Anfrage
+Erstellen Sie für jedes Ticket einen neuen Branch mit dem Format: `[Ticket-ID]-[Ticket Name]`, wobei Leerzeichen durch Bindestriche ersetzt werden. Beispielsweise wäre der Name des Branches für das obige Ticket `166-Integrate-JWT-Authentication-in-Frontend`. Diese Benennungskonvention erleichtert die Automatisierung in GitLab. Sobald Ihre Aufgabe abgeschlossen ist, initiieren Sie eine Merge-Anfrage
 
 ### Commits
 
