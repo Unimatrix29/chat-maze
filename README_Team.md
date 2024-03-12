@@ -31,22 +31,22 @@ User Stories are collaboratively created by the team to outline features or deli
 >
 >**Rolle:** Als HTW-Anwender
 >
-**Ich möchte:** die Möglichkeit haben, meine gestellte Frage zu bearbeiten.
+>**Ich möchte:** die Möglichkeit haben, meine gestellte Frage zu bearbeiten.
 >
-**So dass:** ich Anpassungen vornehmen kann, ohne eine komplett neue Suchanfrage zu stellen.
+>**So dass:** ich Anpassungen vornehmen kann, ohne eine komplett neue Suchanfrage zu stellen.
 >
-**Akzeptanzkriterien:**
+>**Akzeptanzkriterien:**
 >
 >1. Nachdem die Ergebnisse meiner gestellten Frage angezeigt wurden, gibt es eine Option zur Bearbeitung der Frage.
 >    
 >2. Die Benutzeroberfläche ermöglicht es mir, den Text meiner Frage zu ändern.
-  >  
+>  
 >3. Nach der Bearbeitung wird die modifizierte Frage an die KI weitergeleitet.
-  >  
+>  
 >4. Die KI verarbeitet die geänderte Frage und generiert eine aktualisierte Suchanfrage.
-  >
+>
 >5. Die neuen Ergebnisse werden direkt auf der Benutzeroberfläche angezeigt.
-  >  
+>  
 >6. Die Interaktion respektiert die Sicherheitsrichtlinien und schützt die Privatsphäre des Benutzers.
 
 #### Tickets
@@ -137,22 +137,22 @@ User Stories werden gemeinschaftlich vom Team erstellt, um Funktionen oder Liefe
 >
 >**Rolle:** Als HTW-Anwender
 >
-**Ich möchte:** die Möglichkeit haben, meine gestellte Frage zu bearbeiten.
+>**Ich möchte:** die Möglichkeit haben, meine gestellte Frage zu bearbeiten.
 >
-**So dass:** ich Anpassungen vornehmen kann, ohne eine komplett neue Suchanfrage zu stellen.
+>**So dass:** ich Anpassungen vornehmen kann, ohne eine komplett neue Suchanfrage zu stellen.
 >
-**Akzeptanzkriterien:**
+>**Akzeptanzkriterien:**
 >
 >1. Nachdem die Ergebnisse meiner gestellten Frage angezeigt wurden, gibt es eine Option zur Bearbeitung der Frage.
 >    
 >2. Die Benutzeroberfläche ermöglicht es mir, den Text meiner Frage zu ändern.
-  >  
+>  
 >3. Nach der Bearbeitung wird die modifizierte Frage an die KI weitergeleitet.
-  >  
+>  
 >4. Die KI verarbeitet die geänderte Frage und generiert eine aktualisierte Suchanfrage.
-  >
+>
 >5. Die neuen Ergebnisse werden direkt auf der Benutzeroberfläche angezeigt.
-  >  
+>  
 >6. Die Interaktion respektiert die Sicherheitsrichtlinien und schützt die Privatsphäre des Benutzers.
 
 #### Tickets
