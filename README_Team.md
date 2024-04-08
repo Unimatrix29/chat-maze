@@ -1,4 +1,17 @@
 # Chat Leap: The LLM Challenge
+## UserStory  categories:
+
+1:  Hardware Requirements
+2:  Interface and UX
+3:  Controls
+4:  Game Settings
+5:  Testing
+
+
+
+
+
+
 
 ## Introduction
 
