@@ -9,3 +9,6 @@ https://perso.limsi.fr/pointal/_media/python:cours:mementopython3-german.pdf <--
 https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html <-- alles wichtig zu Conda 
 
 https://docs.conda.io/projects/conda/en/latest/user-guide/cheatsheet.html <-- das Cheatsheet direkt 
+
+https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#activating-an-environment <-- env managment cheatsheet
+
