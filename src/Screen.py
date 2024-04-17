@@ -6,9 +6,10 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 # Bildschirmgröße und Gittergröße
-SCREEN_SIZE = (510, 510)
-GRID_SIZE = 16
+SCREEN_SIZE = (480, 480)
+GRID_SIZE =16
 CELL_SIZE = 30
+PIXEL_SIZE = 24
 
 # generate random maze
 def generate_maze():
@@ -30,14 +31,14 @@ while screen_running:
             screen_running = False
 
     # Hintergrund zeichnen
-    screen.fill(WHITE)
+    screen.fill(BLACK)
 
     # Labyrinth zeichnen
     for y in range(GRID_SIZE):
         for x in range(GRID_SIZE):
             if maze[y][x] == 1:
-                pygame.draw.rect(screen, BLACK, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
-    
+                pygame.draw.rect(screen, WHITE, (x * CELL_SIZE, y * CELL_SIZE, PIXEL_SIZE, PIXEL_SIZE))
+
     pygame.display.flip()
 
 # Pygame beenden
