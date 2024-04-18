@@ -11,24 +11,14 @@ CELL_SIZE = 30
 PIXEL_SIZE = 24
 
 
+def setup_screen():
+    global screen
+    pygame.init()
+    screen = pygame.display.set_mode([480, 480])
+    pygame.display.set_caption("Chat_Leap")
 
-# Pygame init
-pygame.init()
-screen = pygame.display.set_mode([480, 480])
-pygame.display.set_caption("Chat_Leap")
-
-# Labyrinth generieren
-maze = MazeGenerator.get_preset("maze_1")
-
-screen_running = True
-while screen_running:
-    pygame.display.flip()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            screen_running = False
-
+def update_screen(maze = MazeGenerator.get_preset(), player = [0, 0]):
     screen.fill(BLACK)
-
     for y in range(GRID_SIZE):
         for x in range(GRID_SIZE):
             if maze[y][x] == 1:
@@ -36,5 +26,7 @@ while screen_running:
 
     pygame.display.flip()
 
-# Pygame beenden
-pygame.quit()
+def quit_screen(): 
+    pygame.quit()
+
+
