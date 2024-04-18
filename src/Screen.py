@@ -8,14 +8,11 @@ RED = (255, 0, 0)
 
 # Bildschirmgröße und Gittergröße
 SCREEN_SIZE = (480, 480)
-GRID_SIZE =16
+GRID_SIZE = 16
 CELL_SIZE = 30
 PIXEL_SIZE = 24
 
-# generate random maze
-def random_maze():
-    maze = [[random.choice([0, 1]) for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
-    return maze
+
 
 # Pygame init
 pygame.init()
