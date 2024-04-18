@@ -9,11 +9,15 @@ running = False
 #program start
 running = True
 Screen.setup_screen()
-while running:
-    if keyboard.is_pressed('q'):  
-            print('You Pressed A Key!')
-            break  
+Screen.update_screen(MazeGenerator.get_preset("maze_1"), [5, 7])
+#while running:
+while True:
+    pass
+
     
+    
+    
+
 
 
 
