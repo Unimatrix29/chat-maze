@@ -3,7 +3,7 @@ import random
 
 class Screen():
     
-    def __init__(self, screen_size = (16, 16)):
+    def __init__(self, screen_size = [16, 16]):
         
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
@@ -14,7 +14,7 @@ class Screen():
         self.CELL_SIZE = 30
         self.PIXEL_SIZE = 24
 
-    def setup_screen():
+    def setup_screen(self):
         global screen
         pygame.init()
         screen = pygame.display.set_mode([480, 480])

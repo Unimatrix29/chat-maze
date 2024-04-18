@@ -67,12 +67,12 @@ class MazeGenerator():
 
         }
 
-    def random_maze():
+    def random_maze(self):
         maze = [[random.choice([0, 1]) for _ in range(16)] for _ in range(16)]
         return maze
 
     def get_preset(self, preset_id = "maze_0"):
         if preset_id in self.PRESET_LIBRARY:
-            return self.PRESET_LIBRARY[preset_id]
+            return self.PRESET_LIBRARY[preset_id][0]
         return self.PRESET_LIBRARY["maze_0"]
 
