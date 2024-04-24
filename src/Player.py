@@ -19,12 +19,13 @@ class Player:
         self.newPosition = self.currentPosition
         self.newPosition[1] = self.currentPosition[1] - 1
 
-        if not self.__screen.CheckWall():
-             self.currentPosition = self.newPosition
+        #not sure if needed 
+        #if not self.__screen.CheckWall():
+        self.currentPosition = self.newPosition
 
     def MoveDown(self):
         self.newPosition = self.currentPosition
         self.newPosition[1] = self.currentPosition[1] + 1
 
-        if not self.__screen.CheckWall():
-             self.currentPosition = self.newPosition
+        #if not self.__screen.CheckWall():
+        self.currentPosition = self.newPosition
