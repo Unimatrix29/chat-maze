@@ -12,3 +12,5 @@ class Player:
         #added a variable to hold and initiate a screen obj 
         self.__screen = screen
 
+    def UpdateMaze(self, newMaze):
+        pass
