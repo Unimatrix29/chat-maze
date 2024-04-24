@@ -6,10 +6,11 @@ from Controller import Controller
 
 window = Screen()
 mazeGenerator = MazeGenerator()
-player = Player(8, 8)
+player = Player()
 
 window.setup_screen()
 maze = mazeGenerator.get_preset("maze_1")
+player.move(maze[1])
 
 while True:
     
@@ -21,5 +22,10 @@ while True:
                 
         if event.type == pygame.QUIT:
             window.quit_screen()
-
+    """        
+    if window.check_wall():
+        screen.show_end()
+    if window.check_finish():
+        screen.show_finish()
+    """
     window.update_screen(maze, player.currentPosition)
