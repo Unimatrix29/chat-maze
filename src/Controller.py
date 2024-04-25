@@ -3,7 +3,12 @@ import random
 class Controller():
 
     def __init__(self):
-        self.move_options = ["up", "down", "left", "right", "deny"]
+        self.move_options = ["deny", "up", "down", "left", "right"]
 
-    def get_random_input():
-        return 
+    def console_input(self):
+        self.direction_request = input("Type a direction: ")
+        if self.direction_request.strip().lower() in self.move_options:
+            return self.direction_request
+        else:
+            return self.move_options[0]
+        
