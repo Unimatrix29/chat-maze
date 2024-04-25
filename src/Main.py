@@ -6,16 +6,21 @@ from Controller import Controller
 
 window = Screen()
 mazeGenerator = MazeGenerator()
-player = Player()
+controller = Controller()
+
+player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window)
 
 gameOver = False
 
 window.setup_screen()
-maze = mazeGenerator.get_preset("maze_1")
-player.move(maze[1])
+maze = mazeGenerator.get_preset("maze_2")
+#player.move(maze[1])
+
 
 while True:
     
+    
+
     for event in pygame.event.get():
         
         if event.type == pygame.KEYDOWN:
@@ -25,9 +30,12 @@ while True:
                 maze = mazeGenerator.get_preset("maze_1")
                 player.set_position(maze[1])
 
-            if not gameOver:
-                mVector = Controller.get_movement(event.key)    #Note: Probably add a list of moveKeys
-                player.move(mVector)                            #      to avoid unnecessary 0-movements
+            # if not gameOver:
+            #    print(controller.console_input())
+
+                
+                #mVector = Controller.get_movement(event.key)    #Note: Probably add a list of moveKeys
+                #player.move(mVector)                            #      to avoid unnecessary 0-movements
                 
         if event.type == pygame.QUIT:
             window.quit_screen()
@@ -42,6 +50,11 @@ while True:
         maze = mazeGenerator.get_preset("FINISH")
         player.set_position([-1, -1])
         gameOver = True
+
+    
         
     
     window.update_screen(maze, player.currentPosition)
+   
+    if not gameOver:
+        player.move(controller.console_input())
