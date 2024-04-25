@@ -11,30 +11,13 @@ class Player:
     def UpdateMaze(self, newMaze):
         pass
 
-    def MoveUp(self):
-        self.newPosition = self.currentPosition
-        self.newPosition[1] = self.currentPosition[1] - 1
-
-        if not self.__screen.check_wall(self.activeMaze, self.newPosition):
-            self.currentPosition = self.newPosition
-
-    def MoveDown(self):
-        self.newPosition = self.currentPosition
-        self.newPosition[1] = self.currentPosition[1] + 1
-
-        if not self.__screen.check_wall(self.activeMaze, self.newPosition):
-            self.currentPosition = self.newPosition
-
-    def MoveLeft(self):
-        self.newPosition = self.currentPosition 
-        self.newPosition[0] = self.currentPosition[0] - 1
-
-        if not self.__screen.check_wall(self.activeMaze, self.newPosition):
-            self.currentPosition = self.newPosition
-
-    def MoveRight(self):
-        self.newPosition = self.currentPosition
-        self.newPosition[0] = self.currentPosition[0] + 1
-
-        if not self.__screen.check_wall(self.activeMaze, self.newPosition):
-            self.currentPosition = self.newPosition
+    def move(self, mVector):
+        self.currentPosition[0] += mVector[0]
+        self.currentPosition[1] += mVector[1]
+    """
+    Sets currentPosition to a point
+    """
+    def set_position(self, point):
+        self.currentPosition[0] = point[0]
+        self.currentPosition[1] = point[1]
+    
