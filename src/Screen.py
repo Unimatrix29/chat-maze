@@ -31,6 +31,21 @@ class Screen():
 
         pygame.display.flip()
 
+    """
+    Returns True if player stucks against a wall
+    """
+    def check_wall(self, maze, playerPosition):
+        if maze[0][playerPosition[1]][playerPosition[0]] == 1:
+            return True
+        return False
+    """
+    Returns True if player arrived the end point of a maze
+    """
+    def check_finish(self, maze, playerPosition):
+        if maze[2] == playerPosition:
+            return True
+        return False
+
     def quit_screen(): 
         pygame.quit()
 
