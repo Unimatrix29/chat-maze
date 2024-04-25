@@ -24,7 +24,7 @@ class Screen():
         screen.fill(self.BLACK)
         for y in range(self.GRID_SIZE):
             for x in range(self.GRID_SIZE):
-                if maze[y][x] == 1:
+                if maze[0][y][x] == 1:
                     pygame.draw.rect(screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
                 if player_pos == [x, y]:
                     pygame.draw.rect(screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))

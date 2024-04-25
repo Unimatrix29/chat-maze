@@ -10,7 +10,7 @@ player = Player()
 
 window.setup_screen()
 maze = mazeGenerator.get_preset("maze_1")
-player.move(maze[1])
+player.move(maze[1]) # The structure of mazes is unclear(?)
 
 while True:
     
@@ -22,10 +22,5 @@ while True:
                 
         if event.type == pygame.QUIT:
             window.quit_screen()
-    """        
-    if window.check_wall():
-        screen.show_end()
-    if window.check_finish():
-        screen.show_finish()
-    """
+
     window.update_screen(maze, player.currentPosition)

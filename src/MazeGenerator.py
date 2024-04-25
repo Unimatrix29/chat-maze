@@ -42,7 +42,7 @@ class MazeGenerator():
             [1,0,0,0,1,0,0,0,0,0,0,1,0,1,1,1],
             [1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,1],
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-            ], [1, 1], [9, 13]
+            ], [2, 1], [9, 13]
             ],
             "maze_2": 
             [[
@@ -113,6 +113,6 @@ class MazeGenerator():
 
     def get_preset(self, preset_id = "maze_0"):
         if preset_id in self.PRESET_LIBRARY:
-            return self.PRESET_LIBRARY[preset_id][0]
+            return self.PRESET_LIBRARY[preset_id]
         return self.PRESET_LIBRARY["maze_0"]
 
