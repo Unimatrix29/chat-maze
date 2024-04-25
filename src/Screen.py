@@ -31,6 +31,12 @@ class Screen():
 
         pygame.display.flip()
 
+    def check_wall(self, maze, new_player_pos):
+        if maze[new_player_pos[1]][new_player_pos[0]] == 1:
+            return True
+        else:
+            return False
+
     def quit_screen(): 
         pygame.quit()
 
