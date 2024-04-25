@@ -19,7 +19,7 @@ class Screen():
         pygame.init()
         screen = pygame.display.set_mode([480, 480])
         pygame.display.set_caption("Chat_Leap")
-
+ 
     def update_screen(self, maze, player_pos):
         screen.fill(self.BLACK)
         for y in range(self.GRID_SIZE):
