@@ -26,3 +26,15 @@ class Player:
 
         #if not self.__screen.CheckWall():
         self.currentPosition = self.newPosition
+
+    def MoveLeft(self):
+        self.newPosition = self.currentPosition 
+        self.newPosition[0] = self.currentPosition[0] - 1
+        if not self.__screen.CheckWall(self.newPosition):
+            self.currentPosition = self.newPosition
+
+    def MoveRight(self):
+        self.newPosition = self.currentPosition
+        self.newPosition[0] = self.currentPosition[0] + 1
+        if not self.__screen.CheckWall(self.newPosition):
+            self.currentPosition = self.newPosition
