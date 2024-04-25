@@ -1,12 +1,16 @@
-#Note: !This is a test implementation!
+from Screen import Screen 
+
 class Player:
-    
-    def __init__(self, x = 0, y = 0):
-        self.currentPosition = [x, y]
+    def __init__(self, maze, screen):
+        self.activeMaze = maze
+
+        self.currentPosition = maze[1]
         
-    """
-    Adds a moving vector to current position
-    """
+        self.__screen = screen
+
+    def UpdateMaze(self, newMaze):
+        pass
+
     def move(self, mVector):
         self.currentPosition[0] += mVector[0]
         self.currentPosition[1] += mVector[1]
@@ -16,3 +20,4 @@ class Player:
     def set_position(self, point):
         self.currentPosition[0] = point[0]
         self.currentPosition[1] = point[1]
+    

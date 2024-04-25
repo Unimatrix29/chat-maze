@@ -1,23 +1,14 @@
-#Note: !This is a test implementation!
-import pygame
+import random 
 
-class Controller:
-    
+class Controller():
+
     def __init__(self):
-        pass
-    
-    """
-    Returns a movement vector of a player
-    determined by the pressed key.
-    """
-    def get_movement(key):
-        if key == pygame.K_a:
-            return [-1, 0]
-        elif key == pygame.K_d:
-            return [1, 0]
-        elif key == pygame.K_w:
-            return [0, -1]
-        elif key == pygame.K_s:
-            return [0, 1]
+        self.move_options = ["deny", "up", "down", "left", "right"]
+
+    def console_input(self):
+        self.direction_request = input("Type a direction: ")
+        if self.direction_request.strip().lower() in self.move_options:
+            return self.direction_request
+        else:
+            return self.move_options[0]
         
-        return [0, 0]
