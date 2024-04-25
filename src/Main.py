@@ -4,22 +4,30 @@ from MazeGenerator import MazeGenerator
 from Player import Player
 from Controller import Controller
 
+
 window = Screen()
 mazeGenerator = MazeGenerator()
+window.setup_screen()
+maze = mazeGenerator.get_preset("maze_2")
+player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window) 
+
+
+
+
+
 controller = Controller()
 
-player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window)
+
 
 gameOver = False
 
-window.setup_screen()
-maze = mazeGenerator.get_preset("maze_2")
+
 #player.move(maze[1])
 
 
+
+
 while True:
-    
-    
 
     for event in pygame.event.get():
         
