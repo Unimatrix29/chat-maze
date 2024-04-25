@@ -19,7 +19,7 @@ class Screen():
         pygame.init()
         screen = pygame.display.set_mode([480, 480])
         pygame.display.set_caption("Chat_Leap")
-
+ 
     def update_screen(self, maze, player_pos):
         screen.fill(self.BLACK)
         for y in range(self.GRID_SIZE):
@@ -30,6 +30,12 @@ class Screen():
                     pygame.draw.rect(screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
 
         pygame.display.flip()
+
+    def check_wall(self, maze, new_player_pos):
+        if maze[new_player_pos[1]][new_player_pos[0]] == 1:
+            return True
+        else:
+            return False
 
     def quit_screen(): 
         pygame.quit()
