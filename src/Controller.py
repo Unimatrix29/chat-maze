@@ -4,7 +4,8 @@ from openai import OpenAI
 class Controller():
 
     def __init__(self):
-        self.client = OpenAI()
+        api_key = "sk-proj-6zZsLWAh1nhmbsAZvQdoT3BlbkFJ02kbMmKx5qPw8sbUZvCA"
+        self.client = OpenAI(api_key=api_key)
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
 
     def console_input(self):
