@@ -28,5 +28,8 @@ class Controller():
                 {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
             ]
         )
+        response_content = response.choices[0].message.content
 
-        print(response.choices[0].message)
+        print(response_content)
+
+        return response_content
