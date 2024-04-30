@@ -1,7 +1,12 @@
 from openai import OpenAI
 
 GPT_MODEL = "gpt-3.5-turbo"
+
+####################################################################
+#THIS KEY IS NOT WORKING, NEED TO ASK RODNER FOR AN ACTUAL KEY 
 API_KEY = "sk-proj-6zZsLWAh1nhmbsAZvQdoT3BlbkFJ02kbMmKx5qPw8sbUZvCA"
+#####################################################################
+
 SYSTEM_PROMPT =  {"content": "You ar a helpful mathe teacher.", "role": "system"}
 
 class Controller():
