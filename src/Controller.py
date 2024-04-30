@@ -16,8 +16,6 @@ class Controller():
 
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
 
-        self.client = OpenAI(api_key=API_KEY)
-
     def get_movement_vector(self, userInput="deny"):
         #format user prompt for api 
         userPrompt = {"content": userInput, "role": "user"}
@@ -36,7 +34,11 @@ class Controller():
 
         return move_vector
 
-    def __chat_completion_request(self, message, seed=None, model=GPT_MODEL):
+    def __chat_completion_request(self, message, seed=None, model=GPT_MODEL, api_key=API_KEY):
+
+        #create api client
+        client = OpenAI(api_key=api_key)
+
         #try api call, return response object 
         try:
             response = self.client.chat.completions.create(
