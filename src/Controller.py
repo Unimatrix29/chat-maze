@@ -14,8 +14,13 @@ class Controller():
         self.client.api_key
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
 
-    def console_input(self):
+    def __gpt_call(self):
         
+        massage = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": self.userPrompt}
+        ]
+
         response = self.client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
