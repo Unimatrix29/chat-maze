@@ -19,29 +19,39 @@ class Controller():
 
     def gpt_call(self):
         
+        #construct massage for api call 
         massage = [SYSTEM_PROMPT]
         massage.extend(self.userHistory)
         massage.append(self.userPrompt)
 
-        #not in here
-        self.userHistory.append(self.userPrompt)
-
+        #test
         for dic in massage:
 
             print(dic)
 
+        #api call 
         response = self.client.chat.completions.create(
         model=GPT_MODEL,
         messages=massage
         )
 
+        #get response massage
         response_massage = response.choices[0].message
-        self.userHistory.append(response_massage)
 
+        #safe user history
+        self.userHistory.append(response_massage)
+        #not in here
+        self.userHistory.append(self.userPrompt)
+
+        #test
         print(response_massage.content)
 
+        
         return response_massage.content
 
+
+ 
+#test
 c = Controller()
 
 c.gpt_call()
