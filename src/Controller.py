@@ -41,7 +41,7 @@ class Controller():
 
         #try api call, return response object 
         try:
-            response = self.client.chat.completions.create(
+            response = client.chat.completions.create(
                 model=model,
                 messages=message,
                 seed=seed
@@ -52,8 +52,8 @@ class Controller():
             print(f"Exeption: {e}")
             return None
         
-    def __construct_message(self, prompt, history):
+    def __construct_message(self, prompt, history, sys_prompt=SYSTEM_PROMPT):
         #construct message for api call 
-        message = [SYSTEM_PROMPT]
-        message.extend(history,  prompt)
+        message = []
+        message.extend(sys_prompt, history,  prompt)
         return message  
