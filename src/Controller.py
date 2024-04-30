@@ -13,6 +13,16 @@ class Controller():
 
         self.client = OpenAI(api_key=API_KEY)
 
+    def get_movement_vector(self, userInput="deny"):
+        userPrompt = {"content": userInput, "role": "user"}
+        message = self.__construct_message(prompt=userPrompt)
+        
+        chat_response = self.__chat_completion_request(message=message)
+
+        self.userHistory.extend(userPrompt, chat_response.choices[0].message)
+        move_vector = self.move_options[chat_response.choices[0].message.content.lower().strip()]
+
+        return move_vector
 
     def __chat_completion_request(self, message, seed=None, model=GPT_MODEL):
         #try api call, return response object 
