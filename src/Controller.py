@@ -10,6 +10,7 @@ class Controller():
     def __init__(self):
         self.userPrompt = {"content": "", "role": "user"}
         self.userHistory = []
+
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
 
         self.client = OpenAI(api_key=API_KEY)
@@ -37,6 +38,10 @@ class Controller():
         response_massage = response.choices[0].message
         self.userHistory.append(response_massage)
 
-        print(response_content)
+        print(response_massage.content)
 
-        return response_content
+        return response_massage.content
+
+c = Controller()
+
+c.gpt_call()
