@@ -2,7 +2,7 @@ from openai import OpenAI
 
 GPT_MODEL = "gpt-3.5-turbo"
 
-####################################################################
+#####################################################################
 #THIS KEY IS NOT WORKING, NEED TO ASK RODNER FOR AN ACTUAL KEY 
 API_KEY = "sk-proj-6zZsLWAh1nhmbsAZvQdoT3BlbkFJ02kbMmKx5qPw8sbUZvCA"
 #####################################################################
@@ -19,12 +19,19 @@ class Controller():
         self.client = OpenAI(api_key=API_KEY)
 
     def get_movement_vector(self, userInput="deny"):
+        #format user prompt for api 
         userPrompt = {"content": userInput, "role": "user"}
+
+        #make message
         message = self.__construct_message(prompt=userPrompt)
         
+        #api call 
         chat_response = self.__chat_completion_request(message=message)
 
+        #safer user history for future calls 
         self.userHistory.extend(userPrompt, chat_response.choices[0].message)
+
+        #extract actual answer and convert to vector 
         move_vector = self.move_options[chat_response.choices[0].message.content.lower().strip()]
 
         return move_vector
