@@ -26,7 +26,7 @@ class Controller():
         #api call 
         chat_response = self.__chat_completion_request(message=message)
 
-        #safer user history for future calls 
+        #safe user history for future calls 
         self.userHistory.extend(userPrompt, chat_response.choices[0].message)
 
         #extract actual answer and convert to vector 
