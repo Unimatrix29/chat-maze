@@ -27,3 +27,9 @@ class Controller():
             print("Something has gone wrong!")
             print(f"Exeption: {e}")
             return None
+        
+    def __construct_message(self, prompt, history):
+        #construct message for api call 
+        message = [SYSTEM_PROMPT]
+        message.extend(history,  prompt)
+        return message  
