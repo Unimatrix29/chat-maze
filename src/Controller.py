@@ -14,7 +14,7 @@ class Controller():
 
         self.client = OpenAI(api_key=API_KEY)
 
-    def gpt_call(self):
+    def __gpt_call(self):
         
         #construct massage for api call 
         massage = [SYSTEM_PROMPT]
