@@ -1,6 +1,10 @@
 import random 
 from openai import OpenAI
 
+GPT_MODEL = "gpt-3.5-turbo"
+API_KEY = "sk-proj-6zZsLWAh1nhmbsAZvQdoT3BlbkFJ02kbMmKx5qPw8sbUZvCA"
+SYSTEM_PROMPT = "You ar a helpful mathe teacher."
+
 class Controller():
 
     def __init__(self):
