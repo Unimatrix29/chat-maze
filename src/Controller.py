@@ -16,19 +16,26 @@ class Controller():
         self.client.api_key
         
 
-    def __gpt_call(self):
+    def gpt_call(self):
         
-        massage = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": self.userPrompt}
-        ]
+        massage = [SYSTEM_PROMPT]
+        massage.extend(self.userHistory)
+        massage.append(self.userPrompt)
+
+        #not in here
+        self.userHistory.append(self.userPrompt)
+
+        for dic in massage:
+
+            print(dic)
 
         response = self.client.chat.completions.create(
         model=GPT_MODEL,
         messages=massage
         )
-        
-        response_content = response.choices[0].message.content
+
+        response_massage = response.choices[0].message
+        self.userHistory.append(response_massage)
 
         print(response_content)
 
