@@ -8,7 +8,7 @@ SYSTEM_PROMPT =  {"content": "You ar a helpful mathe teacher.", "role": "system"
 class Controller():
 
     def __init__(self):
-        self.userPrompt = ""
+        self.userPrompt = {"content": "", "role": "user"}
         self.userHistory = []
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
 
