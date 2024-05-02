@@ -53,10 +53,7 @@ while True:
         player.set_position([-1, -1])
         gameOver = True
 
-    
-        
-    
     window.update_screen(maze, player.currentPosition)
    
     if not gameOver:
-        player.move(controller.console_input())
+        player.move(controller.debug_prompt_to_input())
