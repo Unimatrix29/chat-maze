@@ -31,7 +31,7 @@ class Controller():
         e.pack()
 
         def submit_text():
-            mylabel = Label(self.window, text = e.get())
+            mylabel = Label(self.window, text = "prompt: " + e.get())
             mylabel.pack()
             e.delete(0, 'end')
 
