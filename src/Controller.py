@@ -17,16 +17,31 @@ class Controller():
         
     def setup_prompt_window(self):
         #setup input window
-        window = tk.Tk()
-        window.geometry("500x100")
-        window.title("PROMPT INPUT")
+        self.window = tk.Tk()
+        self.window.geometry("500x100")
+        self.window.title("PROMPT INPUT")
+
+        
+    
+        
+    def init_prompt_window(self):
 
         #setup prompt input field
-        e = Entry(window)
+        e = Entry(self.window, width = 50, bg = "lightgreen", borderwidth = 5)
         e.pack()
-        
+
+        def submit_text():
+            mylabel = Label(self.window, text = e.get())
+            mylabel.pack()
+
         #setup submit button
-        submit_button = ttk.Button(window, text = "send prompt to ChatGPT")
+        submit_button = ttk.Button(self.window, text = "send prompt to ChatGPT", command = submit_text)
         submit_button.pack(expand = True)
+
+        self.window.mainloop()
+
+    
+
+
 
         
