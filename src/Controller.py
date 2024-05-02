@@ -21,7 +21,7 @@ class Controller():
         userPrompt = {"content": userInput, "role": "user"}
 
         #make message
-        message = self.__construct_message(prompt=userPrompt)
+        message = self.__construct_message(prompt=userPrompt, history=self.userHistory)
         
         #api call 
         chat_response = self.__chat_completion_request(message=message)
@@ -52,7 +52,7 @@ class Controller():
             print(f"Exeption: {e}")
             return None
         
-    def __construct_message(self, prompt, history, sys_prompt=SYSTEM_PROMPT):
+    def __construct_message(self, prompt, history=None, sys_prompt=SYSTEM_PROMPT):
         #construct message for api call 
         message = []
         message.extend(sys_prompt, history,  prompt)
