@@ -1,6 +1,7 @@
 import random 
 import tkinter as tk
 from tkinter import ttk
+from tkinter import *
 
 class Controller():
 
@@ -19,6 +20,13 @@ class Controller():
         window = tk.Tk()
         window.geometry("500x100")
         window.title("PROMPT INPUT")
+
+        #setup prompt input field
+        e = Entry(window)
+        e.pack()
+        
+        #setup submit button
         submit_button = ttk.Button(window, text = "send prompt to ChatGPT")
         submit_button.pack(expand = True)
+
         
