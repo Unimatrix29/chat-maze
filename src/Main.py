@@ -13,6 +13,7 @@ player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window)
 gameOver = False
 
 window.setup_screen()
+controller.setup_prompt_window()
 maze = mazeGenerator.get_preset("maze_2")
 #player.move(maze[1])
 
