@@ -29,9 +29,15 @@ class Controller():
         #safe user history for future calls 
         self.userHistory.extend(userPrompt, chat_response.choices[0].message)
 
-        #extract actual answer and convert to vector 
-        move_vector = self.move_options[chat_response.choices[0].message.content.lower().strip()]
+        #get api response content
+        content = chat_response.choices[0].message.content.lower().strip()
 
+        #convert to vector
+        if content in self.move_options:
+            move_vector = self.move_options[content]
+        else:
+            move_vector = self.move_options["deny"]
+        
         return move_vector
 
     def __chat_completion_request(self, message, seed=None, model=GPT_MODEL, api_key=API_KEY):
