@@ -33,6 +33,7 @@ class Controller():
         def submit_text():
             mylabel = Label(self.window, text = e.get())
             mylabel.pack()
+            e.delete(0, 'end')
 
         #setup submit button
         submit_button = ttk.Button(self.window, text = "send prompt to ChatGPT", command = submit_text)
