@@ -38,14 +38,14 @@ class ChatGPT():
 
         #try api call, return response object 
         try:
-            response = client.chat.completions.create(
-                model=model,
+            response = self.client.chat.completions.create(
+                model=self.gpt_model,
                 messages=message,
                 seed=seed
             )
             return response
         except Exception as e: 
-            print("Something has gone wrong!")
+            print("An error occurred!")
             print(f"Exeption: {e}")
             return None
         
