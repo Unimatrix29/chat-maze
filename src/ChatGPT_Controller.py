@@ -95,3 +95,8 @@ class ChatGPT():
         #create client
         self.client = OpenAI(**options)
         print("Client Setup: Done")
+
+#TEST
+# chatGPT = ChatGPT(system_prompt="Repet everything I say.", config_file="config.json", timeout=30)
+# mVector = chatGPT.get_movement_vector(userInput="up")
+# print(mVector)
