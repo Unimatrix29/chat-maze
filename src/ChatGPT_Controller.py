@@ -1,19 +1,13 @@
 from openai import OpenAI
+import json
+import os 
 
-GPT_MODEL = "gpt-3.5-turbo"
+class ChatGPT():
 
-#####################################################################
-#THIS KEY IS NOT WORKING, NEED TO ASK RODNER FOR AN ACTUAL KEY 
-API_KEY = "sk-proj-6zZsLWAh1nhmbsAZvQdoT3BlbkFJ02kbMmKx5qPw8sbUZvCA"
-#####################################################################
-
-SYSTEM_PROMPT =  {"content": "You ar a helpful mathe teacher.", "role": "system"}
-
-class Controller():
-
-    def __init__(self):
-        self.userHistory = []
-
+    def __init__(self, system_prompt, config_file, history=None, gpt_model="gpt-3.5-turbo", timeout=None):
+        self.gpt_model = gpt_model
+        self.system_prompt = {"content": system_prompt, "role": "user"}
+        self.history = history
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
 
     def get_movement_vector(self, userInput="deny"):
