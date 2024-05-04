@@ -10,21 +10,20 @@ class ChatGPT():
         self.history = history
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
 
-    def get_movement_vector(self, userInput="deny"):
-        #format user prompt for api 
-        userPrompt = {"content": userInput, "role": "user"}
+    def get_movement_vector(self, userInput, seed=None):
 
-        #make message
-        message = self.__construct_message(prompt=userPrompt, history=self.userHistory)
+        #create message
+        message = self.__construct_message(userInput=userInput, history=self.history)
         
-        #api call 
-        chat_response = self.__chat_completion_request(message=message)
-
-        #safe user history for future calls 
-        self.userHistory.extend(userPrompt, chat_response.choices[0].message)
+        #api response 
+        chat_response = self.__chat_completion_request(message=message, seed=seed)
+        #test
+        print(f"\n{chat_response}\n")
 
         #get api response content
         content = chat_response.choices[0].message.content.lower().strip()
+        #test
+        print(chat_response.choices[0].message)
 
         #convert to vector
         if content in self.move_options:
