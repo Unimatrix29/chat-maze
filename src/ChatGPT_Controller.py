@@ -33,10 +33,8 @@ class ChatGPT():
         
         return move_vector
 
-    def __chat_completion_request(self, message, seed=None, model=GPT_MODEL, api_key=API_KEY):
 
-        #create api client
-        client = OpenAI(api_key=api_key)
+    def __chat_completion_request(self, message, seed):
 
         #try api call, return response object 
         try:
