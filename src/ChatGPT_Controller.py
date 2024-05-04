@@ -9,6 +9,8 @@ class ChatGPT():
         self.system_prompt = {"content": system_prompt, "role": "user"}
         self.history = history
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
+        self.__setup_client(timeout=timeout, file=config_file)
+
 
     def get_movement_vector(self, userInput, seed=None):
 
@@ -68,3 +70,28 @@ class ChatGPT():
         print("Message Setup: Done")
 
         return message  
+
+
+    def __setup_client(self, timeout, file):
+        #trys to open the json config file to read the api key
+        #programm is exited if its fails 
+        try:
+            here = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(here, file)
+            with open(file_path, "r") as file:
+                data = json.load(file)
+            api_key = data["key"]
+        except Exception as e:
+            print(f"Could not read api key from file: {file_path}")
+            print(f"Exeption: {e}")
+            exit()
+
+        #configure client 
+        options = {
+            'api_key': api_key,
+            'timeout': timeout
+        }
+
+        #create client
+        self.client = OpenAI(**options)
+        print("Client Setup: Done")
