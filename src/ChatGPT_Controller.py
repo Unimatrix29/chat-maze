@@ -52,8 +52,22 @@ class ChatGPT():
             print(f"Exeption: {e}")
             return None
         
-    def __construct_message(self, prompt, history=None, sys_prompt=SYSTEM_PROMPT):
+
+    def __construct_message(self, userInput, history):
+        #format user prompt for api 
+        userPrompt = {"content": userInput, "role": "user"}
+
         #construct message for api call 
         message = []
-        message.extend(sys_prompt, history,  prompt)
+        message.append(self.system_prompt)
+        if history is not None:
+            message.append(history)
+        message.append(userPrompt)
+
+        #Test
+        print("Message:")
+        for dic in message:
+            print(dic)
+        print("Message Setup: Done")
+
         return message  
