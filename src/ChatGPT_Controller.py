@@ -49,7 +49,7 @@ class ChatGPT():
         except Exception as e: 
             print("An error occurred!")
             print(f"Exeption: {e}")
-            return None
+            pass
         
 
     def __construct_message(self, userInput, history):
