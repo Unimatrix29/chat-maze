@@ -12,13 +12,13 @@ class ChatGPT():
         self.__setup_client(timeout=timeout, file=config_file)
 
 
-    def get_movement_vector(self, userInput, seed=None):
+    def get_movement_vector(self, userInput, temperature=None):
 
         #create message
         message = self.__construct_message(userInput=userInput, history=self.history)
         
         #api response 
-        chat_response = self.__chat_completion_request(message=message, seed=seed)
+        chat_response = self.__chat_completion_request(message=message, temperature=temperature)
         #test
         print(f"\n{chat_response}\n")
 
@@ -36,20 +36,20 @@ class ChatGPT():
         return move_vector
 
 
-    def __chat_completion_request(self, message, seed):
+    def __chat_completion_request(self, message, temperature):
 
         #try api call, return response object 
         try:
             response = self.client.chat.completions.create(
                 model=self.gpt_model,
                 messages=message,
-                seed=seed
+                temperature=temperature
             )
             return response
         except Exception as e: 
             print("An error occurred!")
             print(f"Exeption: {e}")
-            return None
+            pass
         
 
     def __construct_message(self, userInput, history):
