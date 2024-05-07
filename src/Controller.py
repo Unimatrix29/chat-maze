@@ -18,6 +18,9 @@ class Controller():
             return self.move_options[direction_request]
         else:
             return self.move_options["deny"]
+        
+    #def wait_for_input(self):
+
              
     def setup_prompt_window(self):
         #setup input window
@@ -34,14 +37,20 @@ class Controller():
         def submit_text():
             mylabel = Label(self.window, text = "prompt: " + e.get())
             mylabel.pack()
+
+            if e.get() in self.move_options:
+                print(self.move_options[e.get()])
+            else:
+                print("wrong input")
             
-            print(e.get())
 
             e.delete(0, 'end')
 
         # setup submit button
         submit_button = ttk.Button(self.window, text = "send prompt to ChatGPT", command = submit_text)
         submit_button.pack(expand = True)
+
+        
 
         
 

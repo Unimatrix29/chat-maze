@@ -57,3 +57,4 @@ while True:
    
     if not gameOver:
         player.move(controller.console_input())
+        pass
