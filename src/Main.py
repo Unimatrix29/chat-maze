@@ -14,7 +14,7 @@ window = Screen()
 mazeGenerator = MazeGenerator()
 #controller = Controller()
 
-chatGPT = ChatGPT(PROMPT, CONFIG_FILE_NAME, GPT_MODEL, timeout=30)
+chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
 
 player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window)
 
