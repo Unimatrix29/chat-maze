@@ -15,7 +15,7 @@ gameOver = False
 window.setup_screen()
 controller.setup_prompt_window()
 controller.init_prompt_window()
-maze = mazeGenerator.get_preset("maze_2")
+maze = mazeGenerator.get_preset("maze_1")
 #player.move(maze[1])
 
 
@@ -56,4 +56,4 @@ while True:
     window.update_screen(maze, player.currentPosition)
    
     if not gameOver:
-        player.move(controller.debug_prompt_to_input())
+        player.move(controller.console_input())
