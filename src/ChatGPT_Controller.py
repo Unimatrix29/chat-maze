@@ -44,12 +44,12 @@ class ChatGPT():
                 model=self.gpt_model,
                 messages=message,
                 temperature=temperature
-            )
+            ) 
+            
             return response
-        except Exception as e: 
-            print("An error occurred!")
-            print(f"Exeption: {e}")
-            pass
+        except openai.APITimeoutError as e:
+            print(f"OpenAI API request exceeded {self.client.timeout} seconds: {e}")
+            return e
         
 
     def __construct_message(self, userInput, history):
