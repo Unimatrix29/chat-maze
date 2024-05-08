@@ -75,4 +75,8 @@ while True:
     if not gameOver:
         console_input = input("Bitte gib höflich ein Richtung an: ")
         mVector = chatGPT.get_movement_vector(console_input, TEMPERATURE)
-        player.move(mVector)
+        if mVector is Exception:
+           #Let the User know, that something went wrong and he should try again 
+           pass
+        else: 
+            player.move(mVector)
