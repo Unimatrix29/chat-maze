@@ -1,3 +1,4 @@
+import openai
 from openai import OpenAI
 import json
 import os 
@@ -16,24 +17,22 @@ class ChatGPT():
 
         #create message
         message = self.__construct_message(userInput=userInput, history=self.history)
-        
+
         #api response 
         chat_response = self.__chat_completion_request(message=message, temperature=temperature)
-        #test
-        print(f"\n{chat_response}\n")
-
+        
         #get api response content
         content = chat_response.choices[0].message.content.lower().strip()
-        #test
-        print(chat_response.choices[0].message)
-
+        
         #convert to vector
         if content in self.move_options:
             move_vector = self.move_options[content]
         else:
             move_vector = self.move_options["deny"]
-        
+            
         return move_vector
+        
+        
 
 
     def __chat_completion_request(self, message, temperature):
@@ -62,13 +61,7 @@ class ChatGPT():
         if history is not None:
             message.append(history)
         message.append(userPrompt)
-
-        #Test
-        print("Message:")
-        for dic in message:
-            print(dic)
-        print("Message Setup: Done")
-
+        
         return message  
 
 
@@ -97,6 +90,6 @@ class ChatGPT():
         print("Client Setup: Done")
 
 #TEST
-# chatGPT = ChatGPT(system_prompt="Repet everything I say.", config_file="config.json", timeout=30)
+# chatGPT = ChatGPT(system_prompt="Repeat everything I say.", config_file="config.json", timeout=30)
 # mVector = chatGPT.get_movement_vector(userInput="up")
 # print(mVector)
