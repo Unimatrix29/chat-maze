@@ -80,9 +80,9 @@ class ChatGPT():
             file_path = os.path.join(here, file)
             with open(file_path, "r") as file:
                 data = json.load(file)
-            api_key = data["key"]
-        except Exception as e:
-            print(f"Could not read api key from file: {file_path}")
+            api_key = data["api_key"]
+        except OSError as e:
+            print(f"Could not read Api key from file: {file_path}")
             print(f"Exeption: {e}")
             exit()
 
