@@ -19,7 +19,10 @@ class ChatGPT():
         message = self.__construct_message(userInput=userInput, history=self.history)
 
         #api response 
-        chat_response = self.__chat_completion_request(message=message, temperature=temperature)
+        try:
+            chat_response = self.__chat_completion_request(message=message, temperature=temperature)
+        except Exception as e: 
+            return e 
         
         #get api response content
         content = chat_response.choices[0].message.content.lower().strip()
@@ -48,7 +51,7 @@ class ChatGPT():
             return response
         except openai.APITimeoutError as e:
             print(f"OpenAI API request exceeded {self.client.timeout} seconds: {e}")
-            return e
+            raise e
         
 
     def __construct_message(self, userInput, history):
@@ -90,6 +93,6 @@ class ChatGPT():
         print("Client Setup: Done")
 
 #TEST
-# chatGPT = ChatGPT(system_prompt="Repeat everything I say.", config_file="config.json", timeout=30)
-# mVector = chatGPT.get_movement_vector(userInput="up")
-# print(mVector)
+#chatGPT = ChatGPT(system_prompt="Repeat everything I say.", config_file="config.json", timeout=30)
+#mVector = chatGPT.get_movement_vector(userInput="up")
+#print(mVector)
