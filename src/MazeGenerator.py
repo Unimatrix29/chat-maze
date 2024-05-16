@@ -125,7 +125,10 @@ class MazeGenerator():
         for i in range(0, 16):
             for j in range(0, 16):
                 rotatedMaze[0][j][i] = maze[0][i][15 - j]
-
+                
+        rotatedMaze[1] = [maze[1][1], 15 - maze[1][0]]
+        rotatedMaze[2] = [maze[2][1], 15 - maze[2][0]]
+        
         return rotatedMaze
     """
     Returns a random point of maze
