@@ -51,7 +51,6 @@ class Controller():
         submit_button = ttk.Button(self.window, text = "send prompt to ChatGPT", command = submit_text)
         submit_button.pack(expand = True)
 
-        self.window.mainloop()
 
     
 
