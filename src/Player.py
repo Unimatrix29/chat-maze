@@ -10,7 +10,9 @@ class Player:
 
     def UpdateMaze(self, newMaze):
         pass
-
+    """
+    Changes currentPosition by a move vector
+    """
     def move(self, mVector):
         self.currentPosition[0] += mVector[0]
         self.currentPosition[1] += mVector[1]
@@ -20,4 +22,3 @@ class Player:
     def set_position(self, point):
         self.currentPosition[0] = point[0]
         self.currentPosition[1] = point[1]
-    

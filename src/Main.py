@@ -18,24 +18,22 @@ TEMPERATURE = 0.25
 
 window = Screen()
 mazeGenerator = MazeGenerator()
-#controller = Controller()
+controller = Controller()
 
-chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
+# chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
 
-player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window)
+maze = mazeGenerator.get_preset("maze_1")
+player = Player(maze, window)
 
+running = True
 gameOver = False
 
 window.setup_screen()
+window.update_screen(maze, player.currentPosition)
 #controller.setup_prompt_window()
 #controller.init_prompt_window()
-maze = mazeGenerator.get_preset("maze_2")
-#player.move(maze[1])
 
-
-while True:
-    
-    
+while running:
 
     for event in pygame.event.get():
         
@@ -45,16 +43,13 @@ while True:
                 gameOver = False
                 maze = mazeGenerator.get_preset("maze_1")
                 player.set_position(maze[1])
-
-            # if not gameOver:
-            #    print(controller.console_input())
-
-                
-                #mVector = Controller.get_movement(event.key)    #Note: Probably add a list of moveKeys
-                #player.move(mVector)                            #      to avoid unnecessary 0-movements
                 
         if event.type == pygame.QUIT:
-            window.quit_screen()
+            running = False
+            
+    if not gameOver:
+        mVector = controller.console_input()
+        player.move(mVector)
 
     if window.check_wall(maze, player.currentPosition):
         # Changing actual maze to an end screen (sad)
@@ -67,16 +62,15 @@ while True:
         player.set_position([-1, -1])
         gameOver = True
 
-    
-        
-    
+    # if not gameOver:
+    #     console_input = input("Bitte gib höflich ein Richtung an: ")
+    #     mVector = chatGPT.get_movement_vector(console_input, TEMPERATURE)
+    #     if mVector is Exception:
+    #        #Let the User know, that something went wrong and he should try again 
+    #        pass
+    #     else: 
+    #         player.move(mVector)
+            
     window.update_screen(maze, player.currentPosition)
    
-    if not gameOver:
-        console_input = input("Bitte gib höflich ein Richtung an: ")
-        mVector = chatGPT.get_movement_vector(console_input, TEMPERATURE)
-        if mVector is Exception:
-           #Let the User know, that something went wrong and he should try again 
-           pass
-        else: 
-            player.move(mVector)
+window.quit_screen()
