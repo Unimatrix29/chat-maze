@@ -5,6 +5,7 @@ class Player:
         self.activeMaze = maze
 
         self.currentPosition = maze[1]
+        self.isHidden = False
         
         self.__screen = screen
 
@@ -22,3 +23,8 @@ class Player:
     def set_position(self, point):
         self.currentPosition[0] = point[0]
         self.currentPosition[1] = point[1]
+    """
+    Changes render visibility
+    """
+    def hide(self, request: bool):
+        self.isHidden = request

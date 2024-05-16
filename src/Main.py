@@ -29,7 +29,7 @@ running = True
 gameOver = False
 
 window.setup_screen()
-window.update_screen(maze, player.currentPosition)
+window.update_screen(maze, player)
 #controller.setup_prompt_window()
 #controller.init_prompt_window()
 
@@ -51,11 +51,9 @@ while running:
         mVector = controller.console_input()
         player.move(mVector)
 
-    if window.check_wall(maze, player.currentPosition):
-        # Changing actual maze to an end screen (sad)
-        maze = mazeGenerator.get_preset("LOST")
-        player.set_position([-1, -1])
-        gameOver = True
+    isOnWall = window.check_wall(maze, player.currentPosition)
+    player.hide(isOnWall)
+        
     if window.check_finish(maze, player.currentPosition):
         # Changing actual maze to an end screen (happy)
         maze = mazeGenerator.get_preset("FINISH")
@@ -71,6 +69,6 @@ while running:
     #     else: 
     #         player.move(mVector)
             
-    window.update_screen(maze, player.currentPosition)
+    window.update_screen(maze, player)
    
 window.quit_screen()
