@@ -15,14 +15,29 @@ class Controller():
         else:
             return self.move_options["deny"]
         
+    def random_input(self):
+        direction_request = input("Type a direction: ")
+        input_move = direction_request.strip().lower()
+        
+        searching = True
+        
+        while searching:
+            random_move = self.__get_random_move()
+            searching = random_move == input_move                   # (reverse)End of searching
+
+        return random_move
+    
+    def __get_random_move(self):
+        keys = self.move_options.keys()
+        move = self.move_options[keys[random.randrange(1, 4)]]
+        
+        return move
+        
     def setup_prompt_window(self):
         #setup input window
         self.window = tk.Tk()
         self.window.geometry("500x100")
         self.window.title("PROMPT INPUT")
-
-        
-    
         
     def init_prompt_window(self):
 
@@ -40,9 +55,3 @@ class Controller():
         submit_button.pack(expand = True)
 
         self.window.mainloop()
-
-    
-
-
-
-        
