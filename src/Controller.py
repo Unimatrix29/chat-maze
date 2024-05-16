@@ -7,6 +7,8 @@ class Controller():
 
     def __init__(self):
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
+        self.submit = False
+        self.text_input = "hier könnte Ihre Werbung stehen"
 
     def console_input(self):
         direction_request = input("Type a direction: ")
@@ -21,8 +23,14 @@ class Controller():
         self.window.geometry("500x100")
         self.window.title("PROMPT INPUT")
 
-        
+    def is_submit(self):
+        if self.submit:    
+            self.submit = False
+            return True
+        return False
     
+    def get_input(self):
+        return self.text_input
         
     def init_prompt_window(self):
 
@@ -31,9 +39,13 @@ class Controller():
         e.pack()
 
         def submit_text():
+            self.text_input = e.get()
+            self.submit = True
+
             mylabel = Label(self.window, text = "prompt: " + e.get())
             mylabel.pack()
             e.delete(0, 'end')
+            
 
         #setup submit button
         submit_button = ttk.Button(self.window, text = "send prompt to ChatGPT", command = submit_text)
