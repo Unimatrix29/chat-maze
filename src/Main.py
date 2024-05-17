@@ -40,7 +40,7 @@ window = Screen()
 mazeGenerator = MazeGenerator()
 controller = Controller()
 
-# chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
+chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
 """
 Asking for difficulty choice
 """
@@ -58,7 +58,8 @@ def set_level():
         
     return DIFFICULTY[options[level]]
         
-difficulty = set_level()
+# difficulty = set_level()
+difficulty = DIFFICULTY["TEST"]
 mazePreset = f"maze_{difficulty[0]}.{random.randint(1, 4)}.0"
 
 maze = mazeGenerator.get_preset(mazePreset)
@@ -125,9 +126,16 @@ while running:
                 
         if event.type == pygame.QUIT:
             running = False
-            
+    
     if not gameOver:
-        mVector = controller.console_input()
+        console_input = input("Bitte gib höflich ein Richtung an: ")
+        mVector = chatGPT.get_movement_vector(console_input, TEMPERATURE)
+        if mVector is Exception:
+           #Let the User know, that something went wrong and he should try again 
+           pass
+        
+        # Testing control
+        # # mVector = controller.console_input()
         player.move(mVector)
         debuffDuration = max(debuffDuration - 1, 0)
         
@@ -147,15 +155,6 @@ while running:
         maze = mazeGenerator.get_preset("FINISH")
         player.set_position([-1, -1])
         gameOver = True
-
-    # if not gameOver:
-    #     console_input = input("Bitte gib höflich ein Richtung an: ")
-    #     mVector = chatGPT.get_movement_vector(console_input, TEMPERATURE)
-    #     if mVector is Exception:
-    #        #Let the User know, that something went wrong and he should try again 
-    #        pass
-    #     else: 
-    #         player.move(mVector)
             
     window.update_screen(maze, player, renderDistance)
    
