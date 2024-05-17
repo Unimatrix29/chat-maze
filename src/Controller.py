@@ -14,25 +14,13 @@ class Controller():
             return self.move_options[direction_request]
         else:
             return self.move_options["deny"]
-        
+    # Returns a random move option including canceling
     def random_input(self):
-        direction_request = input("Type a direction: ")
-        input_move = direction_request.strip().lower()
-        
-        searching = True
-        
-        while searching:
-            random_move = self.__get_random_move()
-            searching = random_move == input_move                   # (reverse)End of searching
-
-        return random_move
-    
-    def __get_random_move(self):
         keys = list(self.move_options.keys())
         move = self.move_options[keys[random.randrange(0, 4)]]
         
         return move
-        
+    
     def setup_prompt_window(self):
         #setup input window
         self.window = tk.Tk()
