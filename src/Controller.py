@@ -28,8 +28,8 @@ class Controller():
         return random_move
     
     def __get_random_move(self):
-        keys = self.move_options.keys()
-        move = self.move_options[keys[random.randrange(1, 4)]]
+        keys = list(self.move_options.keys())
+        move = self.move_options[keys[random.randrange(0, 4)]]
         
         return move
         
