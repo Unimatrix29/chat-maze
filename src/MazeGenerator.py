@@ -149,7 +149,7 @@ class MazeGenerator():
         }
 
     def random_maze(self):
-        maze = [[random.choice([0, 1]) for _ in range(16)] for _ in range(16)]
+        maze = [[[random.choice([0, 1]) for _ in range(16)] for _ in range(16)], [0,0], [15, 15]]
         return maze
 
     def get_preset(self, preset_id = "maze_0"):
@@ -160,7 +160,7 @@ class MazeGenerator():
     Rotates maze by 90° counter clockwise
     """
     def rotate_maze(self, maze):
-        rotatedMaze = self.get_preset("maze_0")
+        rotatedMaze = self.random_maze()
 
         for i in range(0, 16):
             for j in range(0, 16):

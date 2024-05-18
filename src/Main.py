@@ -61,7 +61,6 @@ def set_level():
 # difficulty = set_level()
 difficulty = DIFFICULTY["TEST"]
 mazePreset = f"maze_{difficulty[0]}.{random.randint(1, 4)}.0"
-
 maze = mazeGenerator.get_preset(mazePreset)
 player = Player(maze, window)
 
@@ -79,11 +78,13 @@ def apply_debuff(choice):
     global renderDistance
     global debuffDuration
     global maze
-                
+
     print(choice)
     match choice:
         case "ROTATION":
             maze = mazeGenerator.rotate_maze(maze)
+            newPosition = [player.currentPosition[1], 15 - player.currentPosition[0]]
+            player.set_position(newPosition)
             return
         case "BLINDENESS":
             renderDistance = 4
@@ -148,7 +149,7 @@ while running:
     if window.check_wall(maze, player.currentPosition):
         player.move([-mVector[0], -mVector[1]])
         for i in range(difficulty[1]):
-            apply_debuff(DEBUFF[random.randint(2, 3)])
+            apply_debuff(DEBUFF[random.randint(1, 3)])
         
     if window.check_finish(maze, player.currentPosition):
         # Changing actual maze to an end screen (happy)
