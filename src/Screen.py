@@ -46,7 +46,7 @@ class Screen():
             return True
         return False
 
-    def quit_screen(): 
+    def quit_screen(self): 
         pygame.quit()
 
 
