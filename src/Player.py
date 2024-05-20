@@ -6,9 +6,6 @@ class Player:
 
         self.currentPosition = maze[1]
 
-    def UpdateMaze(self, newMaze):
-        pass
-
     def move(self, mVector):
         self.currentPosition[0] += mVector[0]
         self.currentPosition[1] += mVector[1]
