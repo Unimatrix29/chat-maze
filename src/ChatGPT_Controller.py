@@ -7,7 +7,7 @@ class ChatGPT():
 
     def __init__(self, system_prompt, config_file, history=None, gpt_model="gpt-3.5-turbo", timeout=None):
         self.gpt_model = gpt_model
-        self.system_prompt = {"content": system_prompt, "role": "user"}
+        self.system_prompt = {"content": system_prompt, "role": "system"}
         self.history = history
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
         self.__setup_client(timeout=timeout, file=config_file)
