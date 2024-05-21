@@ -129,8 +129,11 @@ while running:
             running = False
     
     if not gameOver:
-        console_input = input("Bitte gib höflich ein Richtung an: ")
-        mVector = chatGPT.get_movement_vector(console_input, TEMPERATURE)
+        #console_input = input("Bitte gib höflich ein Richtung an: ")
+        while not Controller.is_submit():
+            pass
+        
+        mVector = chatGPT.get_movement_vector(Controller.get_input(), TEMPERATURE)
         if mVector is Exception:
            #Let the User know, that something went wrong and he should try again 
            pass
