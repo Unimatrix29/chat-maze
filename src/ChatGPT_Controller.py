@@ -26,6 +26,7 @@ class ChatGPT():
         
         #get api response content
         content = chat_response.choices[0].message.content.lower().strip()
+        print("ChatGPT: " + content)
         
         #convert to vector
         if content in self.move_options:

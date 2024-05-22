@@ -32,15 +32,31 @@ PROMPT = "Du bist ein sehr höflicher Mensch und akzeptierst nur Anfragen, welch
 #and it musst contain a key-value-pair where the key is called: "api_key"
 ###################################################################################################
 CONFIG_FILE_NAME = "config.json"
-
 GPT_MODEL = "gpt-4-turbo"
 TEMPERATURE = 0.25
 
 window = Screen()
 mazeGenerator = MazeGenerator()
 controller = Controller()
-
 chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
+        
+# difficulty = set_level()
+difficulty = DIFFICULTY["TEST"]
+mazePreset = f"maze_{difficulty[0]}.{random.randint(1, 4)}.0"
+maze = mazeGenerator.get_preset(mazePreset)
+player = Player(maze)
+
+window.setup_screen()
+window.update_screen(maze, player)
+#controller.setup_prompt_window()
+#controller.init_prompt_window()
+maze = mazeGenerator.get_preset("maze_2")
+
+running = True
+gameOver = False
+debuffDuration = 0
+renderDistance = 16
+
 """
 Asking for difficulty choice
 """
@@ -57,23 +73,6 @@ def set_level():
             print("Bad input >:( Enter the number of chosen difficulty")
         
     return DIFFICULTY[options[level]]
-        
-# difficulty = set_level()
-difficulty = DIFFICULTY["TEST"]
-mazePreset = f"maze_{difficulty[0]}.{random.randint(1, 4)}.0"
-maze = mazeGenerator.get_preset(mazePreset)
-player = Player(maze, window)
-
-window.setup_screen()
-window.update_screen(maze, player)
-#controller.setup_prompt_window()
-#controller.init_prompt_window()
-maze = mazeGenerator.get_preset("maze_2")
-
-running = True
-gameOver = False
-debuffDuration = 0
-renderDistance = 16
 
 def apply_debuff(choice):
     global renderDistance
@@ -115,6 +114,7 @@ def remove_debuffs():
     renderDistance = 16
     player.hide(False)
 
+
 while running:
 
     for event in pygame.event.get():
@@ -142,6 +142,7 @@ while running:
         # Testing control
         # # mVector = controller.console_input()
         player.move(mVector)
+        
         debuffDuration = max(debuffDuration - 1, 0)
         
     if debuffDuration == 0:
