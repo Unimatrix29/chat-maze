@@ -48,14 +48,29 @@ player = Player(maze)
 
 window.setup_screen()
 window.update_screen(maze, player)
-#controller.setup_prompt_window()
-#controller.init_prompt_window()
+
 maze = mazeGenerator.get_preset("maze_2")
 
 running = True
 gameOver = False
 debuffDuration = 0
 renderDistance = 16
+
+#choose if you want to control the program via console or GUI
+def choose_mode():
+    global console_On
+    while True:
+        choice = input("Wie wollen sie mit chtaGPT interagieren? Für die Konsole drücken sie [C]. Für die GUI drücken sie [G]: ").strip().lower()
+
+        if choice == "g":
+            controller.setup_prompt_window()
+            controller.init_prompt_window()
+            return False
+        elif choice == "c":
+            return True
+        else:
+            pass
+        
 
 """
 Asking for difficulty choice
@@ -116,6 +131,8 @@ def remove_debuffs():
 
 
 while running:
+    
+    console_On = choose_mode()
 
     for event in pygame.event.get():
         
@@ -130,17 +147,23 @@ while running:
             running = False
     
     if not gameOver:
-        #console_input = input("Bitte gib höflich ein Richtung an: ")
-        while not Controller.is_submit():
-            pass
         
-        mVector = chatGPT.get_movement_vector(Controller.get_input(), TEMPERATURE)
+        #logic for wich control option the user chose 
+        if console_On: 
+            user_input = input("Bitte gib höflich ein Richtung an: ")
+        else:
+            while not controller.is_submit():
+                pass
+            user_input = controller.get_input()
+            
+
+        #chatGPT call
+        mVector = chatGPT.get_movement_vector(user_input, TEMPERATURE)
+        
         if mVector is Exception:
            #Let the User know, that something went wrong and he should try again 
            pass
         
-        # Testing control
-        # # mVector = controller.console_input()
         player.move(mVector)
         
         debuffDuration = max(debuffDuration - 1, 0)
