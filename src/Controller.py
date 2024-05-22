@@ -16,7 +16,13 @@ class Controller():
             return self.move_options[direction_request]
         else:
             return self.move_options["deny"]
+    # Returns a random move option including canceling
+    def random_input(self):
+        keys = list(self.move_options.keys())
+        move = self.move_options[keys[random.randrange(0, 4)]]
         
+        return move
+    
     def setup_prompt_window(self):
         #setup input window
         self.window = tk.Tk()
