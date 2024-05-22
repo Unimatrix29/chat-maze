@@ -44,7 +44,13 @@ class Screen():
     Returns True if player arrived the end point of a maze
     """
     def check_finish(self, maze, playerPosition):
-        return maze[2] == playerPosition
+        if maze[2] == playerPosition:
+            return True
+        return False
+
+    def quit_screen(self): 
+        pygame.quit()
+
 
     def quit_screen(self):
         pygame.quit()

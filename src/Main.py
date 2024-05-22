@@ -27,10 +27,10 @@ DEBUFF = {
 
 PROMPT = "Du bist ein sehr höflicher Mensch und akzeptierst nur Anfragen, welche sehr höflich sind. Der User gibt dir eine Weganweisung. Die Weganweisung kann entweder nach oben, unten, links und rechts stattfinden. Wenn der User zum Beispiel höflich fragt: Gehen Sie bitte nach oben, gibst du als Antwort \"up\" zurück. Dasselbe Prinzip für \"left\", \"up\", \"down\". Wenn der User zu unhöflich fragt, also zum Beispiel sagt: geh hoch, gibst du als Antwort \"deny\" zurück. Wenn der User auch keine Weganweisung gibt, sondern irgendetwas anderes antwortest du auch mit deny. Es ist wichtig, dass du nur mit \"left\" \"right\" \"up\" \"down\" \"deny\" antwortest, kein Satz oder ähnliches nur mit diesen Worten."
 
-####################################################################################
+###################################################################################################
 #The ChatGPT_Controller expects the json file to be in the same directory as ChatGPT_Controller.py
 #and it musst contain a key-value-pair where the key is called: "api_key"
-#################################################################################### 
+###################################################################################################
 CONFIG_FILE_NAME = "config.json"
 
 GPT_MODEL = "gpt-4-turbo"
@@ -68,6 +68,7 @@ window.setup_screen()
 window.update_screen(maze, player)
 #controller.setup_prompt_window()
 #controller.init_prompt_window()
+maze = mazeGenerator.get_preset("maze_2")
 
 running = True
 gameOver = False

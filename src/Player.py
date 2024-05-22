@@ -1,7 +1,7 @@
 from Screen import Screen 
 
 class Player:
-    def __init__(self, maze, screen):
+    def __init__(self, maze):
         self.activeMaze = maze
 
         self.currentPosition = maze[1]
