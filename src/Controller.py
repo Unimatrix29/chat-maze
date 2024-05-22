@@ -4,17 +4,19 @@ import pygame
 class Controller():
 
     def __init__(self):
-        self.setup_input_window()
+        self.WHITE = (255, 255, 255)
+        self.BLACK = (0, 0, 0)
 
     def setup_input_window(self):
-        global screen
         pygame.init()
-        screen = pygame.display.set_mode([700, 700])
+        self.screen = pygame.display.set_mode([700, 700])
         pygame.display.set_caption("text_input")
-        screen.fill(0,0,0)
+        self.font = pygame.font.Font(None, 64)
+        self.text = ""
 
-    def update_screen(self, maze, player_pos):
-        
+    def update_screen(self):
+        self.screen.fill(self.BLACK)
+        self.text_surface = self.font.render(self.text, True, self.WHITE)
 
         pygame.display.flip()
 
