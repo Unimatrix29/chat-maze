@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys
 from Screen import Screen
 from MazeGenerator import MazeGenerator
 from Player import Player
@@ -52,7 +52,8 @@ while True:
             # Input Window
             if event.key == pygame.K_BACKSPACE:
                 textInputWindow.backspace()
-
+            else:
+                textInputWindow.addChar(event.unicode)
             # if not gameOver:
             #    print(controller.console_input())
 

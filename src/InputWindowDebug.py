@@ -10,3 +10,4 @@ for event in pygame.event.get():
             textWindow.quit_screen()
     
     textWindow.update_screen()
+    

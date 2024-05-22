@@ -1,5 +1,5 @@
 import random 
-import pygame
+import pygame, sys
 
 class Controller():
 
@@ -17,12 +17,14 @@ class Controller():
     def update_screen(self):
         self.screen.fill(self.BLACK)
         self.text_surface = self.font.render(self.text, True, self.WHITE)
-
+        self.screen.blit(self.text_surface, (0,0))
         pygame.display.flip()
 
     def backspace(self):
         self.text = self.text[:-1]
 
+    def addChar(self, unicode):
+        self.text += unicode
 
 
     def console_input(self):
