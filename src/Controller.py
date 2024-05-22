@@ -20,7 +20,8 @@ class Controller():
 
         pygame.display.flip()
 
-
+    def backspace(self):
+        self.text = self.text[:-1]
 
 
 

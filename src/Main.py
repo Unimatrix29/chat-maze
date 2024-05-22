@@ -49,13 +49,18 @@ while True:
                 maze = mazeGenerator.get_preset("maze_1")
                 player.set_position(maze[1])
 
+            # Input Window
+            if event.key == pygame.K_BACKSPACE:
+                textInputWindow.backspace()
+
             # if not gameOver:
             #    print(controller.console_input())
 
                 
                 #mVector = Controller.get_movement(event.key)    #Note: Probably add a list of moveKeys
                 #player.move(mVector)                            #      to avoid unnecessary 0-movements
-                
+
+
         if event.type == pygame.QUIT:
             window.quit_screen()
 
