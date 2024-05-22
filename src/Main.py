@@ -132,6 +132,7 @@ def remove_debuffs():
 
 while running:
     
+    #let the user choose the control mode 
     console_On = choose_mode()
 
     for event in pygame.event.get():
