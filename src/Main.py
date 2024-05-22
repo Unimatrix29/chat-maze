@@ -17,6 +17,7 @@ GPT_MODEL = "gpt-4-turbo"
 TEMPERATURE = 0.25
 
 window = Screen()
+textInputWindow = Controller()
 mazeGenerator = MazeGenerator()
 #controller = Controller()
 
@@ -27,6 +28,8 @@ player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window)
 gameOver = False
 
 window.setup_screen()
+
+textInputWindow.setup_screen()
 #controller.setup_prompt_window()
 #controller.init_prompt_window()
 maze = mazeGenerator.get_preset("maze_2")
