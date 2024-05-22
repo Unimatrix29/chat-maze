@@ -32,7 +32,7 @@ window.setup_screen()
 maze = mazeGenerator.get_preset("maze_2")
 
 
-while True:
+while not gameOver:
     if window.check_wall(maze, player.currentPosition):
         # Changing actual maze to an end screen (sad)
         maze = mazeGenerator.get_preset("LOST")
@@ -68,4 +68,5 @@ while True:
                 player.set_position(maze[1])
                 
         if event.type == pygame.QUIT:
+            gameOver = True
             window.quit_screen()
