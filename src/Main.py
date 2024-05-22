@@ -55,6 +55,7 @@ running = True
 gameOver = False
 debuffDuration = 0
 renderDistance = 16
+console_On = False
 
 #choose if you want to control the program via console or GUI
 def choose_mode():
@@ -133,7 +134,9 @@ def remove_debuffs():
 while running:
     
     #let the user choose the control mode 
-    console_On = choose_mode()
+    if not console_On:
+        
+        console_On = choose_mode()
 
     for event in pygame.event.get():
         
