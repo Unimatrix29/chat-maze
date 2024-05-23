@@ -229,3 +229,5 @@ while running:
     window.update_screen(maze, player, renderDistance)
    
 window.quit_screen()
+gameOver_event.set()
+input_thread.join()
