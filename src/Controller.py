@@ -6,13 +6,24 @@ class Controller():
     def __init__(self):
         pass
 
-    def setup_screen(self):
-        pygame.init()
-        #self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode([800, 200])
-        pygame.display.set_caption("text_input")
-        self.base_font = pygame.font.Font(None, 32)
-        self.user_text = ""
+    def console_input(self):
+        direction_request = input("Type a direction: ")
+        if direction_request.strip().lower() in self.move_options:
+            return self.move_options[direction_request]
+        else:
+            return self.move_options["deny"]
+    # Returns a random move option including canceling
+    def random_input(self):
+        keys = list(self.move_options.keys())
+        move = self.move_options[keys[random.randrange(0, 4)]]
+        
+        return move
+    
+    def setup_prompt_window(self):
+        #setup input window
+        self.window = tk.Tk()
+        self.window.geometry("500x100")
+        self.window.title("PROMPT INPUT")
 
         self.input_rect = pygame.Rect(10, 10, 140, 32)
         self.color_active = pygame.Color('limegreen')

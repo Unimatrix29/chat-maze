@@ -20,14 +20,18 @@ class Screen():
         self.screen = pygame.display.set_mode([480, 480])
         pygame.display.set_caption("Chat_Leap")
  
-    def update_screen(self, maze, player_pos):
-        self.screen.fill(self.BLACK)
+    def update_screen(self, maze, player, render = 16):
+        screen.fill(self.BLACK)
         for y in range(self.GRID_SIZE):
             for x in range(self.GRID_SIZE):
+                isRendered = (x - render < player.currentPosition[0] < x + render) and (y - render < player.currentPosition[1] < y + render)
+                if not isRendered:
+                    continue
+                
                 if maze[0][y][x] == 1:
-                    pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
-                if player_pos == [x, y]:
-                    pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+                    pygame.draw.rect(screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+                if player.currentPosition == [x, y] and (not player.isHidden):
+                    pygame.draw.rect(screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
 
         pygame.display.flip()
 
@@ -35,9 +39,7 @@ class Screen():
     Returns True if player stucks against a wall
     """
     def check_wall(self, maze, playerPosition):
-        if maze[0][playerPosition[1]][playerPosition[0]] == 1:
-            return True
-        return False
+        return maze[0][playerPosition[1]][playerPosition[0]] == 1
     """
     Returns True if player arrived the end point of a maze
     """
@@ -46,7 +48,5 @@ class Screen():
             return True
         return False
 
-    def quit_screen(): 
+    def quit_screen(self): 
         pygame.quit()
-
-
