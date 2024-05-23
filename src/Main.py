@@ -49,11 +49,7 @@ while True:
                 maze = mazeGenerator.get_preset("maze_1")
                 player.set_position(maze[1])
 
-            # Input Window
-            if event.key == pygame.K_BACKSPACE:
-                textInputWindow.backspace()
-            else:
-                textInputWindow.addChar(event.unicode)
+            
             # if not gameOver:
             #    print(controller.console_input())
 

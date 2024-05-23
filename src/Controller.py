@@ -20,6 +20,7 @@ class Controller():
         self.color = self.color_passive
 
         self.active = True
+        self.message = ""
 
     def update_screen(self):
         for event in pygame.event.get():
@@ -34,9 +35,10 @@ class Controller():
             if event.type == pygame.KEYDOWN:
                 if self.active:
                     if event.key == pygame.K_RETURN:
-                        pygame.quit()
-                        sys.exit()
-                    if event.key == pygame.K_BACKSPACE:
+                        self.message = self.user_text
+                        self.user_text = ""
+                        break
+                    elif event.key == pygame.K_BACKSPACE:
                         self.user_text = self.user_text[:-1]
                     else:
                         self.user_text += event.unicode
@@ -55,7 +57,10 @@ class Controller():
             pygame.display.flip()
             #clock.tick(60)
 
-
+    def get_message(self):
+        return self.message
+    
+    
 
 
     
