@@ -80,9 +80,9 @@ def console_input():
         if console_On: 
             user_input = input("Bitte gib höflich ein Richtung an: ")
         else:
-            while not controller.is_submit():
-                pass
-            user_input = controller.get_input()
+            if textInputWindow.on_return():
+                user_input = textInputWindow.get_user_input()
+            
 
         #chatGPT call
         move_Vector = chatGPT.get_movement_vector(user_input, TEMPERATURE)
@@ -100,7 +100,7 @@ def choose_mode():
         choice = input("Wie wollen sie mit chtaGPT interagieren? Für die Konsole drücken sie [C]. Für die GUI drücken sie [G]: ").strip().lower()
 
         if choice == "g":
-            textInputWindow.setup_prompt_window()
+            textInputWindow.setup_screen()
             return False
         elif choice == "c":
             return True
@@ -142,11 +142,13 @@ def apply_debuff(choice):
             debuffDuration = difficulty[2]
             return
         case "RANDOM_MOVE":
-            mVector = controller.random_input()
+            #mVector = controller.random_input()
+            mVector = [0,0]
             player.move(mVector)
             while mazeWindow.check_wall(maze, player.currentPosition):
                 player.move([-mVector[0], -mVector[1]])
-                mVector = controller.random_input()
+                #mVector = controller.random_input()
+                mVector = [0,0]
                 player.move(mVector)
             return
         case "TELEPORT":
@@ -213,6 +215,7 @@ while running:
                 gameOver = True
             
     mazeWindow.update_screen(maze, player, renderDistance)
+    textInputWindow.update_screen()
    
 mazeWindow.quit_screen()
 gameOver_event.set()

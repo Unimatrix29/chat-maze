@@ -15,7 +15,6 @@ class Screen():
         self.PIXEL_SIZE = 24
 
     def setup_screen(self):
-
         pygame.init()
         self.screen = pygame.display.set_mode([480, 480])
         pygame.display.set_caption("Chat_Leap")
@@ -29,9 +28,9 @@ class Screen():
                     continue
                 
                 if maze[0][y][x] == 1:
-                    pygame.draw.rect(screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+                    pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
                 if player.currentPosition == [x, y] and (not player.isHidden):
-                    pygame.draw.rect(screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+                    pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
 
         pygame.display.flip()
 
