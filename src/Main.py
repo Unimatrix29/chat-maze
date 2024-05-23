@@ -49,8 +49,8 @@ mazePreset = f"maze_{difficulty[0]}.{random.randint(1, 4)}.0"
 maze = mazeGenerator.get_preset(mazePreset)
 player = Player(maze)
 
-window.setup_screen()
-window.update_screen(maze, player)
+mazeWindow.setup_screen()
+mazeWindow.update_screen(maze, player)
 maze = mazeGenerator.get_preset("maze_2")
 
 running = True
@@ -100,8 +100,7 @@ def choose_mode():
         choice = input("Wie wollen sie mit chtaGPT interagieren? Für die Konsole drücken sie [C]. Für die GUI drücken sie [G]: ").strip().lower()
 
         if choice == "g":
-            controller.setup_prompt_window()
-            controller.init_prompt_window()
+            textInputWindow.setup_prompt_window()
             return False
         elif choice == "c":
             return True
@@ -145,7 +144,7 @@ def apply_debuff(choice):
         case "RANDOM_MOVE":
             mVector = controller.random_input()
             player.move(mVector)
-            while window.check_wall(maze, player.currentPosition):
+            while mazeWindow.check_wall(maze, player.currentPosition):
                 player.move([-mVector[0], -mVector[1]])
                 mVector = controller.random_input()
                 player.move(mVector)
@@ -202,19 +201,19 @@ while running:
             if mVector == [0, 0]:
                 apply_debuff(DEBUFF[random.randint(3, 5)])
             # Applying debuffs in case of running against walls
-            if window.check_wall(maze, player.currentPosition):
+            if mazeWindow.check_wall(maze, player.currentPosition):
                 player.move([-mVector[0], -mVector[1]])
                 for i in range(difficulty[1]):
                     apply_debuff(DEBUFF[random.randint(1, 3)])
 
-            if window.check_finish(maze, player.currentPosition):
+            if mazeWindow.check_finish(maze, player.currentPosition):
                 # Changing actual maze to an end screen (happy)
                 maze = mazeGenerator.get_preset("FINISH")
                 player.set_position([-1, -1])
                 gameOver = True
             
-    window.update_screen(maze, player, renderDistance)
+    mazeWindow.update_screen(maze, player, renderDistance)
    
-window.quit_screen()
+mazeWindow.quit_screen()
 gameOver_event.set()
 input_thread.join()
