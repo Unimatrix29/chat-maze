@@ -6,11 +6,7 @@ class Player:
 
         self.currentPosition = maze[1]
         self.isHidden = False
-        
-        self.__screen = screen
 
-    def UpdateMaze(self, newMaze):
-        pass
     """
     Changes currentPosition by a move vector
     """

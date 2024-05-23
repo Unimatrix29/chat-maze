@@ -50,7 +50,3 @@ class Screen():
 
     def quit_screen(self): 
         pygame.quit()
-
-
-    def quit_screen(self):
-        pygame.quit()
