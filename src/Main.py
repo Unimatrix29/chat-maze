@@ -164,6 +164,9 @@ def remove_debuffs():
     renderDistance = 16
     player.hide(False)
 
+input_thread = threading.Thread(target=console_input)
+input_thread.start()
+
 
 #let the user choose the control mode 
 console_On = choose_mode()
