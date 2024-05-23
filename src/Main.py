@@ -16,7 +16,7 @@ CONFIG_FILE_NAME = "config.json"
 GPT_MODEL = "gpt-4-turbo"
 TEMPERATURE = 0.25
 
-window = Screen()
+mazeWindow = Screen()
 textInputWindow = Controller()
 mazeGenerator = MazeGenerator()
 #controller = Controller()
@@ -27,9 +27,9 @@ player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window)
 
 gameOver = False
 
-window.setup_screen()
-
+mazeWindow.setup_screen()
 textInputWindow.setup_screen()
+
 #controller.setup_prompt_window()
 #controller.init_prompt_window()
 maze = mazeGenerator.get_preset("maze_2")
@@ -59,14 +59,14 @@ while True:
 
 
         if event.type == pygame.QUIT:
-            window.quit_screen()
+            mazeWindow.quit_screen()
 
-    if window.check_wall(maze, player.currentPosition):
+    if mazeWindow.check_wall(maze, player.currentPosition):
         # Changing actual maze to an end screen (sad)
         maze = mazeGenerator.get_preset("LOST")
         player.set_position([-1, -1])
         gameOver = True
-    if window.check_finish(maze, player.currentPosition):
+    if mazeWindow.check_finish(maze, player.currentPosition):
         # Changing actual maze to an end screen (happy)
         maze = mazeGenerator.get_preset("FINISH")
         player.set_position([-1, -1])
@@ -75,16 +75,15 @@ while True:
     
         
     
-    window.update_screen(maze, player.currentPosition)
-   
+    mazeWindow.update_screen(maze, player.currentPosition)
+    textInputWindow.update_screen()
+    
     if not gameOver:
         #console_input = input("Bitte gib höflich ein Richtung an: ")
-        while not Controller.is_submit():
-            pass
-        
-        mVector = chatGPT.get_movement_vector(Controller.get_input(), TEMPERATURE)
-        if mVector is Exception:
-           #Let the User know, that something went wrong and he should try again 
-           pass
-        else: 
-            player.move(mVector)
+        if(textInputWindow.on_return()):
+            mVector = chatGPT.get_movement_vector(textInputWindow.get_user_input(), TEMPERATURE)
+            if mVector is Exception:
+               #Let the User know, that something went wrong and he should try again 
+               pass
+            else: 
+                player.move(mVector)

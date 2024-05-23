@@ -20,6 +20,7 @@ class Controller():
         self.color = self.color_passive
 
         self.active = True
+        self.return_text = False
         self.message = ""
 
     def update_screen(self):
@@ -35,6 +36,7 @@ class Controller():
             if event.type == pygame.KEYDOWN:
                 if self.active:
                     if event.key == pygame.K_RETURN:
+                        self.return_text = True
                         self.message = self.user_text
                         self.user_text = ""
                         break
@@ -57,10 +59,16 @@ class Controller():
             pygame.display.flip()
             #clock.tick(60)
 
-    def get_message(self):
+    def get_user_input(self):
         return self.message
     
+    def on_return(self):
+        if self.return_text:
+            self.return_text = False
+            return True
+        return False
     
+
 
 
     
