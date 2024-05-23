@@ -41,7 +41,6 @@ TEMPERATURE = 0.25
 mazeWindow = Screen()
 textInputWindow = Controller()
 mazeGenerator = MazeGenerator()
-controller = Controller()
         
 # difficulty = set_level()
 difficulty = DIFFICULTY["TEST"]
@@ -64,7 +63,7 @@ shared_queue = queue.Queue()
 
 def console_input():
     
-    global controller, shared_queue, ready_for_input_event
+    global shared_queue, ready_for_input_event
     
     #let the user choose the control mode 
     console_On = choose_mode()
