@@ -193,24 +193,24 @@ while running:
             mVector = shared_queue.get()
             player.move(mVector)
         
-        debuffDuration = max(debuffDuration - 1, 0)
-        
-    if debuffDuration == 0:
-        remove_debuffs()
-    # Applying debuffs in case of rough request
-    if mVector == [0, 0]:
-        apply_debuff(DEBUFF[random.randint(3, 5)])
-    # Applying debuffs in case of running against walls
-    if window.check_wall(maze, player.currentPosition):
-        player.move([-mVector[0], -mVector[1]])
-        for i in range(difficulty[1]):
-            apply_debuff(DEBUFF[random.randint(1, 3)])
-        
-    if window.check_finish(maze, player.currentPosition):
-        # Changing actual maze to an end screen (happy)
-        maze = mazeGenerator.get_preset("FINISH")
-        player.set_position([-1, -1])
-        gameOver = True
+            debuffDuration = max(debuffDuration - 1, 0)
+       
+            if debuffDuration == 0:
+                remove_debuffs()
+            # Applying debuffs in case of rough request
+            if mVector == [0, 0]:
+                apply_debuff(DEBUFF[random.randint(3, 5)])
+            # Applying debuffs in case of running against walls
+            if window.check_wall(maze, player.currentPosition):
+                player.move([-mVector[0], -mVector[1]])
+                for i in range(difficulty[1]):
+                    apply_debuff(DEBUFF[random.randint(1, 3)])
+
+            if window.check_finish(maze, player.currentPosition):
+                # Changing actual maze to an end screen (happy)
+                maze = mazeGenerator.get_preset("FINISH")
+                player.set_position([-1, -1])
+                gameOver = True
             
     window.update_screen(maze, player, renderDistance)
    
