@@ -59,6 +59,38 @@ gameOver = False
 debuffDuration = 0
 renderDistance = 16
 
+choose_event = threading.Event()
+gameOver_event = threading.Event()
+
+shared_queue = queue.Queue()
+
+def console_input():
+    
+    global controller, shared_queue, choose_event
+    
+    choose_event.wait()
+    
+    chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
+    
+    while not gameOver_event.is_set():
+        #logic for wich control option the user chose 
+        if console_On: 
+            user_input = input("Bitte gib höflich ein Richtung an: ")
+        else:
+            while not controller.is_submit():
+                pass
+            user_input = controller.get_input()
+
+        #chatGPT call
+        move_Vector = chatGPT.get_movement_vector(user_input, TEMPERATURE)
+
+        if move_Vector is Exception:
+           #Let the User know, that something went wrong and he should try again 
+           pass
+        else:
+            shared_queue.put(move_Vector)
+
+
 #choose if you want to control the program via console or GUI
 def choose_mode():
     global console_On
