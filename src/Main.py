@@ -77,10 +77,11 @@ def console_input():
             ready_for_input_event.wait()
             user_input = input("Bitte gib höflich ein Richtung an: ")
         else:
-            textInputWindow.setup_screen()
-            textInputWindow.update_screen()
-            if textInputWindow.on_return():
-                user_input = textInputWindow.get_user_input()
+            print("Sorry but the GUI is not working at the moment :(")
+            #textInputWindow.setup_screen()
+            #textInputWindow.update_screen()
+            #if textInputWindow.on_return():
+            #    user_input = textInputWindow.get_user_input()
             
 
         #chatGPT call
@@ -89,7 +90,7 @@ def console_input():
         if move_Vector is Exception:
            #Let the User know, that something went wrong and he should try again 
            pass
-        else:
+        else: 
             shared_queue.put(move_Vector)
 
 
