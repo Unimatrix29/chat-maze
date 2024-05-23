@@ -1,5 +1,3 @@
-import pygame
-import random
 from Screen import Screen
 from MazeGenerator import MazeGenerator
 from Player import Player
@@ -7,7 +5,8 @@ from Controller import Controller
 from ChatGPT_Controller import ChatGPT
 import threading
 import queue
-
+import pygame
+import random
 
 DIFFICULTY = {
     "TEST":
@@ -50,7 +49,6 @@ player = Player(maze)
 
 window.setup_screen()
 window.update_screen(maze, player)
-
 maze = mazeGenerator.get_preset("maze_2")
 
 running = True
@@ -60,7 +58,6 @@ renderDistance = 16
 
 ready_for_input_event = threading.Event()
 gameOver_event = threading.Event()
-
 shared_queue = queue.Queue()
 
 def console_input():
