@@ -41,7 +41,6 @@ TEMPERATURE = 0.25
 window = Screen()
 mazeGenerator = MazeGenerator()
 controller = Controller()
-chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
         
 # difficulty = set_level()
 difficulty = DIFFICULTY["TEST"]
