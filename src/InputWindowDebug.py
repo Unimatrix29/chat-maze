@@ -3,11 +3,8 @@ import pygame
 
 textWindow = Controller()
 
-textWindow.setup_input_window()
+textWindow.setup_screen()
 
-for event in pygame.event.get():
-    if event.type == pygame.QUIT:
-            textWindow.quit_screen()
-    
+while True:
     textWindow.update_screen()
     
