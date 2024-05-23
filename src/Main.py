@@ -189,23 +189,9 @@ while running:
     
     if not gameOver:
         
-        #logic for wich control option the user chose 
-        if console_On: 
-            user_input = input("Bitte gib höflich ein Richtung an: ")
-        else:
-            while not controller.is_submit():
-                pass
-            user_input = controller.get_input()
-            
-
-        #chatGPT call
-        mVector = chatGPT.get_movement_vector(user_input, TEMPERATURE)
-        
-        if mVector is Exception:
-           #Let the User know, that something went wrong and he should try again 
-           pass
-        
-        player.move(mVector)
+        if not shared_queue.empty():
+            mVector = shared_queue.get()
+            player.move(mVector)
         
         debuffDuration = max(debuffDuration - 1, 0)
         
