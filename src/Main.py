@@ -58,16 +58,18 @@ gameOver = False
 debuffDuration = 0
 renderDistance = 16
 
-choose_event = threading.Event()
+ready_for_input_event = threading.Event()
 gameOver_event = threading.Event()
 
 shared_queue = queue.Queue()
 
 def console_input():
     
-    global controller, shared_queue, choose_event
+    global controller, shared_queue, ready_for_input_event
     
-    choose_event.wait()
+    #let the user choose the control mode 
+    console_On = choose_mode()
+    
     
     chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
     
@@ -92,17 +94,14 @@ def console_input():
 
 #choose if you want to control the program via console or GUI
 def choose_mode():
-    global console_On, choose_event
     while True:
         choice = input("Wie wollen sie mit chtaGPT interagieren? Für die Konsole drücken sie [C]. Für die GUI drücken sie [G]: ").strip().lower()
 
         if choice == "g":
             controller.setup_prompt_window()
             controller.init_prompt_window()
-            choose_event.set()
             return False
         elif choice == "c":
-            choose_event.set()
             return True
         else:
             pass
