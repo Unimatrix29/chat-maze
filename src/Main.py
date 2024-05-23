@@ -74,6 +74,9 @@ def console_input():
     chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
     
     while not gameOver_event.is_set():
+        
+        ready_for_input_event.wait()
+        
         #logic for wich control option the user chose 
         if console_On: 
             user_input = input("Bitte gib höflich ein Richtung an: ")
@@ -168,10 +171,9 @@ input_thread = threading.Thread(target=console_input)
 input_thread.start()
 
 
-#let the user choose the control mode 
-console_On = choose_mode()
-
 while running:
+    
+    ready_for_input_event.set()
     
     for event in pygame.event.get():
         
@@ -188,6 +190,9 @@ while running:
     if not gameOver:
         
         if not shared_queue.empty():
+            
+            ready_for_input_event.clear()
+            
             mVector = shared_queue.get()
             player.move(mVector)
         
