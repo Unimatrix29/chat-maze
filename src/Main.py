@@ -174,6 +174,7 @@ input_thread.start()
 while running:
     
     ready_for_input_event.set()
+    ready_for_input_event.clear()
     
     for event in pygame.event.get():
         
@@ -190,8 +191,6 @@ while running:
     if not gameOver:
         
         if not shared_queue.empty():
-            
-            ready_for_input_event.clear()
             
             mVector = shared_queue.get()
             player.move(mVector)
