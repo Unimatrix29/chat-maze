@@ -93,15 +93,17 @@ def console_input():
 
 #choose if you want to control the program via console or GUI
 def choose_mode():
-    global console_On
+    global console_On, choose_event
     while True:
         choice = input("Wie wollen sie mit chtaGPT interagieren? Für die Konsole drücken sie [C]. Für die GUI drücken sie [G]: ").strip().lower()
 
         if choice == "g":
             controller.setup_prompt_window()
             controller.init_prompt_window()
+            choose_event.set()
             return False
         elif choice == "c":
+            choose_event.set()
             return True
         else:
             pass
