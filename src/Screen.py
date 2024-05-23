@@ -15,9 +15,9 @@ class Screen():
         self.PIXEL_SIZE = 24
 
     def setup_screen(self):
-        global screen
+
         pygame.init()
-        screen = pygame.display.set_mode([480, 480])
+        self.screen = pygame.display.set_mode([480, 480])
         pygame.display.set_caption("Chat_Leap")
  
     def update_screen(self, maze, player, render = 16):

@@ -1,3 +1,4 @@
+import pygame, sys
 from Screen import Screen
 from MazeGenerator import MazeGenerator
 from Player import Player
@@ -37,7 +38,8 @@ CONFIG_FILE_NAME = "config.json"
 GPT_MODEL = "gpt-4-turbo"
 TEMPERATURE = 0.25
 
-window = Screen()
+mazeWindow = Screen()
+textInputWindow = Controller()
 mazeGenerator = MazeGenerator()
 controller = Controller()
         
