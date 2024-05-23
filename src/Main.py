@@ -39,7 +39,6 @@ GPT_MODEL = "gpt-4-turbo"
 TEMPERATURE = 0.25
 
 mazeWindow = Screen()
-textInputWindow = Controller()
 mazeGenerator = MazeGenerator()
         
 # difficulty = set_level()
@@ -68,17 +67,18 @@ def console_input():
     #let the user choose the control mode 
     console_On = choose_mode()
     
-    
+    textInputWindow = Controller()
     chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
     
     while not gameOver_event.is_set():
         
-        ready_for_input_event.wait()
-        
         #logic for wich control option the user chose 
         if console_On: 
+            ready_for_input_event.wait()
             user_input = input("Bitte gib höflich ein Richtung an: ")
         else:
+            textInputWindow.setup_screen()
+            textInputWindow.update_screen()
             if textInputWindow.on_return():
                 user_input = textInputWindow.get_user_input()
             
@@ -99,7 +99,6 @@ def choose_mode():
         choice = input("Wie wollen sie mit chtaGPT interagieren? Für die Konsole drücken sie [C]. Für die GUI drücken sie [G]: ").strip().lower()
 
         if choice == "g":
-            textInputWindow.setup_screen()
             return False
         elif choice == "c":
             return True
@@ -214,7 +213,6 @@ while running:
                 gameOver = True
             
     mazeWindow.update_screen(maze, player, renderDistance)
-    textInputWindow.update_screen()
    
 mazeWindow.quit_screen()
 gameOver_event.set()
