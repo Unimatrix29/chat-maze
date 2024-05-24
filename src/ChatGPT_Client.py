@@ -2,9 +2,9 @@ from openai import OpenAI
 from pathlib import Path
 import json
 
-class chatgptClient():
+class ApiClientCreator():
     
-    def __init__(self, timeout=60, file_name="config.json"):
+    def __init__(self, file_name="config.json", timeout=60):
         self.client = None
         self.__setup_client(timeout, file_name)
 
