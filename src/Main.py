@@ -3,7 +3,8 @@ from Screen import Screen
 from MazeGenerator import MazeGenerator
 from Player import Player
 from Controller import Controller
-from ChatGPT_Controller import ChatGPT
+from ChatGPT_Controller import chatgpt_text
+from ChatGPT_Client import ApiClientCreator
 import threading
 import queue
 import pygame
@@ -40,6 +41,9 @@ TEMPERATURE = 0.25
 
 mazeWindow = Screen()
 mazeGenerator = MazeGenerator()
+clientCreator = ApiClientCreator(file_name=CONFIG_FILE_NAME)
+apiClient = clientCreator.get_client()
+
         
 # difficulty = set_level()
 difficulty = DIFFICULTY["TEST"]
@@ -68,7 +72,7 @@ def console_input():
     console_On = choose_mode()
     
     textInputWindow = Controller()
-    chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
+    textChatGPT = chatgpt_text(client=apiClient, system_prompt=PROMPT, gpt_model=GPT_MODEL)
     
     while not gameOver_event.is_set():
         
@@ -85,7 +89,7 @@ def console_input():
             
 
         #chatGPT call
-        move_Vector = chatGPT.get_movement_vector(user_input, TEMPERATURE)
+        move_Vector = textChatGPT.get_movement_vector(user_input, TEMPERATURE)
 
         if move_Vector is Exception:
            #Let the User know, that something went wrong and he should try again 
