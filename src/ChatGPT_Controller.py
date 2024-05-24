@@ -1,5 +1,4 @@
 import openai
-from ChatGPT_Client import chatgptClient
 
 class chatgpt_text():
 
