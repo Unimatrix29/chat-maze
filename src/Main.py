@@ -39,9 +39,7 @@ GPT_MODEL = "gpt-4-turbo"
 TEMPERATURE = 0.25
 
 mazeWindow = Screen()
-textInputWindow = Controller()
 mazeGenerator = MazeGenerator()
-controller = Controller()
         
 # difficulty = set_level()
 difficulty = DIFFICULTY["TEST"]
@@ -64,24 +62,26 @@ shared_queue = queue.Queue()
 
 def console_input():
     
-    global controller, shared_queue, ready_for_input_event
+    global shared_queue, ready_for_input_event
     
     #let the user choose the control mode 
     console_On = choose_mode()
     
-    
+    textInputWindow = Controller()
     chatGPT = ChatGPT(system_prompt=PROMPT, config_file=CONFIG_FILE_NAME, gpt_model=GPT_MODEL, timeout=30)
     
     while not gameOver_event.is_set():
         
-        ready_for_input_event.wait()
-        
         #logic for wich control option the user chose 
         if console_On: 
+            ready_for_input_event.wait()
             user_input = input("Bitte gib höflich ein Richtung an: ")
         else:
-            if textInputWindow.on_return():
-                user_input = textInputWindow.get_user_input()
+            print("Sorry but the GUI is not working at the moment :(")
+            #textInputWindow.setup_screen()
+            #textInputWindow.update_screen()
+            #if textInputWindow.on_return():
+            #    user_input = textInputWindow.get_user_input()
             
 
         #chatGPT call
@@ -90,7 +90,7 @@ def console_input():
         if move_Vector is Exception:
            #Let the User know, that something went wrong and he should try again 
            pass
-        else:
+        else: 
             shared_queue.put(move_Vector)
 
 
@@ -100,7 +100,6 @@ def choose_mode():
         choice = input("Wie wollen sie mit chtaGPT interagieren? Für die Konsole drücken sie [C]. Für die GUI drücken sie [G]: ").strip().lower()
 
         if choice == "g":
-            textInputWindow.setup_screen()
             return False
         elif choice == "c":
             return True
@@ -215,7 +214,6 @@ while running:
                 gameOver = True
             
     mazeWindow.update_screen(maze, player, renderDistance)
-    textInputWindow.update_screen()
    
 mazeWindow.quit_screen()
 gameOver_event.set()
