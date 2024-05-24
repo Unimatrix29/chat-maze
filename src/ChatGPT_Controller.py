@@ -1,16 +1,14 @@
 import openai
-from openai import OpenAI
-import json
-import os 
+from ChatGPT_Client import chatgptClient
 
-class ChatGPT():
+class chatgpt_text():
 
-    def __init__(self, system_prompt, config_file, history=None, gpt_model="gpt-3.5-turbo", timeout=None):
+    def __init__(self, client, system_prompt="", history=None, gpt_model="gpt-3.5-turbo", timeout=None):
+        self.client = client
         self.gpt_model = gpt_model
         self.system_prompt = {"content": system_prompt, "role": "system"}
         self.history = history
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
-        self.__setup_client(timeout=timeout, file=config_file)
 
 
     def get_movement_vector(self, userInput, temperature=None):
@@ -51,7 +49,8 @@ class ChatGPT():
             
             return response
         except openai.APITimeoutError as e:
-            print(f"OpenAI API request exceeded {self.client.timeout} seconds: {e}")
+            print(f"OpenAI API timeout.")
+            print(e)
             raise e
         
 
@@ -67,33 +66,3 @@ class ChatGPT():
         message.append(userPrompt)
         
         return message  
-
-
-    def __setup_client(self, timeout, file):
-        #trys to open the json config file to read the api key
-        #programm is exited if its fails 
-        try:
-            here = os.path.dirname(os.path.abspath(__file__))
-            file_path = os.path.join(here, file)
-            with open(file_path, "r") as file:
-                data = json.load(file)
-            api_key = data["api_key"]
-        except OSError as e:
-            print(f"Could not read Api key from file: {file_path}")
-            print(f"Exeption: {e}")
-            exit()
-
-        #configure client 
-        options = {
-            'api_key': api_key,
-            'timeout': timeout
-        }
-
-        #create client
-        self.client = OpenAI(**options)
-        print("Client Setup: Done")
-
-#TEST
-#chatGPT = ChatGPT(system_prompt="Repeat everything I say.", config_file="config.json", timeout=30)
-#mVector = chatGPT.get_movement_vector(userInput="up")
-#print(mVector)
