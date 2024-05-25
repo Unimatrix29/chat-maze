@@ -1,42 +1,16 @@
 import openai
 
-class chatgpt_text():
+class chatgpt_base():
 
-    def __init__(self, client, system_prompt="", history=None, gpt_model="gpt-3.5-turbo", timeout=None):
+    def __init__(self, client, system_prompt="", gpt_model="gpt-3.5-turbo"):
         self.client = client
         self.gpt_model = gpt_model
         self.system_prompt = {"content": system_prompt, "role": "system"}
-        self.history = history
-        self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
 
 
-    def get_movement_vector(self, userInput, temperature=None):
+    def chat_completion_request(self, userInput, history, temperature):
 
-        #create message
-        message = self.__construct_message(userInput=userInput, history=self.history)
-
-        #api response 
-        try:
-            chat_response = self.__chat_completion_request(message=message, temperature=temperature)
-        except Exception as e: 
-            return e 
-        
-        #get api response content
-        content = chat_response.choices[0].message.content.lower().strip()
-        print("ChatGPT: " + content)
-        
-        #convert to vector
-        if content in self.move_options:
-            move_vector = self.move_options[content]
-        else:
-            move_vector = self.move_options["deny"]
-            
-        return move_vector
-        
-        
-
-
-    def __chat_completion_request(self, message, temperature):
+        message = self.__construct_message(userInput, history)
 
         #try api call, return response object 
         try:
@@ -49,6 +23,9 @@ class chatgpt_text():
             return response
         except openai.APITimeoutError as e:
             print(f"OpenAI API timeout.")
+            print(e)
+            raise e
+        except openai._exceptions as e:
             print(e)
             raise e
         
