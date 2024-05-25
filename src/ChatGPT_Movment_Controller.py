@@ -1,12 +1,12 @@
 import openai
 from openai import OpenAI
-from ChatGPT_Controller import chatgpt_base
+from ChatGPT_Controller import chatgpt_text
 
 class chatgpt_movment():
     
     def __init__(self, client, system_prompt="", history=None, gpt_model="gpt-3.5-turbo"):
         self.history = history
-        self.textChatGPT = chatgpt_base(client, system_prompt, gpt_model)
+        self.textChatGPT = chatgpt_text(client, system_prompt, gpt_model)
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
         
         
