@@ -1,6 +1,6 @@
 import openai
 
-class chatgpt_base():
+class chatgpt_text():
 
     def __init__(self, client, system_prompt="", gpt_model="gpt-3.5-turbo"):
         self.client = client
