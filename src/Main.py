@@ -3,7 +3,7 @@ from Screen import Screen
 from MazeGenerator import MazeGenerator
 from Player import Player
 from Controller import Controller
-from ChatGPT_Controller import chatgpt_text
+from ChatGPT_Movment_Controller import chatgpt_movment
 from ChatGPT_Client import ApiClientCreator
 import threading
 import queue
@@ -72,7 +72,7 @@ def console_input():
     console_On = choose_mode()
     
     textInputWindow = Controller()
-    textChatGPT = chatgpt_text(client=apiClient, system_prompt=PROMPT, gpt_model=GPT_MODEL)
+    movmentChatGPT = chatgpt_movment(client=apiClient, system_prompt=PROMPT, gpt_model=GPT_MODEL)
     
     while not gameOver_event.is_set():
         
@@ -89,7 +89,7 @@ def console_input():
             
 
         #chatGPT call
-        move_Vector = textChatGPT.get_movement_vector(user_input, TEMPERATURE)
+        move_Vector = movmentChatGPT.get_movement_vector(user_input, TEMPERATURE)
 
         if move_Vector is Exception:
            #Let the User know, that something went wrong and he should try again 
