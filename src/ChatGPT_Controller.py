@@ -107,8 +107,8 @@ class ChatGPT():
         
 #if __name__ == "__main__":
 #    from ChatGPT_Client import ApiClientCreator
-#    client_getter = ApiClientCreator()
-#    client = client_getter.get_client()
+
+#    client = ApiClientCreator.get_client()
 #    
 #    chatgpt = ChatGPT(client)
 #    
