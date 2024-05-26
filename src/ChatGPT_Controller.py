@@ -44,6 +44,12 @@ class ChatGPT():
             print(e)
             raise e
         
+        with open(self.file_tts_out, "wb") as audio_file:
+            for chunk in response.iter_bytes(chunk_size=1024):
+                if chunk:
+                    audio_file.write(chunk)
+    
+        
     @staticmethod
     def construct_message(userInput, history=None, system_prompt="",):
         #format user and system prompt for api 
