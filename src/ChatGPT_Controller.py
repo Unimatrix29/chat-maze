@@ -1,4 +1,5 @@
 import openai
+from pathlib import Path
 
 class chatgpt():
 
