@@ -6,6 +6,10 @@ class ChatGPT():
     def __init__(self, client, gpt_model="gpt-3.5-turbo"):
         self.client = client
         self.gpt_model = gpt_model
+        self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
+        self.file_tts_out.resolve()
+        self.file_stt_in = Path(__file__).parent / "tts_in.mp3"
+        self.file_stt_in.resolve()
 
 
     def text_to_text(self, message, temperature=1):
