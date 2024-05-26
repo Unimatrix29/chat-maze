@@ -8,7 +8,7 @@ class ChatGPT():
         self.gpt_model = gpt_model
 
 
-    def chat_completion_request(self, message, temperature):
+    def text_to_text(self, message, temperature=1):
         #try api call, return response object 
         try:
             response = self.client.chat.completions.create(
