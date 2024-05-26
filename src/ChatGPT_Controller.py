@@ -26,7 +26,21 @@ class ChatGPT():
             print(f"OpenAI API timeout.")
             print(e)
             raise e
-        except openai._exceptions as e:
+        
+    
+    def text_to_audio(self, text, voice="onyx", model="tts-1"):
+        
+        if not self.file_tts_out.exists():
+            self.file_tts_out.touch()
+        
+        try:
+            response = self.client.audio.speech.create(
+                model=model,
+                voice=voice,
+                input=text,
+                response_format="mp3",
+            )
+        except openai.APIError as e:
             print(e)
             raise e
         
