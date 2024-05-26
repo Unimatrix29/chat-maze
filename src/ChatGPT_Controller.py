@@ -10,7 +10,7 @@ class chatgpt_text():
 
     def chat_completion_request(self, userInput, history, temperature):
 
-        message = self.__construct_message(userInput, history)
+        message = chatgpt_text.construct_message(userInput, history)
 
         #try api call, return response object 
         try:
@@ -29,8 +29,8 @@ class chatgpt_text():
             print(e)
             raise e
         
-
-    def __construct_message(self, userInput, history):
+    @staticmethod
+    def construct_message(userInput, history):
         #format user prompt for api 
         userPrompt = {"content": userInput, "role": "user"}
 
