@@ -1,7 +1,7 @@
 import openai
 from pathlib import Path
 
-class chatgpt():
+class ChatGPT():
 
     def __init__(self, client, gpt_model="gpt-3.5-turbo"):
         self.client = client
