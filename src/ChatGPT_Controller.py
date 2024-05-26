@@ -49,6 +49,27 @@ class ChatGPT():
                 if chunk:
                     audio_file.write(chunk)
     
+    
+    def audio_to_text(self, user_audio, prompt=""):
+        
+        model = "whisper-1"
+        
+        if not self.file_stt_in.exists():
+            raise FileNotFoundError
+            
+        try:
+            with open(self.file_stt_in, "rb") as audio_file:
+                transcript = self.client.audio.transcriptions.create(
+                    model=model,
+                    file=audio_file,
+                    prompt=prompt,
+                    language="de"
+
+                )
+        except openai.APIError as e:
+            print(e)
+            raise e
+        
         
     @staticmethod
     def construct_message(userInput, history=None, system_prompt="",):
