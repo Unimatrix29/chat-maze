@@ -103,4 +103,18 @@ class ChatGPT():
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
         
-        pygame.mixer.music.unload()           
+        pygame.mixer.music.unload()    
+        
+#if __name__ == "__main__":
+#    from ChatGPT_Client import ApiClientCreator
+#    client_getter = ApiClientCreator()
+#    client = client_getter.get_client()
+#    
+#    chatgpt = ChatGPT(client)
+#    
+#    message = chatgpt.construct_message(userInput="Spieglein, Spieglein, Spieglein an der Wand. Wer ist die schönste im ganzen Land?", system_prompt="Du bist ein Märchenbuch und antwortest auf das was der Nutzer eingibt mit passeden Passagen aus einem Märchen. Deine Antworten sind nie länger als drei Sätze. Sie dürfen auch kürzer sein.")
+#    response = chatgpt.text_to_text(message)
+#    text = response.choices[0].message.content
+#    print(text)
+#    chatgpt.TTS_test(text)
+           
