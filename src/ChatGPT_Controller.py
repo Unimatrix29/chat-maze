@@ -64,3 +64,33 @@ class ChatGPT():
         message.append(userPrompt)
         
         return message  
+    
+    
+    @staticmethod
+    def TTS_test():
+        from ChatGPT_Client import ApiClientCreator
+        import pygame
+        
+        AC = ApiClientCreator()
+        client = AC.get_client()
+
+        speech_file = Path(__file__).parent / "speech.mp3"
+        speech_file = speech_file.resolve()
+        
+        TTS = ChatGPT(client, speech_file)
+
+        pygame.mixer.init()
+
+        texts = ["Das ist der erste Test", "Hier kommt gleich noch einer.", "Alle guten Dinge sind drei.", "Und weils so schön war hier noch ein vierter."]
+
+
+        for text in texts:
+            TTS.text_to_audio(text)
+
+            pygame.mixer.music.load(speech_file)
+            pygame.mixer.music.play()
+
+            while pygame.mixer.music.get_busy():
+                pygame.time.Clock().tick(10)
+            
+            pygame.mixer.music.unload()           
