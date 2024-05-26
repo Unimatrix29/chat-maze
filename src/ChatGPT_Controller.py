@@ -2,16 +2,12 @@ import openai
 
 class chatgpt_text():
 
-    def __init__(self, client, system_prompt="", gpt_model="gpt-3.5-turbo"):
+    def __init__(self, client, gpt_model="gpt-3.5-turbo"):
         self.client = client
         self.gpt_model = gpt_model
-        self.system_prompt = {"content": system_prompt, "role": "system"}
 
 
-    def chat_completion_request(self, userInput, history, temperature):
-
-        message = chatgpt_text.construct_message(userInput, history)
-
+    def chat_completion_request(self, message, temperature):
         #try api call, return response object 
         try:
             response = self.client.chat.completions.create(
@@ -30,13 +26,14 @@ class chatgpt_text():
             raise e
         
     @staticmethod
-    def construct_message(userInput, history):
-        #format user prompt for api 
+    def construct_message(userInput, history=None, system_prompt="",):
+        #format user and system prompt for api 
         userPrompt = {"content": userInput, "role": "user"}
+        system_prompt = {"content": system_prompt, "role": "system"}
 
         #construct message for api call 
         message = []
-        message.append(self.system_prompt)
+        message.append(system_prompt)
         if history is not None:
             message.append(history)
         message.append(userPrompt)
