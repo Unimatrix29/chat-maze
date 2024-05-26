@@ -8,8 +8,8 @@ class ChatGPT():
         self.gpt_model = gpt_model
         self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
         self.file_tts_out.resolve()
-        self.file_stt_in = Path(__file__).parent / "tts_in.mp3"
-        self.file_stt_in.resolve()
+        self.file_user_input = Path(__file__).parent / "user_input.mp3"
+        self.file_user_input.resolve()
 
 
     def text_to_text(self, message, temperature=1):
@@ -54,11 +54,11 @@ class ChatGPT():
         
         model = "whisper-1"
         
-        if not self.file_stt_in.exists():
+        if not self.file_user_input.exists():
             raise FileNotFoundError
             
         try:
-            with open(self.file_stt_in, "rb") as audio_file:
+            with open(self.file_user_input, "rb") as audio_file:
                 transcript = self.client.audio.transcriptions.create(
                     model=model,
                     file=audio_file,
