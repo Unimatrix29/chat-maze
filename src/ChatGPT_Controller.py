@@ -87,31 +87,20 @@ class ChatGPT():
         return message  
     
     
-    @staticmethod
-    def TTS_test():
-        from ChatGPT_Client import ApiClientCreator
+    def TTS_test(self, text=None):
         import pygame
         
-        AC = ApiClientCreator()
-        client = AC.get_client()
-
-        speech_file = Path(__file__).parent / "speech.mp3"
-        speech_file = speech_file.resolve()
-        
-        TTS = ChatGPT(client, speech_file)
+        TTS = ChatGPT(self.client)
 
         pygame.mixer.init()
+        
+        if text == None:
+            text = "Das ist der erste Test. Hier kommt gleich noch einer. Alle guten Dinge sind drei. Und weils so schön war hier noch ein vierter."
 
-        texts = ["Das ist der erste Test", "Hier kommt gleich noch einer.", "Alle guten Dinge sind drei.", "Und weils so schön war hier noch ein vierter."]
-
-
-        for text in texts:
-            TTS.text_to_audio(text)
-
-            pygame.mixer.music.load(speech_file)
-            pygame.mixer.music.play()
-
-            while pygame.mixer.music.get_busy():
-                pygame.time.Clock().tick(10)
-            
-            pygame.mixer.music.unload()           
+        TTS.text_to_audio(text)
+        pygame.mixer.music.load(self.file_tts_out)
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
+        
+        pygame.mixer.music.unload()           
