@@ -1,14 +1,10 @@
-import pygame, sys
-from Screen import Screen
+from ChatGPT_Client import ApiClientCreator
+from ChatGPT_Controller import chatgpt_text
+from Controller import Controller
 from MazeGenerator import MazeGenerator
 from Player import Player
-from Controller import Controller
-from ChatGPT_Controller import chatgpt_text
-from ChatGPT_Client import ApiClientCreator
-import threading
-import queue
-import pygame
-import random
+from Screen import Screen
+import pygame, random, sys, queue, threading
 
 DIFFICULTY = {
     "TEST":
@@ -43,7 +39,6 @@ mazeWindow = Screen()
 mazeGenerator = MazeGenerator()
 clientCreator = ApiClientCreator(file_name=CONFIG_FILE_NAME)
 apiClient = clientCreator.get_client()
-
         
 # difficulty = set_level()
 difficulty = DIFFICULTY["TEST"]
@@ -53,7 +48,6 @@ player = Player(maze)
 
 mazeWindow.setup_screen()
 mazeWindow.update_screen(maze, player)
-maze = mazeGenerator.get_preset("maze_2")
 
 running = True
 gameOver = False
@@ -97,7 +91,6 @@ def console_input():
         else: 
             shared_queue.put(move_Vector)
 
-
 #choose if you want to control the program via console or GUI
 def choose_mode():
     while True:
@@ -108,8 +101,7 @@ def choose_mode():
         elif choice == "c":
             return True
         else:
-            pass
-        
+            pass      
 
 """
 Asking for difficulty choice
@@ -172,7 +164,6 @@ def remove_debuffs():
 
 input_thread = threading.Thread(target=console_input)
 input_thread.start()
-
 
 while running:
     
