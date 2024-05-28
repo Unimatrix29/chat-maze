@@ -63,7 +63,7 @@ class ChatGPT():
                     model=model,
                     file=audio_file,
                     prompt=prompt,
-                    language="en",
+                    language="de",
                     response_format="json"
 
                 )
