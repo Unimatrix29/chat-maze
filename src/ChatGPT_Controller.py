@@ -63,7 +63,8 @@ class ChatGPT():
                     model=model,
                     file=audio_file,
                     prompt=prompt,
-                    language="de"
+                    language="en",
+                    response_format="json"
 
                 )
         except openai.APIError as e:
