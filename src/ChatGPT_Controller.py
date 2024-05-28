@@ -67,6 +67,8 @@ class ChatGPT():
                     response_format="json"
 
                 )
+                
+            return transcript
         except openai.APIError as e:
             print(e)
             raise e 
