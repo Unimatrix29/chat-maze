@@ -54,11 +54,11 @@ class ChatGPT():
         
         model = "whisper-1"
         
-        if not self.file_user_input.exists():
+        if not user_audio.exists():
             raise FileNotFoundError
             
         try:
-            with open(self.file_user_input, "rb") as audio_file:
+            with open(user_audio, "rb") as audio_file:
                 transcript = self.client.audio.transcriptions.create(
                     model=model,
                     file=audio_file,
@@ -69,7 +69,7 @@ class ChatGPT():
                 )
         except openai.APIError as e:
             print(e)
-            raise e
+            raise e 
         
         
     @staticmethod
