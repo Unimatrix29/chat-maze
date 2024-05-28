@@ -107,10 +107,10 @@ class ChatGPT():
             pygame.time.Clock().tick(10)
         
         pygame.mixer.music.unload()    
-        
+
+#Test for speech to text and text to speech
 #if __name__ == "__main__":
 #    from ChatGPT_Client import ApiClientCreator
-
 #    client = ApiClientCreator.get_client()
 #    
 #    chatgpt = ChatGPT(client)
@@ -119,5 +119,8 @@ class ChatGPT():
 #    response = chatgpt.text_to_text(message)
 #    text = response.choices[0].message.content
 #    print(text)
-#    chatgpt.TTS_test(text)
-           
+#    chatgpt.text_to_audio(text)
+#    
+#    transcript = chatgpt.audio_to_text(chatgpt.file_tts_out)
+#    
+#    print(transcript.text)     
