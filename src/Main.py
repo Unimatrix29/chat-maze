@@ -2,7 +2,6 @@ import pygame, sys
 from Screen import Screen
 from MazeGenerator import MazeGenerator
 from Player import Player
-from Controller import Controller
 from ChatGPT_Controller import chatgpt_text
 from ChatGPT_Client import ApiClientCreator
 import threading
@@ -71,7 +70,7 @@ def console_input():
     #let the user choose the control mode 
     console_On = choose_mode()
     
-    textInputWindow = Controller()
+    
     textChatGPT = chatgpt_text(client=apiClient, system_prompt=PROMPT, gpt_model=GPT_MODEL)
     
     while not gameOver_event.is_set():
@@ -81,11 +80,10 @@ def console_input():
             ready_for_input_event.wait()
             user_input = input("Bitte gib höflich ein Richtung an: ")
         else:
-            print("Sorry but the GUI is not working at the moment :(")
-            #textInputWindow.setup_screen()
-            #textInputWindow.update_screen()
-            #if textInputWindow.on_return():
-            #    user_input = textInputWindow.get_user_input()
+            mazeWindow.setup_screen()
+            mazeWindow.update_screen()
+            if mazeWindow.on_return():
+                user_input = mazeWindow.get_user_input()
             
 
         #chatGPT call

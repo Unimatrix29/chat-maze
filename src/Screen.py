@@ -1,5 +1,5 @@
-import pygame
-import random
+import random 
+import pygame, sys
 
 class Screen():
     
@@ -16,21 +16,71 @@ class Screen():
 
     def setup_screen(self):
         pygame.init()
-        self.screen = pygame.display.set_mode([480, 480])
+
+        #Maze
+        self.screen = pygame.display.set_mode([800, 480])
         pygame.display.set_caption("Chat_Leap")
+
+        #Input
+        self.clock = pygame.time.Clock()
+        self.base_font = pygame.font.Font(None, 32)
+        self.user_text = ""
+
+        self.input_rect = pygame.Rect(10, 500, 140, 32)
+        self.color_active = pygame.Color('limegreen')
+        self.color_passive = pygame.Color('gray15')
+        self.color = self.color_passive
+        self.message = ""
+        
+        self.return_text = False
+        self.active = True
  
     def update_screen(self, maze, player, render = 16):
-        self.screen.fill(self.BLACK)
-        for y in range(self.GRID_SIZE):
-            for x in range(self.GRID_SIZE):
-                isRendered = (x - render < player.currentPosition[0] < x + render) and (y - render < player.currentPosition[1] < y + render)
-                if not isRendered:
-                    continue
-                
-                if maze[0][y][x] == 1:
-                    pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
-                if player.currentPosition == [x, y] and (not player.isHidden):
-                    pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+
+        #Input
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.input_rect.collidepoint(event.pos):
+                    self.active = True
+                else:
+                    self.active = False
+            if event.type == pygame.KEYDOWN:
+                if self.active:
+                    if event.key == pygame.K_RETURN:
+                        self.return_text = True
+                        self.message = self.user_text
+                        self.user_text = ""
+                        break
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.user_text = self.user_text[:-1]
+                    else:
+                        self.user_text += event.unicode
+
+            self.screen.fill((0,0,0))
+            #Maze
+            for y in range(self.GRID_SIZE):
+                for x in range(self.GRID_SIZE):
+                    isRendered = (x - render < player.currentPosition[0] < x + render) and (y - render < player.currentPosition[1] < y + render)
+                    if not isRendered:
+                        continue
+                    
+                    if maze[0][y][x] == 1:
+                        pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+                    if player.currentPosition == [x, y] and (not player.isHidden):
+                        pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+    
+                if self.active:
+                    self.color = self.color_active
+                else:
+                    self.color = self.color_passive
+
+            pygame.draw.rect(self.screen, self.color, self.input_rect, 2)
+            self.text_surface = self.base_font.render(self.user_text, True, (255,255,255))
+            self.screen.blit(self.text_surface,(self.input_rect.x + 5, self.input_rect.y + 5))
+            self.input_rect.w = max(10, self.text_surface.get_width() + 10)
 
         pygame.display.flip()
 
@@ -49,3 +99,12 @@ class Screen():
 
     def quit_screen(self): 
         pygame.quit()
+
+    def get_user_input(self):
+        return self.message
+    
+    def on_return(self):
+        if self.return_text:
+            self.return_text = False
+            return True
+        return False
