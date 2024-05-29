@@ -52,7 +52,7 @@ maze = mazeGenerator.get_preset(mazePreset)
 player = Player(maze)
 
 #test purposes
-maze = mazeGenerator.get_preset("maze_1.1.0")
+maze = mazeGenerator.get_preset("maze_3.1.0")
 
 screen.setup_screen()
 

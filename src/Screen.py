@@ -38,10 +38,21 @@ class Screen():
     def draw_wall(self, surface, color, x, y, size, maze):
         half = size / 2
         quarter = size / 4
-        pygame.draw.circle(surface, color, (x * size + half, y * size + half), half)
-        
-        
-        pygame.draw.rect(surface, color, (x + quarter, y + quarter, half, half))
+        if maze[0][x][y] == 1:
+            pygame.draw.circle(surface, color, (x * size + half, y * size + half), half)
+            if x < 15:
+                if maze[0][x+1][y] == 1:
+                    pygame.draw.rect(surface, color, (x * size + size, y * size, half, size))
+            if x > 0:        
+                if maze[0][x-1][y] == 1:
+                    pygame.draw.rect(surface, color, (x * size - half, y * size, half, size))
+            if y < 15:
+                if maze[0][x][y+1] == 1:
+                    pygame.draw.rect(surface, color, (x * size, y * size + size, size, half))
+            if y > 0:        
+                if maze[0][x][y-1] == 1:
+                    pygame.draw.rect(surface, color, (x * size , y * size - half, size, half))
+
         
  
     def update_screen(self, maze, player, render = 16):
@@ -78,11 +89,16 @@ class Screen():
                     if not isRendered:
                         continue
                     
-                    if maze[0][y][x] == 1:
-                        #pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
-                        self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
+                    #if maze[0][x][y] == 1:
+                    #    pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.CELL_SIZE, self.CELL_SIZE))
+                    self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
+
                     if player.currentPosition == [x, y] and (not player.isHidden):
                         pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.CELL_SIZE, self.CELL_SIZE))
+
+                #for y in range(self.GRID_SIZE):
+                #    for x in range(self.GRID_SIZE):
+                        
 
                 if self.active:
                     self.color = self.color_active
