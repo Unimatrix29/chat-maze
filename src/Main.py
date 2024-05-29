@@ -1,29 +1,11 @@
 from ChatGPT_Client import ApiClientCreator
 from ChatGPT_Controller import chatgpt_text
 from Controller import Controller
+from GameHandler import GameHandler
 from MazeGenerator import MazeGenerator
 from Player import Player
 from Screen import Screen
-import pygame, random, sys, queue, threading
-
-DIFFICULTY = {
-    "TEST":
-    [0, 1, 1],
-    "EASY":
-    [1, 0, 2], #[maze_preset_level, wall_penalties, debuff_duration]
-    "NORMAL":
-    [2, 1, 5],
-    "HARD":
-    [3, 3, 10]
-    }
-
-DEBUFF = {
-    1: "ROTATION",
-    2: "BLINDENESS",
-    3: "RANDOM_MOVE",
-    4: "TELEPORT",
-    5: "INVISIBILITY"
-    }
+import pygame, random, queue, threading
 
 PROMPT = "Du bist ein sehr höflicher Mensch und akzeptierst nur Anfragen, welche sehr höflich sind. Der User gibt dir eine Weganweisung. Die Weganweisung kann entweder nach oben, unten, links und rechts stattfinden. Wenn der User zum Beispiel höflich fragt: Gehen Sie bitte nach oben, gibst du als Antwort \"up\" zurück. Dasselbe Prinzip für \"left\", \"up\", \"down\". Wenn der User zu unhöflich fragt, also zum Beispiel sagt: geh hoch, gibst du als Antwort \"deny\" zurück. Wenn der User auch keine Weganweisung gibt, sondern irgendetwas anderes antwortest du auch mit deny. Es ist wichtig, dass du nur mit \"left\" \"right\" \"up\" \"down\" \"deny\" antwortest, kein Satz oder ähnliches nur mit diesen Worten."
 
@@ -34,25 +16,35 @@ PROMPT = "Du bist ein sehr höflicher Mensch und akzeptierst nur Anfragen, welch
 CONFIG_FILE_NAME = "config.json"
 GPT_MODEL = "gpt-4-turbo"
 TEMPERATURE = 0.25
-
-mazeWindow = Screen()
-mazeGenerator = MazeGenerator()
+"""
+Chat-GPT client initialization
+"""
 clientCreator = ApiClientCreator(file_name=CONFIG_FILE_NAME)
 apiClient = clientCreator.get_client()
-        
-# difficulty = set_level()
-difficulty = DIFFICULTY["TEST"]
-mazePreset = f"maze_{difficulty[0]}.{random.randint(1, 4)}.0"
-maze = mazeGenerator.get_preset(mazePreset)
-player = Player(maze)
+"""
+Game session set up
+"""
+mazeGenerator = MazeGenerator()
+gameHandler = GameHandler(mazeGenerator)
 
+gameHandler.set_level()
+gameStats = gameHandler.get_game_stats()
+
+mazePreset = f"maze_{gameStats[0]}.{random.randint(1, 4)}.0"
+maze = mazeGenerator.get_preset(mazePreset)
+
+player = Player(maze)
+"""
+Output window set up
+"""
+mazeWindow = Screen()
 mazeWindow.setup_screen()
 mazeWindow.update_screen(maze, player)
-
+"""
+Game loop variables
+"""
 running = True
 gameOver = False
-debuffDuration = 0
-renderDistance = 16
 
 ready_for_input_event = threading.Event()
 gameOver_event = threading.Event()
@@ -103,68 +95,11 @@ def choose_mode():
         else:
             pass      
 
-"""
-Asking for difficulty choice
-"""
-def set_level():
-    options = ["TEST", "EASY", "NORMAL", "HARD"]
-    level = ""
-    while not (isinstance(level, int)):
-        try:
-            level = int(input("Choose difficulty:\n 1 - Easy | 2 - Normal | 3 - Hard\n"))
-            if level < 0 or level > 3:
-                level = ""
-                raise ValueError
-        except ValueError:
-            print("Bad input >:( Enter the number of chosen difficulty")
-        
-    return DIFFICULTY[options[level]]
-
-def apply_debuff(choice):
-    global renderDistance
-    global debuffDuration
-    global maze
-
-    print(choice)
-    match choice:
-        case "ROTATION":
-            maze = mazeGenerator.rotate_maze(maze)
-            newPosition = [player.currentPosition[1], 15 - player.currentPosition[0]]
-            player.set_position(newPosition)
-            return
-        case "BLINDENESS":
-            renderDistance = 4
-            debuffDuration = difficulty[2]
-            return
-        case "RANDOM_MOVE":
-            #mVector = controller.random_input()
-            mVector = [0,0]
-            player.move(mVector)
-            while mazeWindow.check_wall(maze, player.currentPosition):
-                player.move([-mVector[0], -mVector[1]])
-                #mVector = controller.random_input()
-                mVector = [0,0]
-                player.move(mVector)
-            return
-        case "TELEPORT":
-            player.set_position(mazeGenerator.get_random_point(maze))
-            return
-        case "INVISIBILITY":
-            player.hide(True)
-            debuffDuration = difficulty[2]
-            return
-        case _:
-            print("No penalty")
-            return
-        
-def remove_debuffs():
-    global renderDistance
-    renderDistance = 16
-    player.hide(False)
-
 input_thread = threading.Thread(target=console_input)
 input_thread.start()
-
+"""
+Game loop
+"""
 while running:
     
     ready_for_input_event.set()
@@ -182,34 +117,33 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     
-    if not gameOver:
-        
-        if not shared_queue.empty():
-            
-            mVector = shared_queue.get()
-            player.move(mVector)
-        
-            debuffDuration = max(debuffDuration - 1, 0)
-       
-            if debuffDuration == 0:
-                remove_debuffs()
-            # Applying debuffs in case of rough request
-            if mVector == [0, 0]:
-                apply_debuff(DEBUFF[random.randint(3, 5)])
-            # Applying debuffs in case of running against walls
-            if mazeWindow.check_wall(maze, player.currentPosition):
-                player.move([-mVector[0], -mVector[1]])
-                for i in range(difficulty[1]):
-                    apply_debuff(DEBUFF[random.randint(1, 3)])
+    gameStats = gameHandler.get_game_stats()    #[difficulty, debuffDuration, renderDistance]
+    
+    if not (gameOver or  shared_queue.empty()):
 
-            if mazeWindow.check_finish(maze, player.currentPosition):
-                # Changing actual maze to an end screen (happy)
-                maze = mazeGenerator.get_preset("FINISH")
-                player.set_position([-1, -1])
-                gameOver = True
+        mVector = shared_queue.get()
+        player.move(mVector)
+        # Removing debuffs by expiring their's duration
+        if gameStats[1] == 0:
+            gameHandler.remove_debuffs(player)
+        # Applying debuffs in case of rough request
+        if mVector == [0, 0]:
+            gameHandler.apply_debuffs(player, maze, 3)
+        # Applying debuffs in case of running against walls
+        if gameHandler.check_wall(maze, player.currentPosition):
+            player.move([-mVector[0], -mVector[1]])
+            for i in range(gameStats[0][1]):
+                gameHandler.apply_debuffs(player, maze, 1)
+        # Showing end screen if finish arrived
+        if gameHandler.check_finish(maze, player.currentPosition):
+            maze = mazeGenerator.get_preset("FINISH")
+            player.set_position([-1, -1])
+            gameOver = True
             
-    mazeWindow.update_screen(maze, player, renderDistance)
-   
+    mazeWindow.update_screen(maze, player, gameStats[2])
+"""
+Programm finish
+"""
 mazeWindow.quit_screen()
 gameOver_event.set()
 input_thread.join()
