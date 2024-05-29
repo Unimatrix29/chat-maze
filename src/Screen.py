@@ -71,7 +71,7 @@ class Screen():
                         pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
                     if player.currentPosition == [x, y] and (not player.isHidden):
                         pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
-    
+
                 if self.active:
                     self.color = self.color_active
                 else:
