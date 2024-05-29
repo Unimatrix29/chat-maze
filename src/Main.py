@@ -48,11 +48,13 @@ apiClient = clientCreator.get_client()
 difficulty = DIFFICULTY["TEST"]
 mazePreset = f"maze_{difficulty[0]}.{random.randint(1, 4)}.0"
 maze = mazeGenerator.get_preset(mazePreset)
+
 player = Player(maze)
 
+#test purposes
+maze = mazeGenerator.get_preset("maze_1.1.0")
+
 screen.setup_screen()
-screen.update_screen(maze, player)
-maze = mazeGenerator.get_preset("maze_2")
 
 running = True
 gameOver = False
@@ -142,7 +144,7 @@ def apply_debuff(choice):
             #mVector = controller.random_input()
             mVector = [0,0]
             player.move(mVector)
-            while mazeWindow.check_wall(maze, player.currentPosition):
+            while screen.check_wall(maze, player.currentPosition):
                 player.move([-mVector[0], -mVector[1]])
                 #mVector = controller.random_input()
                 mVector = [0,0]
@@ -213,6 +215,8 @@ while running:
     #        
     #mazeWindow.update_screen(maze, player, renderDistance)
     screen.update_screen(maze, player)
+    if(screen.on_return()):
+        print(screen.get_user_input())
    
 #mazeWindow.quit_screen()
 #gameOver_event.set()
