@@ -1,5 +1,4 @@
-import pygame
-import random
+import pygame, random
 
 class Screen():
     
@@ -33,19 +32,6 @@ class Screen():
                     pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
 
         pygame.display.flip()
-
-    """
-    Returns True if player stucks against a wall
-    """
-    def check_wall(self, maze, playerPosition):
-        return maze[0][playerPosition[1]][playerPosition[0]] == 1
-    """
-    Returns True if player arrived the end point of a maze
-    """
-    def check_finish(self, maze, playerPosition):
-        if maze[2] == playerPosition:
-            return True
-        return False
 
     def quit_screen(self): 
         pygame.quit()
