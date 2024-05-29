@@ -1,5 +1,8 @@
 import random
-
+"""
+GameHandler class implies debuffing functionality
+and selecting difficulty
+"""
 class GameHandler():
     
     def __init__(self, mazeGenerator):
@@ -73,7 +76,7 @@ class GameHandler():
         self.debuffDuration = self.difficulty[2]
     """
     Applying debuffs whether because of running against a wall (case = 1)
-    or rough request (case = 3)
+    or rough request (case = 3) #TODO
     """
     def apply_debuffs(self, player, maze, case):
         DEBUFF = {
@@ -86,10 +89,14 @@ class GameHandler():
         for i in range(self.difficulty[1]):
             DEBUFF[random.randint(case, case + 2)](player, maze)
             print("Debuff applied")
-    
+    """
+    Removing all temporary debuffs
+    """
     def remove_debuffs(self, player):
         self.renderDistance = 16
         player.hide(False)
-    
+    """
+    Access function for use in game loop (Main.py)
+    """
     def get_game_stats(self):
         return [self.difficulty, self.debuffDuration, self.renderDistance]
