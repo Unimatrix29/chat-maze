@@ -12,7 +12,6 @@ class Screen():
         self.SCREEN_SIZE = screen_size
         self.GRID_SIZE = 16
         self.CELL_SIZE = 30
-        self.PIXEL_SIZE = 24
 
     def setup_screen(self):
         pygame.init()
@@ -35,6 +34,15 @@ class Screen():
         
         self.return_text = False
         self.active = True
+
+    def draw_wall(self, surface, color, x, y, size, maze):
+        half = size / 2
+        quarter = size / 4
+        pygame.draw.circle(surface, color, (x * size + half, y * size + half), half)
+        
+        
+        pygame.draw.rect(surface, color, (x + quarter, y + quarter, half, half))
+        
  
     def update_screen(self, maze, player, render = 16):
 
@@ -71,9 +79,10 @@ class Screen():
                         continue
                     
                     if maze[0][y][x] == 1:
-                        pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+                        #pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+                        self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
                     if player.currentPosition == [x, y] and (not player.isHidden):
-                        pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.PIXEL_SIZE, self.PIXEL_SIZE))
+                        pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.CELL_SIZE, self.CELL_SIZE))
 
                 if self.active:
                     self.color = self.color_active
@@ -113,3 +122,5 @@ class Screen():
             self.return_text = False
             return True
         return False
+    
+    
