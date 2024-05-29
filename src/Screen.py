@@ -18,7 +18,7 @@ class Screen():
         pygame.init()
 
         #Maze
-        self.screen = pygame.display.set_mode([800, 480])
+        self.screen = pygame.display.set_mode([480, 520])
         pygame.display.set_caption("Chat_Leap")
 
         #Input
@@ -60,6 +60,7 @@ class Screen():
                         self.user_text += event.unicode
 
             self.screen.fill((0,0,0))
+            
             #Maze
             for y in range(self.GRID_SIZE):
                 for x in range(self.GRID_SIZE):

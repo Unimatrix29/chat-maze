@@ -38,7 +38,7 @@ CONFIG_FILE_NAME = "config.json"
 GPT_MODEL = "gpt-4-turbo"
 TEMPERATURE = 0.25
 
-mazeWindow = Screen()
+screen = Screen()
 mazeGenerator = MazeGenerator()
 clientCreator = ApiClientCreator(file_name=CONFIG_FILE_NAME)
 apiClient = clientCreator.get_client()
@@ -50,8 +50,8 @@ mazePreset = f"maze_{difficulty[0]}.{random.randint(1, 4)}.0"
 maze = mazeGenerator.get_preset(mazePreset)
 player = Player(maze)
 
-mazeWindow.setup_screen()
-mazeWindow.update_screen(maze, player)
+screen.setup_screen()
+screen.update_screen(maze, player)
 maze = mazeGenerator.get_preset("maze_2")
 
 running = True
@@ -79,11 +79,7 @@ def console_input():
         if console_On: 
             ready_for_input_event.wait()
             user_input = input("Bitte gib höflich ein Richtung an: ")
-        else:
-            mazeWindow.setup_screen()
-            mazeWindow.update_screen()
-            if mazeWindow.on_return():
-                user_input = mazeWindow.get_user_input()
+        
             
 
         #chatGPT call
@@ -168,55 +164,56 @@ def remove_debuffs():
     renderDistance = 16
     player.hide(False)
 
-input_thread = threading.Thread(target=console_input)
-input_thread.start()
+#input_thread = threading.Thread(target=console_input)
+#input_thread.start()
 
 
 while running:
     
-    ready_for_input_event.set()
-    ready_for_input_event.clear()
+    #ready_for_input_event.set()
+    #ready_for_input_event.clear()
     
     for event in pygame.event.get():
-        
-        if event.type == pygame.KEYDOWN:
-            # Game restart by pressing R key
-            if event.key == pygame.K_r:
-                gameOver = False
-                maze = mazeGenerator.get_preset(mazePreset)
-                player.set_position(maze[1])
-                
+    #    
+    #    if event.type == pygame.KEYDOWN:
+    #        # Game restart by pressing R key
+    #        if event.key == pygame.K_r:
+    #            gameOver = False
+    #            maze = mazeGenerator.get_preset(mazePreset)
+    #            player.set_position(maze[1])
+    #            
         if event.type == pygame.QUIT:
             running = False
-    
-    if not gameOver:
-        
-        if not shared_queue.empty():
-            
-            mVector = shared_queue.get()
-            player.move(mVector)
-        
-            debuffDuration = max(debuffDuration - 1, 0)
-       
-            if debuffDuration == 0:
-                remove_debuffs()
-            # Applying debuffs in case of rough request
-            if mVector == [0, 0]:
-                apply_debuff(DEBUFF[random.randint(3, 5)])
-            # Applying debuffs in case of running against walls
-            if mazeWindow.check_wall(maze, player.currentPosition):
-                player.move([-mVector[0], -mVector[1]])
-                for i in range(difficulty[1]):
-                    apply_debuff(DEBUFF[random.randint(1, 3)])
+    #
+    #if not gameOver:
+    #    
+    #    if not shared_queue.empty():
+    #        
+    #        mVector = shared_queue.get()
+    #        player.move(mVector)
+    #    
+    #        debuffDuration = max(debuffDuration - 1, 0)
+    #   
+    #        if debuffDuration == 0:
+    #            remove_debuffs()
+    #        # Applying debuffs in case of rough request
+    #        if mVector == [0, 0]:
+    #            apply_debuff(DEBUFF[random.randint(3, 5)])
+    #        # Applying debuffs in case of running against walls
+    #        if mazeWindow.check_wall(maze, player.currentPosition):
+    #            player.move([-mVector[0], -mVector[1]])
+    #            for i in range(difficulty[1]):
+    #                apply_debuff(DEBUFF[random.randint(1, 3)])
 
-            if mazeWindow.check_finish(maze, player.currentPosition):
-                # Changing actual maze to an end screen (happy)
-                maze = mazeGenerator.get_preset("FINISH")
-                player.set_position([-1, -1])
-                gameOver = True
-            
-    mazeWindow.update_screen(maze, player, renderDistance)
+    #        if mazeWindow.check_finish(maze, player.currentPosition):
+    #            # Changing actual maze to an end screen (happy)
+    #            maze = mazeGenerator.get_preset("FINISH")
+    #            player.set_position([-1, -1])
+    #            gameOver = True
+    #        
+    #mazeWindow.update_screen(maze, player, renderDistance)
+    screen.update_screen(maze, player)
    
-mazeWindow.quit_screen()
-gameOver_event.set()
-input_thread.join()
+#mazeWindow.quit_screen()
+#gameOver_event.set()
+#input_thread.join()
