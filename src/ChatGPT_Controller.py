@@ -45,23 +45,22 @@ class ChatGPT():
                 input=text,
                 response_format="mp3",
             )
+            
+            with open(self.file_tts_out, "wb") as audio_file:
+                for chunk in response.iter_bytes(chunk_size=1024):
+                    if chunk:
+                        audio_file.write(chunk)
+                        
         except openai.APIError as e:
+            print("Api call failed!")
+            print(e)
+            raise e 
+        except Exception as e:
             print(e)
             raise e
-        
-        with open(self.file_tts_out, "wb") as audio_file:
-            for chunk in response.iter_bytes(chunk_size=1024):
-                if chunk:
-                    audio_file.write(chunk)
     
     
-    def audio_to_text(self, user_audio, prompt=""):
-        
-        model = "whisper-1"
-        
-        if not user_audio.exists():
-            raise FileNotFoundError
-            
+    def audio_to_text(self, prompt="", model ="whisper-1"):
         try:
             with open(user_audio, "rb") as audio_file:
                 transcript = self.client.audio.transcriptions.create(
