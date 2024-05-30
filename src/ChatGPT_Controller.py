@@ -132,35 +132,7 @@ class ChatGPT():
         
         wavWrite(self.file_user_input, samplerate, data)
     
-    
-    
-    def test(self):
-        runnig = True
-        samplerate = 44100
-        channel = 2
-        maxDuration = 5
-        
-        pygame.init()
-        
-        inputStream = sd.InputStream(samplerate=samplerate, channels=channel, callback=self.callback)
-        
-        print("#" * 80)
-        print("Speak now...")
-        print("Press Ctrl+C to stop recording")
-        print("#" * 80)
-        
-        with inputStream:
-            start_time = time.time()
-            while time.time() - start_time < 10:
-                data = np.vstack(self.q.get())
-                time.sleep(0.1)
-            
-        while not self.q.empty():
-            data = np.vstack(self.q.get())   
-        wavWrite(self.file_user_input, samplerate, data)
                             
-                
-    
     def TTS_test(self, text=None):
         import pygame
         
