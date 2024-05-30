@@ -1,6 +1,5 @@
 import openai
 import numpy as np 
-import queue
 import time
 import sounddevice as sd
 from pathlib import Path
@@ -8,7 +7,7 @@ from scipy.io.wavfile import write as wavWrite
 
 class ChatGPT():
 
-    def __init__(self, client, queue, gpt_model="gpt-3.5-turbo", ):
+    def __init__(self, client, gpt_model="gpt-3.5-turbo", ):
         self.client = client
         self.gpt_model = gpt_model
         self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
@@ -78,27 +77,10 @@ class ChatGPT():
         except openai.APIError as e:
             print(e)
             raise e 
+        except Exception as e:
+            print(e)
+            raise e
         
-        
-    @staticmethod
-    def construct_message(userInput, history=None, system_prompt="",):
-        #format user and system prompt for api 
-        userPrompt = {"content": userInput, "role": "user"}
-        system_prompt = {"content": system_prompt, "role": "system"}
-
-        #construct message for api call 
-        message = []
-        message.append(system_prompt)
-        if history is not None:
-            message.append(history)
-        message.append(userPrompt)
-        
-        return message  
-    
-    
-    def callback(self, indata, frames, time, status):
-        self.q.put(indata.copy())
-
     
     def get_user_audio(self, duration=10):
         samplerate = 44100 
@@ -164,7 +146,6 @@ class ChatGPT():
 #    from ChatGPT_Client import ApiClientCreator
 #    import pygame
 #    client = ApiClientCreator.get_client()
-#    q = queue.Queue()
 #    
 #    chatgpt = ChatGPT(client, q)
 #    
