@@ -99,7 +99,23 @@ class ChatGPT():
         
         wavWrite(self.file_user_input, samplerate, data) 
         
-    def get_user_audio_with_dynamic_duration(self):
+    @staticmethod
+    def construct_message(userInput, history=None, system_prompt="",):
+        #format user and system prompt for api 
+        userPrompt = {"content": userInput, "role": "user"}
+        system_prompt = {"content": system_prompt, "role": "system"}
+
+        #construct message for api call 
+        message = []
+        message.append(system_prompt)
+        if history is not None:
+            message.append(history)
+        message.append(userPrompt)
+        
+        return message  
+        
+    
+    #def get_user_audio_with_dynamic_duration(self):
         samplerate = 44100
         channel = 1
         maxDuration = 5
