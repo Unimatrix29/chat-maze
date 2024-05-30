@@ -5,6 +5,7 @@ from Player import Player
 from Controller import Controller
 from ChatGPT_Movment_Controller import chatgpt_movment
 from ChatGPT_Client import ApiClientCreator
+from ChatGPT_Controller import ChatGPT
 import threading
 import queue
 import pygame
@@ -41,19 +42,19 @@ TEMPERATURE = 0.25
 
 screen = Screen()
 mazeGenerator = MazeGenerator()
-clientCreator = ApiClientCreator(file_name=CONFIG_FILE_NAME)
-apiClient = clientCreator.get_client()
+
+apiClient = ApiClientCreator.get_client(CONFIG_FILE_NAME)
 
         
 # difficulty = set_level()
 difficulty = DIFFICULTY["TEST"]
 mazePreset = f"maze_{difficulty[0]}.{random.randint(1, 4)}.0"
 maze = mazeGenerator.get_preset(mazePreset)
+maze = mazeGenerator.get_preset("maze_1.1.0")
 
 player = Player(maze)
 
 #test purposes
-maze = mazeGenerator.get_preset("maze_3.1.0")
 
 screen.setup_screen()
 
@@ -71,22 +72,22 @@ def console_input():
     global shared_queue, ready_for_input_event
     
     #let the user choose the control mode 
-    console_On = choose_mode()
+    #console_On = choose_mode()
+
+    chatgpt = ChatGPT(apiClient, "gpt-4o")
     
-    textInputWindow = Controller()
-    movmentChatGPT = chatgpt_movment(client=apiClient, system_prompt=PROMPT, gpt_model=GPT_MODEL)
+    movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, system_prompt=PROMPT)
     
     while not gameOver_event.is_set():
-        
-        #logic for wich control option the user chose 
-        if console_On: 
-            ready_for_input_event.wait()
-            user_input = input("Bitte gib höflich ein Richtung an: ")
-        
-            
 
+        ready_for_input_event.wait()
+
+        msg = shared_queue.get()
         #chatGPT call
-        move_Vector = movmentChatGPT.get_movement_vector(user_input, TEMPERATURE)
+
+        move_Vector, content = movmentChatGPT.get_vector(msg, TEMPERATURE)
+
+        screen.response_text = content
 
         if move_Vector is Exception:
            #Let the User know, that something went wrong and he should try again 
@@ -167,26 +168,14 @@ def remove_debuffs():
     renderDistance = 16
     player.hide(False)
 
-#input_thread = threading.Thread(target=console_input)
-#input_thread.start()
+input_thread = threading.Thread(target=console_input)
+input_thread.start()
 
 
 while running:
     
     #ready_for_input_event.set()
     #ready_for_input_event.clear()
-    
-    for event in pygame.event.get():
-    #    
-    #    if event.type == pygame.KEYDOWN:
-    #        # Game restart by pressing R key
-    #        if event.key == pygame.K_r:
-    #            gameOver = False
-    #            maze = mazeGenerator.get_preset(mazePreset)
-    #            player.set_position(maze[1])
-    #            
-        if event.type == pygame.QUIT:
-            running = False
     #
     #if not gameOver:
     #    
@@ -217,8 +206,22 @@ while running:
     #mazeWindow.update_screen(maze, player, renderDistance)
     screen.update_screen(maze, player)
     if(screen.on_return()):
-        print(screen.get_user_input())
+        user_input = screen.get_user_input()
+        print(user_input)
+        shared_queue.put(user_input)
+        ready_for_input_event.set()
+        ready_for_input_event.clear()
+
+    if not shared_queue.empty():
+        data = shared_queue.get()
+        if not type(data) is str:
+            player.move(data)
+        else:
+            shared_queue.put(data)
+    #player.move(vector)
+    
+
    
-#mazeWindow.quit_screen()
+screen.quit_screen()
 #gameOver_event.set()
-#input_thread.join()
+input_thread.join()

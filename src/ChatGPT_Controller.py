@@ -99,7 +99,7 @@ class ChatGPT():
         wavWrite(self.file_user_input, samplerate, data) 
         
     @staticmethod
-    def construct_message(userInput, history=None, system_prompt="",):
+    def construct_message(userInput, system_prompt, history=None):
         #format user and system prompt for api 
         userPrompt = {"content": userInput, "role": "user"}
         system_prompt = {"content": system_prompt, "role": "system"}

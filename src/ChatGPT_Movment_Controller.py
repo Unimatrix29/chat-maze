@@ -24,11 +24,12 @@ class chatgpt_movment():
         content = chat_response.choices[0].message.content.lower().strip()
         print("ChatGPT: " + content)
         
+
         #convert to vector
         if content in self.move_options:
             move_vector = self.move_options[content]
         else:
             move_vector = self.move_options["deny"]
             
-        return move_vector
+        return move_vector, content
         

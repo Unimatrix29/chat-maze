@@ -8,6 +8,7 @@ class Screen():
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
         self.GREY = (127, 127, 127)
+        self.PINK = (199,21,133)
     
         self.SCREEN_SIZE = screen_size
         self.GRID_SIZE = 16
@@ -25,8 +26,10 @@ class Screen():
         #Input
         self.title_font = pygame.font.Font(None, 16)
         self.base_font = pygame.font.Font(None, 24)
+        self.response_font = pygame.font.Font(None, 16)
         self.user_text = "bitte geh nach unten"
         self.title_text = "Input your message to ChatGPT:"
+        self.response_text = "-----"
 
         self.input_rect = pygame.Rect(10, 540, 140, 24)
         self.color_active = pygame.Color('limegreen')
@@ -72,9 +75,10 @@ class Screen():
             if event.type == pygame.KEYDOWN:
                 if self.active:
                     if event.key == pygame.K_RETURN:
-                        self.return_text = True
-                        self.message = self.user_text
-                        self.user_text = ""
+                        if self.user_text != "":
+                            self.return_text = True
+                            self.message = self.user_text
+                            self.user_text = ""
                         break
                     elif event.key == pygame.K_BACKSPACE:
                         self.user_text = self.user_text[:-1]
@@ -91,12 +95,12 @@ class Screen():
                     if not isRendered:
                         continue
                     
-                    if maze[0][x][y] == 1:
+                    if maze[0][y][x] == 1:
                         pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
                     #self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
 
                     if player.currentPosition == [x, y] and (not player.isHidden):
-                        pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.CELL_SIZE, self.CELL_SIZE))
+                        pygame.draw.rect(self.screen, self.GREY, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
 
                 #for y in range(self.GRID_SIZE):
                 #    for x in range(self.GRID_SIZE):
@@ -112,7 +116,8 @@ class Screen():
             self.text_title = self.title_font.render(self.title_text, True, self.color)
             self.screen.blit(self.text_surface,(self.input_rect.x + 5, self.input_rect.y + 5))
             self.screen.blit(self.text_title,(10, 520))
-            self.input_rect.w = max(10, self.text_surface.get_width() + 10)
+            self.input_rect.w = max(10, self.text_surface.get_width() + 20)
+            self.write_response()
 
         pygame.display.flip()
 
@@ -141,4 +146,6 @@ class Screen():
             return True
         return False
     
-    
+    def write_response(self):
+        self.text_response = self.response_font.render("ChatGPT: " + self.response_text, True, self.PINK)
+        self.screen.blit(self.text_response,(10, 580))
