@@ -21,6 +21,7 @@ class GameHandler():
         self.renderDistance = 16
         
         self.mazeGenerator = MazeGenerator()
+        self.preset = "maze_0"
         self.maze = []
         self.difficulty = self.DIFFICULTY["TEST"]
         
@@ -41,7 +42,10 @@ class GameHandler():
                 print("Bad input >:( Enter the number of chosen difficulty")
                 
         self.difficulty = self.DIFFICULTY[options[int(level)]]
-        self.maze = self.mazeGenerator.get_random_preset(self.difficulty[0])
+
+        # preset = f"maze_{self.difficulty[0]}.{random.randint(1, 5)}.0"
+        self.preset = f"maze_{self.difficulty[0]}.1.0"
+        self.maze = self.mazeGenerator.get_preset(self.preset)
     """
     Returns True if player stucks against a wall
     """
@@ -95,6 +99,11 @@ class GameHandler():
             DEBUFF[choice][1](player, maze)
             print(f"{DEBUFF[choice][0]} were applied")
     """
+    Reducing debuff duration by 1 (every step)
+    """
+    def reduce_debuffs(self):
+        self.debuffDuration = max(0, self.debuffDuration - 1)
+    """
     Removing all temporary debuffs
     """
     def remove_debuffs(self, player):
@@ -105,12 +114,6 @@ class GameHandler():
     """
     def get_game_stats(self):
         return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance]]
-    """
-    Restarts the session
-    """
-    def restart_game(self, startMaze):
-        self.maze = startMaze
-        self.gameOver = False
     """
     Finishes the session depending on end event
     """
