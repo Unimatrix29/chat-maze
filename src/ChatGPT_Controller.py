@@ -62,7 +62,7 @@ class ChatGPT():
     
     def audio_to_text(self, prompt="", model ="whisper-1"):
         try:
-            with open(user_audio, "rb") as audio_file:
+            with open(self.file_user_input, "rb") as audio_file:
                 transcript = self.client.audio.transcriptions.create(
                     model=model,
                     file=audio_file,
