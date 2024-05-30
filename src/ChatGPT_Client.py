@@ -4,16 +4,8 @@ import json
 
 class ApiClientCreator():
     
-    def __init__(self, file_name="config.json", timeout=60):
-        self.client = None
-        self.__setup_client(timeout, file_name)
-
-    
-    def get_client(self):
-        return self.client
-    
-    
-    def __setup_client(self, timeout, file_name):
+    @staticmethod
+    def get_client( file_name="config.json", timeout=60):
         #trys to open the json config file to read the api key
         #programm is exited if its fails 
         try:
@@ -33,5 +25,5 @@ class ApiClientCreator():
         }
 
         #create client
-        self.client = OpenAI(**options)
-        #print("Client Setup: Done")
+        client = OpenAI(**options)
+        return client
