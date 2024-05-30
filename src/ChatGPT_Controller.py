@@ -70,10 +70,9 @@ class ChatGPT():
                     prompt=prompt,
                     language="de",
                     response_format="json"
-
                 )
                 
-            return transcript
+            return transcript.text
         except openai.APIError as e:
             print("Api call failed!")
             print(e)
