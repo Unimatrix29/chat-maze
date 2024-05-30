@@ -20,7 +20,8 @@ class Screen():
         pygame.init()
 
         #Maze
-        self.screen = pygame.display.set_mode([600, 600])
+        self.screen = pygame.display.set_mode([600, 600], pygame.NOFRAME)
+
         pygame.display.set_caption("Chat_Leap")
 
         #Input
