@@ -2,7 +2,6 @@ from ChatGPT_Client import ApiClientCreator
 from ChatGPT_Controller import chatgpt_text
 from Controller import Controller
 from GameHandler import GameHandler
-from MazeGenerator import MazeGenerator
 from Player import Player
 from Screen import Screen
 import pygame, random, queue, threading
@@ -24,27 +23,25 @@ apiClient = clientCreator.get_client()
 """
 Game session set up
 """
-mazeGenerator = MazeGenerator()
-gameHandler = GameHandler(mazeGenerator)
+gameHandler = GameHandler()
 
 gameHandler.set_level()
-gameStats = gameHandler.get_game_stats()
+gameStats = gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
 
-mazePreset = f"maze_{gameStats[0]}.{random.randint(1, 4)}.0"
-maze = mazeGenerator.get_preset(mazePreset)
+startMaze = gameStats[1]
 
-player = Player(maze)
+player = Player(startMaze)
 """
 Output window set up
 """
 mazeWindow = Screen()
 mazeWindow.setup_screen()
-mazeWindow.update_screen(maze, player)
+mazeWindow.update_screen(startMaze, player)
 """
 Game loop variables
 """
 running = True
-gameOver = False
+maze = startMaze
 
 ready_for_input_event = threading.Event()
 gameOver_event = threading.Event()
@@ -110,37 +107,40 @@ while running:
         if event.type == pygame.KEYDOWN:
             # Game restart by pressing R key
             if event.key == pygame.K_r:
-                gameOver = False
-                maze = mazeGenerator.get_preset(mazePreset)
+                maze = startMaze
                 player.set_position(maze[1])
+                gameHandler.restart_game(maze)
                 
         if event.type == pygame.QUIT:
             running = False
     
-    gameStats = gameHandler.get_game_stats()    #[difficulty, debuffDuration, renderDistance]
+    gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
     
-    if not (gameOver or  shared_queue.empty()):
+    if not (gameHandler.is_game_over() or shared_queue.empty()):
 
         mVector = shared_queue.get()
         player.move(mVector)
         # Removing debuffs by expiring their's duration
-        if gameStats[1] == 0:
-            gameHandler.remove_debuffs(player)
+        if gameStats[2][0] > 0:
+            gameStats[2][0] -= 1
+        else: gameHandler.remove_debuffs(player)
         # Applying debuffs in case of rough request
-        if mVector == [0, 0]:
-            gameHandler.apply_debuffs(player, maze, 3)
+        # if mVector == [0, 0]:
+        #     gameHandler.apply_debuffs(player, maze, 3)
         # Applying debuffs in case of running against walls
-        if gameHandler.check_wall(maze, player.currentPosition):
+        if gameHandler.check_wall(player.currentPosition):
             player.move([-mVector[0], -mVector[1]])
             for i in range(gameStats[0][1]):
                 gameHandler.apply_debuffs(player, maze, 1)
         # Showing end screen if finish arrived
-        if gameHandler.check_finish(maze, player.currentPosition):
-            maze = mazeGenerator.get_preset("FINISH")
+        if gameHandler.check_finish(player.currentPosition):
             player.set_position([-1, -1])
-            gameOver = True
+            gameHandler.end_game()
+        
+        gameStats = gameHandler.get_game_stats()
+        maze = gameStats[1]
             
-    mazeWindow.update_screen(maze, player, gameStats[2])
+    mazeWindow.update_screen(maze, player, gameStats[2][1])
 """
 Programm finish
 """
