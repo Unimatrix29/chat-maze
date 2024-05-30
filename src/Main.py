@@ -29,7 +29,6 @@ gameHandler.set_level()
 gameStats = gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
 
 startMaze = gameStats[1]
-maze = gameStats[1]
 
 player = Player(startMaze)
 """
@@ -42,6 +41,7 @@ mazeWindow.update_screen(startMaze, player)
 Game loop variables
 """
 running = True
+maze = startMaze
 
 ready_for_input_event = threading.Event()
 gameOver_event = threading.Event()
@@ -105,26 +105,28 @@ while running:
     for event in pygame.event.get():
         
         if event.type == pygame.KEYDOWN:
-            # Game restart by pressing R key (Problem with maze reseting)
+            # Game restart by pressing R key
             if event.key == pygame.K_r:
-                pass
-                # maze = startMaze
-                # player.set_position(maze[1])
+                maze = startMaze
+                player.set_position(maze[1])
+                gameHandler.restart_game(maze)
                 
         if event.type == pygame.QUIT:
             running = False
+    
+    gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
     
     if not (gameHandler.is_game_over() or shared_queue.empty()):
 
         mVector = shared_queue.get()
         player.move(mVector)
         # Removing debuffs by expiring their's duration
-        gameHandler.reduce_debuffs()
-        if gameStats[2][0] == 0:
-            gameHandler.remove_debuffs(player)
+        if gameStats[2][0] > 0:
+            gameStats[2][0] -= 1
+        else: gameHandler.remove_debuffs(player)
         # Applying debuffs in case of rough request
-        if mVector == [0, 0]:
-            gameHandler.apply_debuffs(player, maze, 3)
+        # if mVector == [0, 0]:
+        #     gameHandler.apply_debuffs(player, maze, 3)
         # Applying debuffs in case of running against walls
         if gameHandler.check_wall(player.currentPosition):
             player.move([-mVector[0], -mVector[1]])
@@ -134,10 +136,10 @@ while running:
         if gameHandler.check_finish(player.currentPosition):
             player.set_position([-1, -1])
             gameHandler.end_game()
-            
-    gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
-    maze = gameStats[1]
         
+        gameStats = gameHandler.get_game_stats()
+        maze = gameStats[1]
+            
     mazeWindow.update_screen(maze, player, gameStats[2][1])
 """
 Programm finish
