@@ -100,13 +100,20 @@ class ChatGPT():
         self.q.put(indata.copy())
 
     
-    def get_user_audio_with_fixed_duration(self):
-        samplerate = 44100
-        duration = 10 
+    def get_user_audio(self, duration=10):
+        samplerate = 44100 
         
-        print("speak")
+        print("Speak now...")
         data = sd.rec(int(samplerate * duration), samplerate, channels=2)
+        
+        while duration > 0:
+            print(duration)
+            duration = duration - 1
+            time.sleep(1)
+                    
         sd.wait()
+        
+        print("Recording finished!")
         
         wavWrite(self.file_user_input, samplerate, data) 
         
