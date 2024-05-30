@@ -1,3 +1,4 @@
+from MazeGenerator import MazeGenerator 
 import random
 """
 GameHandler class implies debuffing functionality
@@ -5,7 +6,7 @@ and selecting difficulty
 """
 class GameHandler():
     
-    def __init__(self, mazeGenerator):
+    def __init__(self):
         self.DIFFICULTY = {
             "TEST":
             [0, 1, 1],
@@ -19,9 +20,11 @@ class GameHandler():
         self.debuffDuration = 0
         self.renderDistance = 16
         
-        self.mazeGenerator = mazeGenerator
+        self.mazeGenerator = MazeGenerator()
+        self.maze = []
         self.difficulty = self.DIFFICULTY["TEST"]
-    
+        
+        self.gameOver = False
     """
     Asking for difficulty choice
     """
@@ -37,20 +40,21 @@ class GameHandler():
             except ValueError:
                 print("Bad input >:( Enter the number of chosen difficulty")
                 
-        self.difficulty = self.DIFFICULTY[options[level]]
+        self.difficulty = self.DIFFICULTY[options[int(level)]]
+        self.maze = self.mazeGenerator.get_random_preset(self.difficulty[0])
     """
     Returns True if player stucks against a wall
     """
-    def check_wall(self, maze, playerPosition):
-        return maze[0][playerPosition[1]][playerPosition[0]] == 1
+    def check_wall(self, playerPosition):
+        return self.maze[0][playerPosition[1]][playerPosition[0]] == 1
     """
     Returns True if player arrived the end point of a maze
     """
-    def check_finish(self, maze, playerPosition):
-        return maze[2] == playerPosition
+    def check_finish(self, playerPosition):
+        return self.maze[2] == playerPosition
     
     def maze_rotation(self, player, maze):
-        maze = self.mazeGenerator.rotate_maze(maze)
+        self.maze = self.mazeGenerator.rotate_maze(maze)
         newPosition = [player.currentPosition[1], 15 - player.currentPosition[0]]
         player.set_position(newPosition)
     
@@ -62,7 +66,7 @@ class GameHandler():
         #mVector = controller.random_input()
         mVector = [0,0]
         player.move(mVector)
-        while self.check_wall(maze, player.currentPosition):
+        while self.check_wall(player.currentPosition):
             player.move([-mVector[0], -mVector[1]])
             #mVector = controller.random_input()
             mVector = [0,0]
@@ -76,19 +80,20 @@ class GameHandler():
         self.debuffDuration = self.difficulty[2]
     """
     Applying debuffs whether because of running against a wall (case = 1)
-    or rough request (case = 3) #TODO
+    or rough request (case = 3)
     """
     def apply_debuffs(self, player, maze, case):
         DEBUFF = {
-            1: self.maze_rotation,
-            2: self.blind,
-            3: self.random_move,
-            4: self.teleport,
-            5: self.set_invisible
+            1: ["ROTATION", self.maze_rotation],
+            2: ["BLINDNESS", self.blind],
+            3: ["RANDOM MOVE", self.random_move],
+            4: ["TELEPORT", self.teleport],
+            5: ["INVISIBILITY", self.set_invisible]
             }
         for i in range(self.difficulty[1]):
-            DEBUFF[random.randint(case, case + 2)](player, maze)
-            print("Debuff applied")
+            choice = random.randint(case, case + 2)
+            DEBUFF[choice][1](player, maze)
+            print(f"{DEBUFF[choice][0]} were applied")
     """
     Removing all temporary debuffs
     """
@@ -99,4 +104,24 @@ class GameHandler():
     Access function for use in game loop (Main.py)
     """
     def get_game_stats(self):
-        return [self.difficulty, self.debuffDuration, self.renderDistance]
+        return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance]]
+    """
+    Restarts the session
+    """
+    def restart_game(self, startMaze):
+        self.maze = startMaze
+        self.gameOver = False
+    """
+    Finishes the session depending on end event
+    """
+    def end_game(self, case = "FINISH"):
+        if case == "DEATH":
+            pass
+        if case == "FINISH":
+            self.maze = self.mazeGenerator.get_preset("FINISH")
+            self.gameOver = True
+    """
+    Returns session's status (finish arrived)
+    """
+    def is_game_over(self):
+        return self.gameOver
