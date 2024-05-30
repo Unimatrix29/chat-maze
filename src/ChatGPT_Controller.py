@@ -1,15 +1,21 @@
 import openai
+import numpy as np 
+import queue
+import time
+import sounddevice as sd
 from pathlib import Path
+from scipy.io.wavfile import write as wavWrite
 
 class ChatGPT():
 
-    def __init__(self, client, gpt_model="gpt-3.5-turbo"):
+    def __init__(self, client, queue, gpt_model="gpt-3.5-turbo", ):
         self.client = client
         self.gpt_model = gpt_model
         self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
         self.file_tts_out.resolve()
-        self.file_user_input = Path(__file__).parent / "user_input.mp3"
+        self.file_user_input = Path(__file__).parent / "user_input.wav"
         self.file_user_input.resolve()
+        self.q = queue
 
 
     def text_to_text(self, message, temperature=1):
@@ -90,6 +96,71 @@ class ChatGPT():
         return message  
     
     
+    def callback(self, indata, frames, time, status):
+        self.q.put(indata.copy())
+
+    
+    def get_user_audio_with_fixed_duration(self):
+        samplerate = 44100
+        duration = 10 
+        
+        print("speak")
+        data = sd.rec(int(samplerate * duration), samplerate, channels=2)
+        sd.wait()
+        
+        wavWrite(self.file_user_input, samplerate, data) 
+        
+    def get_user_audio_with_dynamic_duration(self):
+        samplerate = 44100
+        channel = 1
+        maxDuration = 5
+        inputStream = sd.InputStream(samplerate=samplerate, channels=channel)
+        
+        print("#" * 80)
+        print("Speak now...")
+        print("Press Ctrl+C to stop recording")
+        print("#" * 80)
+        
+        inputStream.start()
+        
+        data = inputStream.read(samplerate * maxDuration)[0]
+        print("\nRecording stoped")
+        
+        inputStream.stop()
+        inputStream.close()   
+        
+        
+        wavWrite(self.file_user_input, samplerate, data)
+    
+    
+    
+    def test(self):
+        runnig = True
+        samplerate = 44100
+        channel = 2
+        maxDuration = 5
+        
+        pygame.init()
+        
+        inputStream = sd.InputStream(samplerate=samplerate, channels=channel, callback=self.callback)
+        
+        print("#" * 80)
+        print("Speak now...")
+        print("Press Ctrl+C to stop recording")
+        print("#" * 80)
+        
+        with inputStream:
+            start_time = time.time()
+            while time.time() - start_time < 10:
+                data = np.vstack(self.q.get())
+                time.sleep(0.1)
+            
+        while not self.q.empty():
+            data = np.vstack(self.q.get())   
+        wavWrite(self.file_user_input, samplerate, data)
+                            
+                
+    
     def TTS_test(self, text=None):
         import pygame
         
@@ -108,19 +179,17 @@ class ChatGPT():
         
         pygame.mixer.music.unload()    
 
+           
 #Test for speech to text and text to speech
-#if __name__ == "__main__":
-#    from ChatGPT_Client import ApiClientCreator
-#    client = ApiClientCreator.get_client()
-#    
-#    chatgpt = ChatGPT(client)
-#    
-#    message = chatgpt.construct_message(userInput="Spieglein, Spieglein, Spieglein an der Wand. Wer ist die schönste im ganzen Land?", system_prompt="Du bist ein Märchenbuch und antwortest auf das was der Nutzer eingibt mit passeden Passagen aus einem Märchen. Deine Antworten sind nie länger als drei Sätze. Sie dürfen auch kürzer sein.")
-#    response = chatgpt.text_to_text(message)
-#    text = response.choices[0].message.content
-#    print(text)
-#    chatgpt.text_to_audio(text)
-#    
-#    transcript = chatgpt.audio_to_text(chatgpt.file_tts_out)
-#    
-#    print(transcript.text)     
+if __name__ == "__main__":  
+    from ChatGPT_Client import ApiClientCreator
+    import pygame
+    client = ApiClientCreator.get_client()
+    q = queue.Queue()
+    
+    chatgpt = ChatGPT(client, q)
+    
+    #chatgpt.test()
+    
+    #chatgpt.get_user_audio_with_dynamic_duration()
+    chatgpt.get_user_audio_with_fixed_duration()
