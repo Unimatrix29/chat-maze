@@ -17,6 +17,7 @@ class GameHandler():
             "HARD":
             [3, 3, 10]
             }
+        self.moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
         self.debuffDuration = 0
         self.renderDistance = 16
         
@@ -67,13 +68,13 @@ class GameHandler():
         self.debuffDuration = self.difficulty[2]
     
     def random_move(self, player, maze):
-        #mVector = controller.random_input()
-        mVector = [0,0]
+        randOption = random.randint(0, 4)
+        mVector = self.moves[randOption]
         player.move(mVector)
         while self.check_wall(player.currentPosition):
             player.move([-mVector[0], -mVector[1]])
-            #mVector = controller.random_input()
-            mVector = [0,0]
+            randOption = random.randint(0, 4)
+            mVector = self.moves[randOption]
             player.move(mVector)
     
     def teleport(self, player, maze):
