@@ -32,8 +32,7 @@ class ChatGPT():
             ) 
             
             return response
-        except openai.APITimeoutError as e:
-            print(f"OpenAI API timeout.")
+        except openai.APIError as e:
             print(e)
             raise e
         
@@ -76,6 +75,7 @@ class ChatGPT():
                 
             return transcript
         except openai.APIError as e:
+            print("Api call failed!")
             print(e)
             raise e 
         except Exception as e:
