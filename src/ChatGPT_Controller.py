@@ -160,15 +160,15 @@ class ChatGPT():
 
            
 #Test for speech to text and text to speech
-if __name__ == "__main__":  
-    from ChatGPT_Client import ApiClientCreator
-    import pygame
-    client = ApiClientCreator.get_client()
-    q = queue.Queue()
-    
-    chatgpt = ChatGPT(client, q)
-    
-    #chatgpt.test()
-    
-    #chatgpt.get_user_audio_with_dynamic_duration()
-    chatgpt.get_user_audio_with_fixed_duration()
+#if __name__ == "__main__":  
+#    from ChatGPT_Client import ApiClientCreator
+#    import pygame
+#    client = ApiClientCreator.get_client()
+#    q = queue.Queue()
+#    
+#    chatgpt = ChatGPT(client, q)
+#    
+#    #chatgpt.test()
+#    
+#    #chatgpt.get_user_audio_with_dynamic_duration()
+#    chatgpt.get_user_audio()
