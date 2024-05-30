@@ -12,21 +12,23 @@ class Screen():
         self.SCREEN_SIZE = screen_size
         self.GRID_SIZE = 16
         self.CELL_SIZE = 30
+        self.maze_offset_x = 60
+        self.maze_offset_y = 30
 
     def setup_screen(self):
         pygame.init()
 
         #Maze
-        self.screen = pygame.display.set_mode([480, 560])
+        self.screen = pygame.display.set_mode([600, 600])
         pygame.display.set_caption("Chat_Leap")
 
         #Input
         self.title_font = pygame.font.Font(None, 16)
-        self.base_font = pygame.font.Font(None, 32)
+        self.base_font = pygame.font.Font(None, 24)
         self.user_text = "bitte geh nach unten"
         self.title_text = "Input your message to ChatGPT:"
 
-        self.input_rect = pygame.Rect(10, 520, 140, 32)
+        self.input_rect = pygame.Rect(10, 540, 140, 24)
         self.color_active = pygame.Color('limegreen')
         self.color_passive = pygame.Color('gray15')
         self.color = self.color_passive
@@ -89,9 +91,9 @@ class Screen():
                     if not isRendered:
                         continue
                     
-                    #if maze[0][x][y] == 1:
-                    #    pygame.draw.rect(self.screen, self.WHITE, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.CELL_SIZE, self.CELL_SIZE))
-                    self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
+                    if maze[0][x][y] == 1:
+                        pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+                    #self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
 
                     if player.currentPosition == [x, y] and (not player.isHidden):
                         pygame.draw.rect(self.screen, self.GREY, (x * self.CELL_SIZE, y * self.CELL_SIZE, self.CELL_SIZE, self.CELL_SIZE))
@@ -109,7 +111,7 @@ class Screen():
             self.text_surface = self.base_font.render(self.user_text, True, (255,255,255))
             self.text_title = self.title_font.render(self.title_text, True, self.color)
             self.screen.blit(self.text_surface,(self.input_rect.x + 5, self.input_rect.y + 5))
-            self.screen.blit(self.text_title,(10, 500))
+            self.screen.blit(self.text_title,(10, 520))
             self.input_rect.w = max(10, self.text_surface.get_width() + 10)
 
         pygame.display.flip()
