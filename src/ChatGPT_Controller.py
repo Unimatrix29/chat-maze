@@ -14,7 +14,12 @@ class ChatGPT():
         self.file_tts_out.resolve()
         self.file_user_input = Path(__file__).parent / "user_input.wav"
         self.file_user_input.resolve()
-        self.q = queue
+        
+        if not self.file_user_input.exists():
+            self.file_user_input.touch()
+            
+        if not self.file_tts_out.exists():
+            self.file_tts_out.touch()
 
 
     def text_to_text(self, message, temperature=1):
@@ -34,10 +39,6 @@ class ChatGPT():
         
     
     def text_to_audio(self, text, voice="onyx", model="tts-1"):
-        
-        if not self.file_tts_out.exists():
-            self.file_tts_out.touch()
-        
         try:
             response = self.client.audio.speech.create(
                 model=model,
