@@ -1,5 +1,3 @@
-from Screen import Screen 
-
 class Player:
     def __init__(self, maze):
         self.activeMaze = maze

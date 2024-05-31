@@ -1,3 +1,11 @@
+
+from ChatGPT_Client import ApiClientCreator
+from ChatGPT_Controller import chatgpt_text
+from Controller import Controller
+from GameHandler import GameHandler
+from Player import Player
+from Screen import Screen
+import pygame, random, queue, threading
 import pygame, sys
 from Screen import Screen
 from MazeGenerator import MazeGenerator
@@ -39,6 +47,34 @@ PROMPT = "Du bist ein sehr höflicher Mensch und akzeptierst nur Anfragen, welch
 CONFIG_FILE_NAME = "config.json"
 GPT_MODEL = "gpt-4-turbo"
 TEMPERATURE = 0.25
+<<<<<<< src/Main.py
+"""
+Chat-GPT client initialization
+"""
+clientCreator = ApiClientCreator(file_name=CONFIG_FILE_NAME)
+apiClient = clientCreator.get_client()
+"""
+Game session set up
+"""
+gameHandler = GameHandler()
+
+gameHandler.set_level()
+gameStats = gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
+
+startMaze = gameStats[1]
+maze = gameStats[1]
+
+player = Player(startMaze)
+"""
+Output window set up
+"""
+mazeWindow = Screen()
+mazeWindow.setup_screen()
+mazeWindow.update_screen(startMaze, player)
+"""
+Game loop variables
+"""
+=======
 
 screen = Screen()
 mazeGenerator = MazeGenerator()
@@ -58,10 +94,8 @@ player = Player(maze)
 
 screen.setup_screen()
 
+>>>>>>> src/Main.py
 running = True
-gameOver = False
-debuffDuration = 0
-renderDistance = 16
 
 ready_for_input_event = threading.Event()
 gameOver_event = threading.Event()
@@ -95,7 +129,6 @@ def console_input():
         else: 
             shared_queue.put(move_Vector)
 
-
 #choose if you want to control the program via console or GUI
 def choose_mode():
     while True:
@@ -106,6 +139,9 @@ def choose_mode():
         elif choice == "c":
             return True
         else:
+<<<<<<< src/Main.py
+            pass      
+=======
             pass
         
 
@@ -167,13 +203,62 @@ def remove_debuffs():
     global renderDistance
     renderDistance = 16
     player.hide(False)
+>>>>>>> src/Main.py
 
 input_thread = threading.Thread(target=console_input)
 input_thread.start()
-
-
+"""
+Game loop
+"""
 while running:
     
+<<<<<<< src/Main.py
+    ready_for_input_event.set()
+    ready_for_input_event.clear()
+    
+    for event in pygame.event.get():
+        
+        if event.type == pygame.KEYDOWN:
+            # Game restart by pressing R key (Problem with maze reseting)
+            if event.key == pygame.K_r:
+                pass
+                # maze = startMaze
+                # player.set_position(maze[1])
+                
+        if event.type == pygame.QUIT:
+            running = False
+    
+    if not (gameHandler.is_game_over() or shared_queue.empty()):
+
+        mVector = shared_queue.get()
+        player.move(mVector)
+        # Removing debuffs by expiring their's duration
+        gameHandler.reduce_debuffs()
+        if gameStats[2][0] == 0:
+            gameHandler.remove_debuffs(player)
+        # Applying debuffs in case of rough request
+        if mVector == [0, 0]:
+            gameHandler.apply_debuffs(player, maze, 3)
+        # Applying debuffs in case of running against walls
+        if gameHandler.check_wall(player.currentPosition):
+            player.move([-mVector[0], -mVector[1]])
+            for i in range(gameStats[0][1]):
+                gameHandler.apply_debuffs(player, maze, 1)
+        # Showing end screen if finish arrived
+        if gameHandler.check_finish(player.currentPosition):
+            player.set_position([-1, -1])
+            gameHandler.end_game()
+            
+    gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
+    maze = gameStats[1]
+        
+    mazeWindow.update_screen(maze, player, gameStats[2][1])
+"""
+Programm finish
+"""
+mazeWindow.quit_screen()
+gameOver_event.set()
+=======
     #ready_for_input_event.set()
     #ready_for_input_event.clear()
     #
@@ -224,4 +309,5 @@ while running:
    
 screen.quit_screen()
 #gameOver_event.set()
+>>>>>>> src/Main.py
 input_thread.join()
