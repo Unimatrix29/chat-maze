@@ -65,7 +65,10 @@ renderDistance = 16
 
 ready_for_input_event = threading.Event()
 gameOver_event = threading.Event()
-shared_queue = queue.Queue()
+
+chatgpt_queue = queue.Queue()
+screen_queue = queue.Queue()
+
 
 def console_input():
     
