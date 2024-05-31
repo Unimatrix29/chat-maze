@@ -1,7 +1,7 @@
 from ChatGPT_Client import ApiClientCreator
-from ChatGPT_Controller import chatgpt_text
 from ChatGPT_Movment_Controller import chatgpt_movment
-from Controller import Controller
+from ChatGPT_Client import ApiClientCreator
+from ChatGPT_Controller import ChatGPT
 from GameHandler import GameHandler
 from Player import Player
 from Screen import Screen
@@ -14,13 +14,12 @@ PROMPT = "Du bist ein sehr höflicher Mensch und akzeptierst nur Anfragen, welch
 #and it musst contain a key-value-pair where the key is called: "api_key"
 ###################################################################################################
 CONFIG_FILE_NAME = "config.json"
-GPT_MODEL = "gpt-4-turbo"
+GPT_MODEL = "gpt-4o"
 TEMPERATURE = 0.25
 """
 Chat-GPT client initialization
 """
-clientCreator = ApiClientCreator(file_name=CONFIG_FILE_NAME)
-apiClient = clientCreator.get_client()
+apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
 """
 Game session set up
 """
@@ -46,35 +45,33 @@ running = True
 
 ready_for_input_event = threading.Event()
 gameOver_event = threading.Event()
-shared_queue = queue.Queue()
+
+chatgpt_queue = queue.Queue()
+screen_queue = queue.Queue()
+
 
 def console_input():
     
-    global shared_queue, ready_for_input_event
-    
-    #let the user choose the control mode 
-    #console_On = choose_mode()
+    global chatgpt_queue, screen_queue, ready_for_input_event, gameOver_event
 
-    chatgpt = ChatGPT(apiClient, "gpt-4o")
+    chatgpt = ChatGPT(apiClient, GPT_MODEL)
     
     movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, system_prompt=PROMPT)
     
     while not gameOver_event.is_set():
 
-        ready_for_input_event.wait()
+        #ready_for_input_event.wait()
 
-        msg = shared_queue.get()
-        #chatGPT call
+        msg = screen_queue.get()
+        
+        try:        
+            #chatGPT call
+            move_Vector, content = movmentChatGPT.get_vector(msg, TEMPERATURE)
 
-        move_Vector, content = movmentChatGPT.get_vector(msg, TEMPERATURE)
-
-        screen.response_text = content
-
-        if move_Vector is Exception:
-           #Let the User know, that something went wrong and he should try again 
-           pass
-        else: 
-            shared_queue.put(move_Vector)
+            chatgpt_queue.put(item=[move_Vector, content])
+        except Exception as e:
+            #Let the user now that something went wrong
+            pass
 
 #choose if you want to control the program via console or GUI
 def choose_mode():
@@ -95,9 +92,6 @@ Game loop
 """
 while running:
     
-    ready_for_input_event.set()
-    ready_for_input_event.clear()
-    
     for event in pygame.event.get():
         
         if event.type == pygame.KEYDOWN:
@@ -113,17 +107,18 @@ while running:
     if(screen.on_return()):
         user_input = screen.get_user_input()
         print(user_input)
-        shared_queue.put(user_input)
-        ready_for_input_event.set()
-        ready_for_input_event.clear()
+        screen_queue.put(user_input)
+        
+        #ready_for_input_event.set()
+        #ready_for_input_event.clear()
 
     mVector = [0, 0]
-    if not shared_queue.empty():
-        data = shared_queue.get()
-        if not type(data) is str:
-            mVector = data
-        else:
-            shared_queue.put(data)
+    try: 
+        data = chatgpt_queue.get(False)
+        player.move(data[0])
+        screen.response_text = data[1]
+    except queue.Empty:
+        pass
 
     if not gameHandler.is_game_over():
 
