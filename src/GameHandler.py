@@ -68,12 +68,12 @@ class GameHandler():
         self.debuffDuration = self.difficulty[2]
     
     def random_move(self, player, maze):
-        randOption = random.randint(0, 4)
+        randOption = random.randint(0, 3)
         mVector = self.moves[randOption]
         player.move(mVector)
         while self.check_wall(player.currentPosition):
             player.move([-mVector[0], -mVector[1]])
-            randOption = random.randint(0, 4)
+            randOption = random.randint(0, 3)
             mVector = self.moves[randOption]
             player.move(mVector)
     
