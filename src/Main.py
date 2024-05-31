@@ -115,7 +115,7 @@ while running:
     mVector = [0, 0]
     try: 
         data = chatgpt_queue.get(False)
-        player.move(data[0])
+        mVector = data[0]
         screen.response_text = data[1]
     except queue.Empty:
         pass
@@ -128,7 +128,7 @@ while running:
         if gameStats[2][0] == 0:
             gameHandler.remove_debuffs(player)
         # Applying debuffs in case of rough request
-        if mVector == [0, 0]:
+        if mVector == [-1, -1]:
             gameHandler.apply_debuffs(player, maze, 3)
         # Applying debuffs in case of running against walls
         if gameHandler.check_wall(player.currentPosition):
