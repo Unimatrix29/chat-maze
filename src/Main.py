@@ -19,8 +19,7 @@ TEMPERATURE = 0.25
 """
 Chat-GPT client initialization
 """
-clientCreator = ApiClientCreator(file_name=CONFIG_FILE_NAME)
-apiClient = clientCreator.get_client()
+apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
 """
 Game session set up
 """
