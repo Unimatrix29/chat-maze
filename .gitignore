@@ -1,0 +1,4 @@
+**/*.pyc
+**/*.mp3
+**/*.wav
+src/config.json
