@@ -83,20 +83,19 @@ def console_input():
     
     while not gameOver_event.is_set():
 
-        ready_for_input_event.wait()
+        #ready_for_input_event.wait()
 
-        msg = shared_queue.get()
-        #chatGPT call
+        msg = screen_queue.get()
+        
+        try:        
+            #chatGPT call
+            move_Vector, content = movmentChatGPT.get_vector(msg, TEMPERATURE)
 
-        move_Vector, content = movmentChatGPT.get_vector(msg, TEMPERATURE)
+            chatgpt_queue.put(item=[move_Vector, content])
+        except Exception as e:
+            #Let the user now that something went wrong
+            pass
 
-        screen.response_text = content
-
-        if move_Vector is Exception:
-           #Let the User know, that something went wrong and he should try again 
-           pass
-        else: 
-            shared_queue.put(move_Vector)
 
 
 #choose if you want to control the program via console or GUI
@@ -208,23 +207,23 @@ while running:
     #        
     #mazeWindow.update_screen(maze, player, renderDistance)
     screen.update_screen(maze, player)
+    
     if(screen.on_return()):
         user_input = screen.get_user_input()
         print(user_input)
-        shared_queue.put(user_input)
-        ready_for_input_event.set()
-        ready_for_input_event.clear()
+        screen_queue.put(user_input)
+        
+        #ready_for_input_event.set()
+        #ready_for_input_event.clear()
 
-    if not shared_queue.empty():
-        data = shared_queue.get()
-        if not type(data) is str:
-            player.move(data)
-        else:
-            shared_queue.put(data)
-    #player.move(vector)
+    try: 
+        data = chatgpt_queue.get(False)
+        player.move(data[0])
+        screen.response_text = data[1]
+    except queue.Empty:
+        pass
     
-
-   
+    
 screen.quit_screen()
 #gameOver_event.set()
 input_thread.join()
