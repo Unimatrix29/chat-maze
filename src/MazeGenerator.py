@@ -1,5 +1,5 @@
-import random
 import math
+import random
 
 class MazeGenerator():
 
@@ -244,6 +244,13 @@ class MazeGenerator():
         if preset_id in self.PRESET_LIBRARY:
             return self.PRESET_LIBRARY[preset_id]
         return self.PRESET_LIBRARY["maze_0"]
+    
+    def get_random_preset(self, difficulty = 1):
+        mazePreset = f"maze_{difficulty}.{random.randint(1, 1)}.0"
+        if mazePreset in self.PRESET_LIBRARY:
+            return self.PRESET_LIBRARY[mazePreset]
+        return self.PRESET_LIBRARY["maze_0"]
+
     """
     Rotates maze by 90° counter clockwise
     """
