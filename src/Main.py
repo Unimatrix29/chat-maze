@@ -72,12 +72,9 @@ screen_queue = queue.Queue()
 
 def console_input():
     
-    global shared_queue, ready_for_input_event
-    
-    #let the user choose the control mode 
-    #console_On = choose_mode()
+    global chatgpt_queue, screen_queue, ready_for_input_event, gameOver_event
 
-    chatgpt = ChatGPT(apiClient, "gpt-4o")
+    chatgpt = ChatGPT(apiClient, GPT_MODEL)
     
     movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, system_prompt=PROMPT)
     
