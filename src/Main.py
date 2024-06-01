@@ -91,19 +91,7 @@ input_thread.start()
 Game loop
 """
 while running:
-    
-    for event in pygame.event.get():
         
-        if event.type == pygame.KEYDOWN:
-            # Game restart by pressing R key (Problem with maze reseting)
-            if event.key == pygame.K_r:
-                pass
-                # maze = startMaze
-                # player.set_position(maze[1])
-                
-        if event.type == pygame.QUIT:
-            running = False
-    
     if(screen.on_return()):
         user_input = screen.get_user_input()
         print(user_input)
@@ -124,7 +112,8 @@ while running:
 
         player.move(mVector)
         # Removing debuffs by expiring their's duration
-        gameHandler.reduce_debuffs()
+        if not mVector == [0, 0]:
+            gameHandler.reduce_debuffs()
         if gameStats[2][0] == 0:
             gameHandler.remove_debuffs(player)
         # Applying debuffs in case of rough request
@@ -133,15 +122,14 @@ while running:
         # Applying debuffs in case of running against walls
         if gameHandler.check_wall(player.currentPosition):
             player.move([-mVector[0], -mVector[1]])
-            for i in range(gameStats[0][1]):
-                gameHandler.apply_debuffs(player, maze, 1)
+            gameHandler.apply_debuffs(player, maze, 1)
         # Showing end screen if finish arrived
         if gameHandler.check_finish(player.currentPosition):
             player.set_position([-1, -1])
             gameHandler.end_game()
             
-    gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
-    maze = gameStats[1]
+        gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
+        maze = gameStats[1]
         
     screen.update_screen(maze, player, gameStats[2][1])
 """
