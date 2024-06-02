@@ -1,5 +1,5 @@
 from MazeGenerator import MazeGenerator 
-import random
+import random, time
 """
 GameHandler class implies debuffing functionality
 and selecting difficulty
@@ -115,6 +115,20 @@ class GameHandler():
     """
     def get_game_stats(self):
         return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance]]
+    """
+    Restarts and resets the session depending on request
+    """
+    def restart_game(self, player, resetRequest = False):
+        if resetRequest:
+            self.set_level()
+        
+        self.maze = self.mazeGenerator.get_preset(self.preset)
+        self.remove_debuffs(player)
+        self.debuffDuration = 0
+        self.gameOver = False
+        player.set_position(self.maze[1])
+        
+        time.sleep(0.5)
     """
     Finishes the session depending on end event
     """
