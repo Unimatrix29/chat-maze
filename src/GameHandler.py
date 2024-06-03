@@ -127,7 +127,7 @@ class GameHandler():
         self.debuffDuration = 0
         self.gameOver = False
         player.set_position(self.maze[1])
-        
+        # Sleep to avoid call spamming while reset keys are pressed
         time.sleep(0.5)
     """
     Finishes the session depending on end event
