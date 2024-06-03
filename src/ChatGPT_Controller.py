@@ -110,15 +110,14 @@ class ChatGPT():
         
     def construct_message(self, userInput, system_prompt):
         #format user and system prompt for api 
-        userPrompt = {"content": userInput, "role": "user"}
         system_prompt = {"content": system_prompt, "role": "system"}
-
+            
+        self.set_history("user" , userInput)
+        
         #construct message for api call 
         message = []
         message.append(system_prompt)
-        if history is not None:
-            message.append(history)
-        message.append(userPrompt)
+        message.extend(self._history)
         
         return message  
 
