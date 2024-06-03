@@ -25,13 +25,13 @@ class ChatGPT():
     def text_to_text(self, message, temperature=1):
         #try api call, return response object 
         try:
-            response = self.client.chat.completions.create(
+            textResponse = self.client.chat.completions.create(
                 model=self.gpt_model,
                 messages=message,
                 temperature=temperature
             ) 
             
-            return response
+            return textResponse
         except openai.APIError as e:
             print(e)
             raise e
@@ -39,26 +39,31 @@ class ChatGPT():
     
     def text_to_audio(self, text, voice="onyx", model="tts-1"):
         try:
-            response = self.client.audio.speech.create(
+            audioResponse = self.client.audio.speech.create(
                 model=model,
                 voice=voice,
                 input=text,
                 response_format="mp3",
             )
             
-            with open(self.file_tts_out, "wb") as audio_file:
-                for chunk in response.iter_bytes(chunk_size=1024):
-                    if chunk:
-                        audio_file.write(chunk)
-                        
+            self.write_audio_to_file(audioResponse)
+               
         except openai.APIError as e:
             print("Api call failed!")
             print(e)
             raise e 
-        except Exception as e:
-            print(e)
-            raise e
     
+    
+    def write_audio_to_file(self, audio_data):
+        try:
+            with open(self.file_tts_out, "wb") as audio_file:
+                for chunk in audio_data.iter_bytes(chunk_size=1024):
+                    if chunk:
+                        audio_file.write(chunk)
+        except Exception as e: 
+            print(f"Failed to write to audio file!")
+            print(e)
+        
     
     def audio_to_text(self, prompt="", model ="whisper-1"):
         try:
