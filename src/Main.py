@@ -50,7 +50,7 @@ chatgpt_queue = queue.Queue()
 screen_queue = queue.Queue()
 
 
-def console_input():
+def get_chatgpt_response():
     
     global chatgpt_queue, screen_queue, ready_for_input_event, gameOver_event
 
@@ -85,8 +85,8 @@ def choose_mode():
         else:
             pass
         
-input_thread = threading.Thread(target=console_input)
-input_thread.start()
+chatGPT_thread = threading.Thread(target=get_chatgpt_response)
+chatGPT_thread.start()
 """
 Game loop
 """
@@ -137,4 +137,4 @@ Programm finish
 """
 screen.quit_screen()
 gameOver_event.set()
-input_thread.join()
+chatGPT_thread.join()
