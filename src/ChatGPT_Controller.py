@@ -7,11 +7,11 @@ from scipy.io.wavfile import write as wavWrite
 
 class ChatGPT():
 
-    def __init__(self, client, gpt_model="gpt-3.5-turbo", ):
+    def __init__(self, client, max_history_length=5, gpt_model="gpt-3.5-turbo", ):
         self.client = client
         self.gpt_model = gpt_model
         self._history = []
-        self.max_length = 5
+        self.max_length = max_history_length
         
         self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
         self.file_tts_out.resolve()
