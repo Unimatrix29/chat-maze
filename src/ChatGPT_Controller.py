@@ -121,8 +121,16 @@ class ChatGPT():
         message.append(userPrompt)
         
         return message  
+
     
-                            
+    def set_history(self, role, value):
+        self._history.append({"content": value, "role": role})
+        
+        if len(self._history) >= self.max_length * 2:
+            del self._history[0]
+            del self._history[0]  
+    
+                  
     def TTS_test(self, text=None):
         import pygame
         
