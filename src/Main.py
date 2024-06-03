@@ -17,10 +17,6 @@ CONFIG_FILE_NAME = "config.json"
 GPT_MODEL = "gpt-4o"
 TEMPERATURE = 0.25
 """
-Chat-GPT client initialization
-"""
-apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
-"""
 Game session set up
 """
 gameHandler = GameHandler()
@@ -50,9 +46,14 @@ chatgpt_queue = queue.Queue()
 screen_queue = queue.Queue()
 
 
-def console_input():
+def get_chatgpt_response():
     
     global chatgpt_queue, screen_queue, ready_for_input_event, gameOver_event
+    
+    """
+    Chat-GPT client initialization
+    """
+    apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
 
     chatgpt = ChatGPT(apiClient, GPT_MODEL)
     
@@ -85,8 +86,8 @@ def choose_mode():
         else:
             pass
         
-input_thread = threading.Thread(target=console_input)
-input_thread.start()
+chatGPT_thread = threading.Thread(target=get_chatgpt_response)
+chatGPT_thread.start()
 """
 Game loop
 """
@@ -137,4 +138,4 @@ Programm finish
 """
 screen.quit_screen()
 gameOver_event.set()
-input_thread.join()
+chatGPT_thread.join()

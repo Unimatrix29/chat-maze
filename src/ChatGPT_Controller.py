@@ -7,31 +7,35 @@ from scipy.io.wavfile import write as wavWrite
 
 class ChatGPT():
 
-    def __init__(self, client, gpt_model="gpt-3.5-turbo", ):
+    def __init__(self, client, max_history_length=5, gpt_model="gpt-3.5-turbo", ):
         self.client = client
         self.gpt_model = gpt_model
+        self._history = []
+        self.max_length = max_history_length
+        
         self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
         self.file_tts_out.resolve()
-        self.file_user_input = Path(__file__).parent / "user_input.wav"
-        self.file_user_input.resolve()
         
-        if not self.file_user_input.exists():
-            self.file_user_input.touch()
-            
         if not self.file_tts_out.exists():
             self.file_tts_out.touch()
-
+        
+        self.file_user_input = Path(__file__).parent / "user_input.wav"
+        self.file_user_input.resolve()
+                     
+        if not self.file_user_input.exists():
+            self.file_user_input.touch()
+        
 
     def text_to_text(self, message, temperature=1):
         #try api call, return response object 
         try:
-            response = self.client.chat.completions.create(
+            textResponse = self.client.chat.completions.create(
                 model=self.gpt_model,
                 messages=message,
                 temperature=temperature
             ) 
             
-            return response
+            return textResponse
         except openai.APIError as e:
             print(e)
             raise e
@@ -39,26 +43,20 @@ class ChatGPT():
     
     def text_to_audio(self, text, voice="onyx", model="tts-1"):
         try:
-            response = self.client.audio.speech.create(
+            audioResponse = self.client.audio.speech.create(
                 model=model,
                 voice=voice,
                 input=text,
                 response_format="mp3",
             )
             
-            with open(self.file_tts_out, "wb") as audio_file:
-                for chunk in response.iter_bytes(chunk_size=1024):
-                    if chunk:
-                        audio_file.write(chunk)
-                        
+            self.write_audio_to_file(audioResponse)
+               
         except openai.APIError as e:
             print("Api call failed!")
             print(e)
             raise e 
-        except Exception as e:
-            print(e)
-            raise e
-    
+        
     
     def audio_to_text(self, prompt="", model ="whisper-1"):
         try:
@@ -98,45 +96,40 @@ class ChatGPT():
         
         wavWrite(self.file_user_input, samplerate, data) 
         
-    @staticmethod
-    def construct_message(userInput, system_prompt, history=None):
+    
+    def write_audio_to_file(self, audio_data):
+        try:
+            with open(self.file_tts_out, "wb") as audio_file:
+                for chunk in audio_data.iter_bytes(chunk_size=1024):
+                    if chunk:
+                        audio_file.write(chunk)
+        except Exception as e: 
+            print(f"Failed to write to audio file!")
+            print(e)
+        
+        
+    def construct_message(self, userInput, system_prompt):
         #format user and system prompt for api 
-        userPrompt = {"content": userInput, "role": "user"}
         system_prompt = {"content": system_prompt, "role": "system"}
-
+            
+        self.set_history("user" , userInput)
+        
         #construct message for api call 
         message = []
         message.append(system_prompt)
-        if history is not None:
-            message.append(history)
-        message.append(userPrompt)
+        message.extend(self._history)
         
         return message  
-        
+
     
-    #def get_user_audio_with_dynamic_duration(self):
-        samplerate = 44100
-        channel = 1
-        maxDuration = 5
-        inputStream = sd.InputStream(samplerate=samplerate, channels=channel)
+    def set_history(self, role, value):
+        self._history.append({"content": value, "role": role})
         
-        print("#" * 80)
-        print("Speak now...")
-        print("Press Ctrl+C to stop recording")
-        print("#" * 80)
-        
-        inputStream.start()
-        
-        data = inputStream.read(samplerate * maxDuration)[0]
-        print("\nRecording stoped")
-        
-        inputStream.stop()
-        inputStream.close()   
-        
-        
-        wavWrite(self.file_user_input, samplerate, data)
+        if len(self._history) >= self.max_length * 2:
+            del self._history[0]
+            del self._history[0]  
     
-                            
+                  
     def TTS_test(self, text=None):
         import pygame
         
@@ -154,17 +147,3 @@ class ChatGPT():
             pygame.time.Clock().tick(10)
         
         pygame.mixer.music.unload()    
-
-           
-#Test for speech to text and text to speech
-#if __name__ == "__main__":  
-#    from ChatGPT_Client import ApiClientCreator
-#    import pygame
-#    client = ApiClientCreator.get_client()
-#    
-#    chatgpt = ChatGPT(client, q)
-#    
-#    #chatgpt.test()
-#    
-#    #chatgpt.get_user_audio_with_dynamic_duration()
-#    chatgpt.get_user_audio()
