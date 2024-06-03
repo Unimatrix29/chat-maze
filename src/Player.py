@@ -2,7 +2,7 @@ class Player:
     def __init__(self, maze):
         self.activeMaze = maze
 
-        self.currentPosition = maze[1]
+        self.currentPosition = [maze[1][0], maze[1][1]]
         self.isHidden = False
 
     """

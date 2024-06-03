@@ -40,6 +40,8 @@ class Screen():
         
         self.return_text = False
         self.active = True
+        self.restart_request = False
+        self.reset_request = False
 
     def draw_wall(self, surface, color, x, y, size, maze):
         half = size / 2
@@ -85,7 +87,12 @@ class Screen():
                         self.user_text = self.user_text[:-1]
                     else:
                         self.user_text += event.unicode
-
+            #Reset keys listener
+            if not self.active:            
+                keys = pygame.key.get_pressed()
+                self.restart_request = keys[pygame.K_r]
+                self.reset_request = self.restart_request and keys[pygame.K_LCTRL]
+            
             self.screen.fill((0,0,0))
             
             
@@ -137,3 +144,9 @@ class Screen():
     def write_response(self):
         self.text_response = self.response_font.render("ChatGPT: " + self.response_text, True, self.PINK)
         self.screen.blit(self.text_response,(10, 580))
+    
+    def has_restart_request(self):
+        return self.restart_request
+    
+    def has_reset_request(self):
+        return self.reset_request
