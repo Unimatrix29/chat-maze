@@ -14,15 +14,15 @@ class ChatGPT():
         self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
         self.file_tts_out.resolve()
         
-        if not self.file_user_input.exists():
-            self.file_user_input.touch()
+        if not self.file_tts_out.exists():
+            self.file_tts_out.touch()
         
         self.file_user_input = Path(__file__).parent / "user_input.wav"
         self.file_user_input.resolve()
-                    
-        if not self.file_tts_out.exists():
-            self.file_tts_out.touch()
-
+                     
+        if not self.file_user_input.exists():
+            self.file_user_input.touch()
+        
 
     def text_to_text(self, message, temperature=1):
         #try api call, return response object 
