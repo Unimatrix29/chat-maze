@@ -17,10 +17,6 @@ CONFIG_FILE_NAME = "config.json"
 GPT_MODEL = "gpt-4o"
 TEMPERATURE = 0.25
 """
-Chat-GPT client initialization
-"""
-apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
-"""
 Game session set up
 """
 gameHandler = GameHandler()
@@ -53,6 +49,11 @@ screen_queue = queue.Queue()
 def get_chatgpt_response():
     
     global chatgpt_queue, screen_queue, ready_for_input_event, gameOver_event
+    
+    """
+    Chat-GPT client initialization
+    """
+    apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
 
     chatgpt = ChatGPT(apiClient, GPT_MODEL)
     
