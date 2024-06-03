@@ -105,8 +105,8 @@ class ChatGPT():
             print(f"Failed to write to audio file!")
             print(e)
         
-    @staticmethod
-    def construct_message(userInput, system_prompt, history=None):
+        
+    def construct_message(self, userInput, system_prompt):
         #format user and system prompt for api 
         userPrompt = {"content": userInput, "role": "user"}
         system_prompt = {"content": system_prompt, "role": "system"}
