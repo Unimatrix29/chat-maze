@@ -12,19 +12,19 @@ class chatgpt_movment():
         
     def get_vector(self, userInput, temperature):
         
-        message = ChatGPT.construct_message(userInput, self.sysPrompt)
+        message = self.chatgpt.construct_message(userInput, self.sysPrompt)                
         
         #api response 
         try:
             chat_response = self.chatgpt.text_to_text(message, temperature)
         except Exception as e: 
-            return e 
+            raise e 
         
-        #get api response content
-        content = chat_response.lower().strip()
+        content = chat_response.choices[0].message.content.lower().strip()
+        self.chatgpt.set_history( "assistant", content)
+        
         print("ChatGPT: " + content)
-        
-
+    
         #convert to vector
         if content in self.move_options:
             move_vector = self.move_options[content]
