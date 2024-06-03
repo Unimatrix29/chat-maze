@@ -28,16 +28,15 @@ gameHandler = GameHandler()
 gameHandler.set_level()
 gameStats = gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
 
-startMaze = gameStats[1]
 maze = gameStats[1]
 
-player = Player(startMaze)
+player = Player(maze)
 """
 Output window set up
 """
 screen = Screen()
 screen.setup_screen()
-screen.update_screen(startMaze, player)
+screen.update_screen(maze, player)
 """
 Game loop variables
 """
@@ -132,6 +131,14 @@ while running:
         maze = gameStats[1]
         
     screen.update_screen(maze, player, gameStats[2][1])
+    
+    if screen.has_restart_request():
+        resetRequest = screen.has_reset_request()
+        
+        line = "Game reset" if resetRequest else "Session restart"
+        print(line)
+        
+        gameHandler.restart_game(player, resetRequest)
 """
 Programm finish
 """
