@@ -33,7 +33,7 @@ class ChatGPT():
                 temperature=temperature
             ) 
             
-            return textResponse.choices[0].message.content
+            return textResponse
         except openai.APIError as e:
             print(e)
             raise e
