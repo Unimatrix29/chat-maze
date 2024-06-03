@@ -112,29 +112,6 @@ class ChatGPT():
         message.append(userPrompt)
         
         return message  
-        
-    
-    #def get_user_audio_with_dynamic_duration(self):
-        samplerate = 44100
-        channel = 1
-        maxDuration = 5
-        inputStream = sd.InputStream(samplerate=samplerate, channels=channel)
-        
-        print("#" * 80)
-        print("Speak now...")
-        print("Press Ctrl+C to stop recording")
-        print("#" * 80)
-        
-        inputStream.start()
-        
-        data = inputStream.read(samplerate * maxDuration)[0]
-        print("\nRecording stoped")
-        
-        inputStream.stop()
-        inputStream.close()   
-        
-        
-        wavWrite(self.file_user_input, samplerate, data)
     
                             
     def TTS_test(self, text=None):
@@ -154,17 +131,3 @@ class ChatGPT():
             pygame.time.Clock().tick(10)
         
         pygame.mixer.music.unload()    
-
-           
-#Test for speech to text and text to speech
-#if __name__ == "__main__":  
-#    from ChatGPT_Client import ApiClientCreator
-#    import pygame
-#    client = ApiClientCreator.get_client()
-#    
-#    chatgpt = ChatGPT(client, q)
-#    
-#    #chatgpt.test()
-#    
-#    #chatgpt.get_user_audio_with_dynamic_duration()
-#    chatgpt.get_user_audio()
