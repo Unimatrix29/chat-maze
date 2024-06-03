@@ -10,6 +10,8 @@ class ChatGPT():
     def __init__(self, client, gpt_model="gpt-3.5-turbo", ):
         self.client = client
         self.gpt_model = gpt_model
+        self._history = []
+        self.max_length = 5
         
         self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
         self.file_tts_out.resolve()
