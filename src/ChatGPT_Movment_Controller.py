@@ -21,7 +21,7 @@ class chatgpt_movment():
             return e 
         
         #get api response content
-        content = chat_response.choices[0].message.content.lower().strip()
+        content = chat_response.lower().strip()
         print("ChatGPT: " + content)
         
 

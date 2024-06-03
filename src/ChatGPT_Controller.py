@@ -10,14 +10,16 @@ class ChatGPT():
     def __init__(self, client, gpt_model="gpt-3.5-turbo", ):
         self.client = client
         self.gpt_model = gpt_model
+        
         self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
         self.file_tts_out.resolve()
-        self.file_user_input = Path(__file__).parent / "user_input.wav"
-        self.file_user_input.resolve()
         
         if not self.file_user_input.exists():
             self.file_user_input.touch()
-            
+        
+        self.file_user_input = Path(__file__).parent / "user_input.wav"
+        self.file_user_input.resolve()
+                    
         if not self.file_tts_out.exists():
             self.file_tts_out.touch()
 
@@ -31,7 +33,7 @@ class ChatGPT():
                 temperature=temperature
             ) 
             
-            return textResponse
+            return textResponse.choices[0].message.content
         except openai.APIError as e:
             print(e)
             raise e
@@ -52,17 +54,6 @@ class ChatGPT():
             print("Api call failed!")
             print(e)
             raise e 
-    
-    
-    def write_audio_to_file(self, audio_data):
-        try:
-            with open(self.file_tts_out, "wb") as audio_file:
-                for chunk in audio_data.iter_bytes(chunk_size=1024):
-                    if chunk:
-                        audio_file.write(chunk)
-        except Exception as e: 
-            print(f"Failed to write to audio file!")
-            print(e)
         
     
     def audio_to_text(self, prompt="", model ="whisper-1"):
@@ -102,6 +93,17 @@ class ChatGPT():
         print("Recording finished!")
         
         wavWrite(self.file_user_input, samplerate, data) 
+        
+    
+    def write_audio_to_file(self, audio_data):
+        try:
+            with open(self.file_tts_out, "wb") as audio_file:
+                for chunk in audio_data.iter_bytes(chunk_size=1024):
+                    if chunk:
+                        audio_file.write(chunk)
+        except Exception as e: 
+            print(f"Failed to write to audio file!")
+            print(e)
         
     @staticmethod
     def construct_message(userInput, system_prompt, history=None):
