@@ -1,5 +1,5 @@
 from MazeGenerator import MazeGenerator 
-import random, time
+import json, random, time
 """
 GameHandler class implies debuffing functionality
 and selecting difficulty
@@ -17,6 +17,8 @@ class GameHandler():
             "HARD":
             [3, 3, 10]
             }
+        self.PROMPT = ""
+        
         self.moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
         self.debuffDuration = 0
         self.renderDistance = 16
@@ -33,6 +35,7 @@ class GameHandler():
     def set_level(self):
         options = ["TEST", "EASY", "NORMAL", "HARD"]
         level = ""
+        # Waiting for correct input (int)
         while not (isinstance(level, int)):
             try:
                 level = int(input("Choose difficulty:\n 1 - Easy | 2 - Normal | 3 - Hard\n"))
@@ -41,12 +44,27 @@ class GameHandler():
                     raise ValueError
             except ValueError:
                 print("Bad input >:( Enter the number of chosen difficulty")
-                
-        self.difficulty = self.DIFFICULTY[options[int(level)]]
-
+        # Translating user input into difficulty preset
+        userChoice = options[int(level)]
+        self.difficulty = self.DIFFICULTY[userChoice]
+        
+        # Getting a random preset
         # preset = f"maze_{self.difficulty[0]}.{random.randint(1, 5)}.0"
         self.preset = f"maze_{self.difficulty[0]}.1.0"
         self.maze = self.mazeGenerator.get_preset(self.preset)
+        # Chosing a random ChatGPT prompt
+        with open('src/prompts.json') as json_file:
+            data = json.load(json_file)
+            # {"Name" : "Prompt"} pair
+            # item = data[userChoice][random.choice([0, 1])]
+            item = data[userChoice][0]
+            key = list(item.keys())[0]
+            
+            self.PROMPT = item[key]
+            
+        print(f"Selected difficulty: {userChoice}")
+        print(f"Getting maze preset: {self.preset}")
+        print(f"In this round ChatGPT is {key}")
     """
     Returns True if player stucks against a wall
     """
@@ -116,6 +134,11 @@ class GameHandler():
     def get_game_stats(self):
         return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance]]
     """
+    Returns session's status (finish arrived)
+    """
+    def is_game_over(self):
+        return self.gameOver
+    """
     Restarts and resets the session depending on request
     """
     def restart_game(self, player, resetRequest = False):
@@ -139,7 +162,7 @@ class GameHandler():
             self.maze = self.mazeGenerator.get_preset("FINISH")
             self.gameOver = True
     """
-    Returns session's status (finish arrived)
+    Returns selected prompt
     """
-    def is_game_over(self):
-        return self.gameOver
+    def get_prompt(self):
+        return self.PROMPT
