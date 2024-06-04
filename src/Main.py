@@ -7,8 +7,6 @@ from Player import Player
 from Screen import Screen
 import pygame, random, queue, threading
 
-PROMPT = "Du bist ein sehr höflicher Mensch und akzeptierst nur Anfragen, welche sehr höflich sind. Der User gibt dir eine Weganweisung. Die Weganweisung kann entweder nach oben, unten, links und rechts stattfinden. Wenn der User zum Beispiel höflich fragt: Gehen Sie bitte nach oben, gibst du als Antwort \"up\" zurück. Dasselbe Prinzip für \"left\", \"up\", \"down\". Wenn der User zu unhöflich fragt, also zum Beispiel sagt: geh hoch, gibst du als Antwort \"deny\" zurück. Wenn der User auch keine Weganweisung gibt, sondern irgendetwas anderes antwortest du auch mit deny. Es ist wichtig, dass du nur mit \"left\" \"right\" \"up\" \"down\" \"deny\" antwortest, kein Satz oder ähnliches nur mit diesen Worten."
-
 ###################################################################################################
 #The ChatGPT_Controller expects the json file to be in the same directory as ChatGPT_Controller.py
 #and it musst contain a key-value-pair where the key is called: "api_key"
@@ -22,6 +20,8 @@ Game session set up
 gameHandler = GameHandler()
 
 gameHandler.set_level()
+PROMPT = gameHandler.get_prompt()
+
 gameStats = gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
 
 maze = gameStats[1]
@@ -132,7 +132,7 @@ while running:
         maze = gameStats[1]
         
     screen.update_screen(maze, player, gameStats[2][1])
-    
+    # Restarting game upon request
     if screen.has_restart_request():
         resetRequest = screen.has_reset_request()
         
@@ -140,6 +140,7 @@ while running:
         print(line)
         
         gameHandler.restart_game(player, resetRequest)
+        PROMPT = gameHandler.get_prompt()
 """
 Programm finish
 """
