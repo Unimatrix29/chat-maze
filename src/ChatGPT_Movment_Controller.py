@@ -26,10 +26,13 @@ class chatgpt_movment():
         print("ChatGPT: " + content)
     
         #convert to vector
-        if content in self.move_options:
-            move_vector = self.move_options[content]
+        direction = content.split('|')[0]
+        if direction in self.move_options:
+            move_vector = self.move_options[direction]
         else:
             move_vector = self.move_options["deny"]
             
         return move_vector, content
-        
+    
+    def update_prompt(self, PROMPT):
+        self.sysPrompt = PROMPT

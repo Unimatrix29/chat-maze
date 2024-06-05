@@ -47,7 +47,7 @@ screen_queue = queue.Queue()
 
 def get_chatgpt_response():
     
-    global chatgpt_queue, screen_queue, ready_for_input_event, gameOver_event
+    global chatgpt_queue, screen_queue, ready_for_input_event, gameOver_event, PROMPT
     
     """
     Chat-GPT client initialization
@@ -55,7 +55,7 @@ def get_chatgpt_response():
     apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
 
     chatgpt = ChatGPT(apiClient, GPT_MODEL)
-    
+        
     movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, system_prompt=PROMPT)
     
     while not gameOver_event.is_set():
@@ -64,6 +64,7 @@ def get_chatgpt_response():
 
         msg = screen_queue.get()
         
+        movmentChatGPT.update_prompt(PROMPT)
         try:        
             #chatGPT call
             move_Vector, content = movmentChatGPT.get_vector(msg, TEMPERATURE)
