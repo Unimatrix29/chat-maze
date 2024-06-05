@@ -17,7 +17,17 @@ class GameHandler():
             "HARD":
             [3, 3, 10]
             }
+        self.PROMPT_LIBRARY = {}
         self.PROMPT = ""
+        # Loading prompt library and chosing a start ChatGPT prompt
+        with open('src/prompts.json') as json_file:
+            data = json.load(json_file)
+            self.PROMPT_LIBRARY = data
+            # {"Name" : "Prompt"} pair
+            item = data["TEST"][0]
+            key = "TEST"
+            
+            self.PROMPT = item[key]
         
         self.moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
         self.debuffDuration = 0
@@ -49,20 +59,17 @@ class GameHandler():
         userChoice = options[int(level)]
         self.difficulty = self.DIFFICULTY[userChoice]
         
-        # Getting a random preset
+        # Getting a (random) maze preset
         # preset = f"maze_{self.difficulty[0]}.{random.randint(1, 5)}.0"
         self.startMazePreset = f"maze_{self.difficulty[0]}.1.0"
         self.activeMazePreset = f"maze_{self.difficulty[0]}.1.0"
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
-        # Chosing a random ChatGPT prompt
-        with open('src/prompts.json') as json_file:
-            data = json.load(json_file)
-            # {"Name" : "Prompt"} pair
-            # item = data[userChoice][random.choice([0, 1])]
-            item = data[userChoice][0]
-            key = list(item.keys())[0]
-            
-            self.PROMPT = item[key]
+        # Getting a (random) GPT prompt
+        # promptNumber = random.choice([0, 1])
+        promptNumber = 0
+        key = list(self.PROMPT_LIBRARY[userChoice][promptNumber].keys())[0]
+        # self.PROMPT = self.PROMPT_LIBRARY[userChoice][promptNumber][key]
+        self.PROMPT = self.PROMPT_LIBRARY[userChoice][promptNumber][key]
             
         print(f"Selected difficulty: {userChoice}")
         print(f"Getting maze preset: {self.startMazePreset}")
