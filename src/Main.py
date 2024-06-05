@@ -120,8 +120,11 @@ while running:
         # Applying debuffs in case of rough request
         if mVector == [-1, -1]:
             gameHandler.apply_debuffs(player, maze, 3)
+        # Going to the next section (start point) of the maze preset
+        if gameHandler.check_border(player.currentPosition):
+            gameHandler.switch_section(player)
         # Applying debuffs in case of running against walls
-        if gameHandler.check_wall(player.currentPosition):
+        elif gameHandler.check_wall(player.currentPosition):
             player.move([-mVector[0], -mVector[1]])
             gameHandler.apply_debuffs(player, maze, 1)
         # Showing end screen if finish arrived

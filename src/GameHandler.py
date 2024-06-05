@@ -24,7 +24,8 @@ class GameHandler():
         self.renderDistance = 16
         
         self.mazeGenerator = MazeGenerator()
-        self.preset = "maze_0"
+        self.startMazePreset = ""
+        self.activeMazePreset = ""
         self.maze = []
         self.difficulty = self.DIFFICULTY["TEST"]
         
@@ -50,8 +51,9 @@ class GameHandler():
         
         # Getting a random preset
         # preset = f"maze_{self.difficulty[0]}.{random.randint(1, 5)}.0"
-        self.preset = f"maze_{self.difficulty[0]}.1.0"
-        self.maze = self.mazeGenerator.get_preset(self.preset)
+        self.startMazePreset = f"maze_{self.difficulty[0]}.1.0"
+        self.activeMazePreset = f"maze_{self.difficulty[0]}.1.0"
+        self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         # Chosing a random ChatGPT prompt
         with open('src/prompts.json') as json_file:
             data = json.load(json_file)
@@ -63,7 +65,7 @@ class GameHandler():
             self.PROMPT = item[key]
             
         print(f"Selected difficulty: {userChoice}")
-        print(f"Getting maze preset: {self.preset}")
+        print(f"Getting maze preset: {self.startMazePreset}")
         print(f"In this round ChatGPT is {key}")
     """
     Returns True if player stucks against a wall
@@ -75,6 +77,11 @@ class GameHandler():
     """
     def check_finish(self, playerPosition):
         return self.maze[2] == playerPosition
+    """
+    Rerurns True if player went out of maze (16x16 area)
+    """
+    def check_border(self, playerPosition):
+        return not (playerPosition[0] in range(0, 16) and playerPosition[1] in range(0, 16))
     
     def maze_rotation(self, player, maze):
         self.maze = self.mazeGenerator.rotate_maze(maze)
@@ -139,13 +146,28 @@ class GameHandler():
     def is_game_over(self):
         return self.gameOver
     """
+    Switches maze preset's section according to preset connection setting (graph)
+    """
+    def switch_section(self, player):
+        graph = self.mazeGenerator.get_preset_connections(self.activeMazePreset)
+        # Last int of a preset
+        startSection = self.activeMazePreset[-1]
+        playerPosition = player.currentPosition;
+        # bridge = [target_section, start_point (active section), end_point]
+        for bridge in graph[startSection]:
+            if bridge[1] == playerPosition:
+                self.activeMazePreset = f"{self.activeMazePreset[:-1]}{bridge[0]}"
+                self.maze = self.mazeGenerator.get_preset(self.activeMazePreset)
+                
+                player.set_position(bridge[2])
+    """
     Restarts and resets the session depending on request
     """
     def restart_game(self, player, resetRequest = False):
         if resetRequest:
             self.set_level()
         
-        self.maze = self.mazeGenerator.get_preset(self.preset)
+        self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         self.remove_debuffs(player)
         self.debuffDuration = 0
         self.gameOver = False
