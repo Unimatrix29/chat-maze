@@ -32,6 +32,7 @@ class GameHandler():
         self.moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
         self.debuffDuration = 0
         self.renderDistance = 16
+        self.rotationCounter = 0
         
         self.mazeGenerator = MazeGenerator()
         self.startMazePreset = ""
@@ -91,9 +92,10 @@ class GameHandler():
         return not (playerPosition[0] in range(0, 16) and playerPosition[1] in range(0, 16))
     
     def maze_rotation(self, player, maze):
-        self.maze = self.mazeGenerator.rotate_maze(maze)
-        newPosition = [player.currentPosition[1], 15 - player.currentPosition[0]]
+        self.maze = self.mazeGenerator.rotate_maze(self.maze)
+        newPosition = player.get_rotated_position()
         player.set_position(newPosition)
+        self.rotationCounter = (self.rotationCounter + 1) % 4
     
     def blind(self, player = 0, maze = 0):
         self.renderDistance = 4
@@ -159,7 +161,8 @@ class GameHandler():
         graph = self.mazeGenerator.get_preset_connections(self.activeMazePreset)
         # Last int of a preset
         startSection = self.activeMazePreset[-1]
-        playerPosition = player.currentPosition;
+        # Stock player position (in non-rotated maze)
+        playerPosition = player.get_rotated_position((4 - self.rotationCounter) % 4);
         # bridge = [target_section, start_point (active section), end_point]
         for bridge in graph[startSection]:
             if bridge[1] == playerPosition:
@@ -167,6 +170,9 @@ class GameHandler():
                 self.maze = self.mazeGenerator.get_preset(self.activeMazePreset)
                 
                 player.set_position(bridge[2])
+
+        for i in range(self.rotationCounter):
+            self.maze_rotation(player, self.maze)
     """
     Restarts and resets the session depending on request
     """
@@ -177,6 +183,7 @@ class GameHandler():
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         self.remove_debuffs(player)
         self.debuffDuration = 0
+        self.rotationCounter = 0
         self.gameOver = False
         player.set_position(self.maze[1])
         # Sleep to avoid call spamming while reset keys are pressed
