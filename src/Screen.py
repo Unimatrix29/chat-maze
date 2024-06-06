@@ -70,11 +70,6 @@ class Screen():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.input_rect.collidepoint(event.pos):
-                    self.active = True
-                else:
-                    self.active = False
             if event.type == pygame.KEYDOWN:
                 if self.active:
                     if event.key == pygame.K_RETURN:
@@ -93,39 +88,31 @@ class Screen():
                 self.restart_request = keys[pygame.K_r]
                 self.reset_request = self.restart_request and keys[pygame.K_LCTRL]
             
-            self.screen.fill((0,0,0))
+        self.screen.fill((0,0,0))
             
             
-            #Maze
-            for y in range(self.GRID_SIZE):
-                for x in range(self.GRID_SIZE):
-                    isRendered = (x - render < player.currentPosition[0] < x + render) and (y - render < player.currentPosition[1] < y + render)
-                    if not isRendered:
-                        continue
-                    
-                    if maze[0][y][x] == 1:
-                        pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
-                    #self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
-
-                    if player.currentPosition == [x, y] and (not player.isHidden):
-                        pygame.draw.rect(self.screen, self.GREY, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
-
-                #for y in range(self.GRID_SIZE):
-                #    for x in range(self.GRID_SIZE):
-                        
-
-                if self.active:
-                    self.color = self.color_active
-                else:
-                    self.color = self.color_passive
-
-            pygame.draw.rect(self.screen, self.color, self.input_rect, 2)
-            self.text_surface = self.base_font.render(self.user_text, True, (255,255,255))
-            self.text_title = self.title_font.render(self.title_text, True, self.color)
-            self.screen.blit(self.text_surface,(self.input_rect.x + 5, self.input_rect.y + 5))
-            self.screen.blit(self.text_title,(10, 520))
-            self.input_rect.w = max(10, self.text_surface.get_width() + 20)
-            self.write_response()
+        #Maze
+        for y in range(self.GRID_SIZE):
+            for x in range(self.GRID_SIZE):
+                isRendered = (x - render < player.currentPosition[0] < x + render) and (y - render < player.currentPosition[1] < y + render)
+                if not isRendered:
+                    continue
+                
+                if maze[0][y][x] == 1:
+                    pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+                #self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
+                if player.currentPosition == [x, y] and (not player.isHidden):
+                    pygame.draw.rect(self.screen, self.color_active, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+            #for y in range(self.GRID_SIZE):
+            #    for x in range(self.GRID_SIZE):
+                
+        pygame.draw.rect(self.screen, self.color, self.input_rect, 2)
+        self.text_surface = self.base_font.render(self.user_text, True, (255,255,255))
+        self.text_title = self.title_font.render(self.title_text, True, self.color)
+        self.screen.blit(self.text_surface,(self.input_rect.x + 5, self.input_rect.y + 5))
+        self.screen.blit(self.text_title,(10, 520))
+        self.input_rect.w = max(10, self.text_surface.get_width() + 20)
+        self.write_response()
 
         pygame.display.flip()
 
