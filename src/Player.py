@@ -15,6 +15,7 @@ class Player:
         self.currentPosition[0] = point[0]
         self.currentPosition[1] = point[1]
     """
+    Returns currentPosition after rotating it by [count] times
     """
     def get_rotated_position(self, count = 1):
         rotatedPosition = [self.currentPosition[0], self.currentPosition[1]]

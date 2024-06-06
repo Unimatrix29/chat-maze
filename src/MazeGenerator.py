@@ -13,7 +13,7 @@ class MazeGenerator():
         maze = [[[random.choice([0, 1]) for _ in range(16)] for _ in range(16)], [0,0], [15, 15]]
         return maze
 
-    def get_preset(self, preset_id: str = "maze_0.0.0"):
+    def get_preset(self, preset_id: str = "maze_0.1.0"):
         section = preset_id[-1]
         preset = preset_id[:-2]
 

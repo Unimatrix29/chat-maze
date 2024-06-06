@@ -25,7 +25,7 @@ class GameHandler():
             self.PROMPT_LIBRARY = data
             # {"Name" : "Prompt"} pair
             item = data["TEST"][0]
-            key = "TEST"
+            key = "TEST 1"
             
             self.PROMPT = item[key]
         
