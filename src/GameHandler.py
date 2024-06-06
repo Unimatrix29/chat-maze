@@ -181,6 +181,7 @@ class GameHandler():
             self.set_level()
         
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
+        self.activeMazePreset = str(self.startMazePreset)
         self.remove_debuffs(player)
         self.debuffDuration = 0
         self.rotationCounter = 0
@@ -195,7 +196,8 @@ class GameHandler():
         if case == "DEATH":
             pass
         if case == "FINISH":
-            self.maze = self.mazeGenerator.get_preset("FINISH")
+            preset = f"FINISH.0.{random.randint(0, 1)}"
+            self.maze = self.mazeGenerator.get_preset(preset)
             self.gameOver = True
     """
     Returns selected prompt
