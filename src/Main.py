@@ -5,7 +5,8 @@ from ChatGPT_Controller import ChatGPT
 from GameHandler import GameHandler
 from Player import Player
 from Screen import Screen
-import pygame, random, queue, threading
+import pygame, random, queue, threading, time
+import numpy as np
 
 ###################################################################################################
 #The ChatGPT_Controller expects the json file to be in the same directory as ChatGPT_Controller.py
@@ -72,7 +73,7 @@ def get_chatgpt_response():
             chatgpt_queue.put(item=[move_Vector, content])
         except Exception as e:
             #Let the user now that something went wrong
-            pass
+            print(e)
 
 #choose if you want to control the program via console or GUI
 def choose_mode():
@@ -110,8 +111,12 @@ while running:
         pass
 
     if not gameHandler.is_game_over():
+        # Running till a wall
+        while not gameHandler.check_wall(list(np.array(player.currentPosition) + np.array(mVector))) and mVector != [0, 0]:
+            player.move(mVector)
+            screen.update_screen(maze, player, gameStats[2][1])
+            time.sleep(0.3)
 
-        player.move(mVector)
         # Removing debuffs by expiring their's duration
         if not mVector == [0, 0]:
             gameHandler.reduce_debuffs()
