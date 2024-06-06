@@ -65,6 +65,7 @@ class GameHandler():
         self.startMazePreset = f"maze_{self.difficulty[0]}.1.0"
         self.activeMazePreset = f"maze_{self.difficulty[0]}.1.0"
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
+        
         # Getting a (random) GPT prompt
         # promptNumber = random.choice([0, 1])
         promptNumber = 0
@@ -92,10 +93,11 @@ class GameHandler():
         return not (playerPosition[0] in range(0, 16) and playerPosition[1] in range(0, 16))
     
     def maze_rotation(self, player, maze):
+        self.rotationCounter = (self.rotationCounter + 1) % 4
         self.maze = self.mazeGenerator.rotate_maze(self.maze)
+        
         newPosition = player.get_rotated_position()
         player.set_position(newPosition)
-        self.rotationCounter = (self.rotationCounter + 1) % 4
     
     def blind(self, player = 0, maze = 0):
         self.renderDistance = 4
@@ -129,9 +131,11 @@ class GameHandler():
             4: ["TELEPORT", self.teleport],
             5: ["INVISIBILITY", self.set_invisible]
             }
+        
         for i in range(self.difficulty[1]):
             choice = random.randint(case, case + 2)
             DEBUFF[choice][1](player, maze)
+            
             print(f"{DEBUFF[choice][0]} were applied")
     """
     Reducing debuff duration by 1 (every step)
@@ -159,10 +163,12 @@ class GameHandler():
     """
     def switch_section(self, player):
         graph = self.mazeGenerator.get_preset_connections(self.activeMazePreset)
+        
         # Last int of a preset
         startSection = self.activeMazePreset[-1]
         # Stock player position (in non-rotated maze)
         playerPosition = player.get_rotated_position((4 - self.rotationCounter) % 4);
+        
         # bridge = [target_section, start_point (active section), end_point]
         for bridge in graph[startSection]:
             if bridge[1] == playerPosition:
@@ -182,20 +188,25 @@ class GameHandler():
         
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         self.activeMazePreset = str(self.startMazePreset)
+        
         self.remove_debuffs(player)
         self.debuffDuration = 0
         self.rotationCounter = 0
+        
         self.gameOver = False
+        
         player.set_position(self.maze[1])
         # Sleep to avoid call spamming while reset keys are pressed
         time.sleep(0.5)
     """
     Finishes the session depending on end event
     """
-    def end_game(self, case = "FINISH"):
+    def end_game(self, player, case = "FINISH"):
         if case == "DEATH":
             pass
         if case == "FINISH":
+            player.hide(True)
+            
             preset = f"FINISH.0.{random.randint(0, 1)}"
             self.maze = self.mazeGenerator.get_preset(preset)
             self.gameOver = True
