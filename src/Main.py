@@ -129,8 +129,7 @@ while running:
             gameHandler.apply_debuffs(player, maze, 1)
         # Showing end screen if finish arrived
         if gameHandler.check_finish(player.currentPosition):
-            player.set_position([-1, -1])
-            gameHandler.end_game()
+            gameHandler.end_game(player)
             
         gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
         maze = gameStats[1]
