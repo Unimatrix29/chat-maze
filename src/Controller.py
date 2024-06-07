@@ -1,58 +1,76 @@
 import random 
-import tkinter as tk
-from tkinter import ttk
-from tkinter import *
+import pygame, sys
 
 class Controller():
 
 
     def __init__(self):
-        self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
-        # for test purposes only
-        self.input_switch = False
-        self.input = "deny"
+        pass
 
-    def console_input(self):
-        direction_request = input("Type a direction: ")
-        if direction_request.strip().lower() in self.move_options:
-            return self.move_options[direction_request]
-        else:
-            return self.move_options["deny"]
+    def setup_screen(self):
+        pygame.init()
+        self.clock = pygame.time.Clock()
+        self.screen = pygame.display.set_mode([800, 200])
+        pygame.display.set_caption("text_input")
+        self.base_font = pygame.font.Font(None, 32)
+        self.user_text = ""
+
+        self.input_rect = pygame.Rect(10, 10, 140, 32)
+        self.color_active = pygame.Color('limegreen')
+        self.color_passive = pygame.Color('gray15')
+        self.color = self.color_passive
+        self.message = ""
         
-    #def wait_for_input(self):
+        self.return_text = False
+        self.active = True
 
-             
-    def setup_prompt_window(self):
-        #setup input window
-        self.window = tk.Tk()
-        self.window.geometry("500x100")
-        self.window.title("PROMPT INPUT")
-  
-    def init_prompt_window(self):
+    def update_screen(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.input_rect.collidepoint(event.pos):
+                    self.active = True
+                else:
+                    self.active = False
+            if event.type == pygame.KEYDOWN:
+                if self.active:
+                    if event.key == pygame.K_RETURN:
+                        self.return_text = True
+                        self.message = self.user_text
+                        self.user_text = ""
+                        break
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.user_text = self.user_text[:-1]
+                    else:
+                        self.user_text += event.unicode
 
-        # setup prompt input field
-        e = Entry(self.window, width = 50, bg = "lightgreen", borderwidth = 5)
-        e.pack()
+            self.screen.fill((0,0,0))
 
-        def submit_text():
-            mylabel = Label(self.window, text = "prompt: " + e.get())
-            mylabel.pack()
-
-            if e.get() in self.move_options:
-                print(self.move_options[e.get()])
+            if self.active:
+                self.color = self.color_active
             else:
-                print("wrong input")
-            
+                self.color = self.color_passive
 
-            e.delete(0, 'end')
+            pygame.draw.rect(self.screen, self.color, self.input_rect, 2)
+            self.text_surface = self.base_font.render(self.user_text, True, (255,255,255))
+            self.screen.blit(self.text_surface,(self.input_rect.x + 5, self.input_rect.y + 5))
+            self.input_rect.w = max(10, self.text_surface.get_width() + 10)
+            pygame.display.flip()
+            #clock.tick(60)
 
-        # setup submit button
-        submit_button = ttk.Button(self.window, text = "send prompt to ChatGPT", command = submit_text)
-        submit_button.pack(expand = True)
+    def get_user_input(self):
+        return self.message
+    
+    def on_return(self):
+        if self.return_text:
+            self.return_text = False
+            return True
+        return False
+    
 
-        
 
-        
 
     
 
