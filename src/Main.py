@@ -8,6 +8,24 @@ from Screen import Screen
 import queue, threading, time
 import numpy as np
 
+"""
+Game session set up
+"""
+gameHandler = GameHandler()
+gameHandler.set_level()
+PROMPT = gameHandler.get_prompt()
+gameStats = gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
+maze = gameStats[1]
+player = Player(maze)
+"""
+Output window set up
+"""
+screen = Screen()
+screen.setup_screen()
+screen.update_screen(maze, player)
+
+
+
 def get_chatgpt_response():
 
     ###################################################################################################
@@ -45,101 +63,82 @@ def get_chatgpt_response():
             #Let the user now that something went wrong
             print(e)
 
+"""
+Game loop variables
+"""
+running = True
+ready_for_input_event = threading.Event()
+gameOver_event = threading.Event()
+chatgpt_queue = queue.Queue()
+screen_queue = queue.Queue()
+chatGPT_thread = threading.Thread(target=get_chatgpt_response)
+chatGPT_thread.start()
 
 
-def main():
-    """
-    Game session set up
-    """
-    gameHandler = GameHandler()
-    gameHandler.set_level()
-    PROMPT = gameHandler.get_prompt()
-    gameStats = gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
-    maze = gameStats[1]
-    player = Player(maze)
-    """
-    Output window set up
-    """
-    screen = Screen()
-    screen.setup_screen()
-    screen.update_screen(maze, player)
-    """
-    Game loop variables
-    """
-    running = True
-    ready_for_input_event = threading.Event()
-    gameOver_event = threading.Event()
-    chatgpt_queue = queue.Queue()
-    screen_queue = queue.Queue()
-    chatGPT_thread = threading.Thread(target=get_chatgpt_response)
-    chatGPT_thread.start()
-    """
-    Game loop
-    """
-    while running:
+
+"""
+Game loop
+"""
+while running:
+        
+    if(screen.on_return()):
+        user_input = screen.get_user_input()
+        print(user_input)
+        screen_queue.put(user_input)
+        
+        #ready_for_input_event.set()
+        #ready_for_input_event.clear()
+
+    mVector = [0, 0]
+    try: 
+        data = chatgpt_queue.get(False)
+        mVector = data[0]
+        screen.response_text = data[1]
+    except queue.Empty:
+        pass
+
+    if not gameHandler.is_game_over():
+        # Running till a wall
+        while not gameHandler.check_wall(list(np.array(player.currentPosition) + np.array(mVector))) and mVector != [0, 0]:
+            player.move(mVector)
+            screen.update_screen(maze, player, gameStats[2][1])
+            time.sleep(0.3)
+
+        # Removing debuffs by expiring their's duration
+        if not mVector == [0, 0]:
+            gameHandler.reduce_debuffs()
+        if gameStats[2][0] == 0:
+            gameHandler.remove_debuffs(player)
+        # Applying debuffs in case of rough request
+        if mVector == [-1, -1]:
+            gameHandler.apply_debuffs(player, maze, 3)
+        # Going to the next section (start point) of the maze preset
+        if gameHandler.check_border(player.currentPosition):
+            gameHandler.switch_section(player)
+        # Applying debuffs in case of running against walls
+        elif gameHandler.check_wall(player.currentPosition):
+            player.move([-mVector[0], -mVector[1]])
+            gameHandler.apply_debuffs(player, maze, 1)
+        # Showing end screen if finish arrived
+        if gameHandler.check_finish(player.currentPosition):
+            gameHandler.end_game(player)
             
-        if(screen.on_return()):
-            user_input = screen.get_user_input()
-            print(user_input)
-            screen_queue.put(user_input)
-            
-            #ready_for_input_event.set()
-            #ready_for_input_event.clear()
-
-        mVector = [0, 0]
-        try: 
-            data = chatgpt_queue.get(False)
-            mVector = data[0]
-            screen.response_text = data[1]
-        except queue.Empty:
-            pass
-
-        if not gameHandler.is_game_over():
-            # Running till a wall
-            while not gameHandler.check_wall(list(np.array(player.currentPosition) + np.array(mVector))) and mVector != [0, 0]:
-                player.move(mVector)
-                screen.update_screen(maze, player, gameStats[2][1])
-                time.sleep(0.3)
-
-            # Removing debuffs by expiring their's duration
-            if not mVector == [0, 0]:
-                gameHandler.reduce_debuffs()
-            if gameStats[2][0] == 0:
-                gameHandler.remove_debuffs(player)
-            # Applying debuffs in case of rough request
-            if mVector == [-1, -1]:
-                gameHandler.apply_debuffs(player, maze, 3)
-            # Going to the next section (start point) of the maze preset
-            if gameHandler.check_border(player.currentPosition):
-                gameHandler.switch_section(player)
-            # Applying debuffs in case of running against walls
-            elif gameHandler.check_wall(player.currentPosition):
-                player.move([-mVector[0], -mVector[1]])
-                gameHandler.apply_debuffs(player, maze, 1)
-            # Showing end screen if finish arrived
-            if gameHandler.check_finish(player.currentPosition):
-                gameHandler.end_game(player)
-                
-            gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
-            maze = gameStats[1]
-            
-        screen.update_screen(maze, player, gameStats[2][1])
-        # Restarting game upon request
-        if screen.has_restart_request():
-            resetRequest = screen.has_reset_request()
-            
-            line = "Game reset" if resetRequest else "Session restart"
-            print(line)
-            
-            gameHandler.restart_game(player, resetRequest)
-            PROMPT = gameHandler.get_prompt()
-    """
-    Programm finish
-    """
-    screen.quit_screen()
-    gameOver_event.set()
-    chatGPT_thread.join()
-
-
-if __name__ == "__main__":
-    main()
+        gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
+        maze = gameStats[1]
+        
+    screen.update_screen(maze, player, gameStats[2][1])
+    # Restarting game upon request
+    if screen.has_restart_request():
+        resetRequest = screen.has_reset_request()
+        
+        line = "Game reset" if resetRequest else "Session restart"
+        print(line)
+        
+        gameHandler.restart_game(player, resetRequest)
+        PROMPT = gameHandler.get_prompt()
+"""
+Programm finish
+"""
+screen.quit_screen()
+gameOver_event.set()
+chatGPT_thread.join()
