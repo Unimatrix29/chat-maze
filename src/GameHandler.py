@@ -1,5 +1,8 @@
 from MazeGenerator import MazeGenerator 
 import json, random, time
+from pathlib import Path
+homedir=str(Path.cwd().parents[0]) 
+
 """
 GameHandler class implies debuffing functionality
 and selecting difficulty
@@ -20,7 +23,7 @@ class GameHandler():
         self.PROMPT_LIBRARY = {}
         self.PROMPT = ""
         # Loading prompt library and chosing a start ChatGPT prompt
-        with open('src/prompts.json') as json_file:
+        with open(f'{homedir}/src/prompts.json') as json_file:
             data = json.load(json_file)
             self.PROMPT_LIBRARY = data
             # {"Name" : "Prompt"} pair

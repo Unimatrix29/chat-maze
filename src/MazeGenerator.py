@@ -1,10 +1,12 @@
 import json, math, random
+from pathlib import Path
+homedir=str(Path.cwd().parents[0]) 
 
 class MazeGenerator():
 
     def __init__(self):
         self.PRESET_LIBRARY = []
-        with open('src/maze_presets.json') as preset_file:
+        with open(f'{homedir}/src/maze_presets.json') as preset_file:
             data = json.load(preset_file)
             
             self.PRESET_LIBRARY = data

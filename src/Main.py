@@ -5,25 +5,10 @@ from ChatGPT_Controller import ChatGPT
 from GameHandler import GameHandler
 from Player import Player
 from Screen import Screen
-import pygame, random, queue, threading, time
+import queue, threading, time
 import numpy as np
 
-<<<<<<< HEAD
 
-window = Screen()
-mazeGenerator = MazeGenerator()
-window.setup_screen()
-maze = mazeGenerator.get_preset("maze_2")
-player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window) 
-
-
-
-
-
-controller = Controller()
-
-
-=======
 ###################################################################################################
 #The ChatGPT_Controller expects the json file to be in the same directory as ChatGPT_Controller.py
 #and it musst contain a key-value-pair where the key is called: "api_key"
@@ -38,19 +23,10 @@ gameHandler = GameHandler()
 
 gameHandler.set_level()
 PROMPT = gameHandler.get_prompt()
->>>>>>> main
+
 
 gameStats = gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
 
-<<<<<<< HEAD
-
-#player.move(maze[1])
-
-
-
-
-while True:
-=======
 maze = gameStats[1]
 
 player = Player(maze)
@@ -80,7 +56,6 @@ def get_chatgpt_response():
     Chat-GPT client initialization
     """
     apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
->>>>>>> main
 
     chatgpt = ChatGPT(apiClient, GPT_MODEL)
         
@@ -101,18 +76,6 @@ def get_chatgpt_response():
         except Exception as e:
             #Let the user now that something went wrong
             print(e)
-
-#choose if you want to control the program via console or GUI
-def choose_mode():
-    while True:
-        choice = input("Wie wollen sie mit chtaGPT interagieren? Für die Konsole drücken sie [C]. Für die GUI drücken sie [G]: ").strip().lower()
-
-        if choice == "g":
-            return False
-        elif choice == "c":
-            return True
-        else:
-            pass
         
 chatGPT_thread = threading.Thread(target=get_chatgpt_response)
 chatGPT_thread.start()
