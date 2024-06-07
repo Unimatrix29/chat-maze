@@ -8,6 +8,22 @@ from Screen import Screen
 import pygame, random, queue, threading, time
 import numpy as np
 
+<<<<<<< HEAD
+
+window = Screen()
+mazeGenerator = MazeGenerator()
+window.setup_screen()
+maze = mazeGenerator.get_preset("maze_2")
+player = Player(mazeGenerator.PRESET_LIBRARY["maze_1"], window) 
+
+
+
+
+
+controller = Controller()
+
+
+=======
 ###################################################################################################
 #The ChatGPT_Controller expects the json file to be in the same directory as ChatGPT_Controller.py
 #and it musst contain a key-value-pair where the key is called: "api_key"
@@ -22,9 +38,19 @@ gameHandler = GameHandler()
 
 gameHandler.set_level()
 PROMPT = gameHandler.get_prompt()
+>>>>>>> main
 
 gameStats = gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
 
+<<<<<<< HEAD
+
+#player.move(maze[1])
+
+
+
+
+while True:
+=======
 maze = gameStats[1]
 
 player = Player(maze)
@@ -54,6 +80,7 @@ def get_chatgpt_response():
     Chat-GPT client initialization
     """
     apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
+>>>>>>> main
 
     chatgpt = ChatGPT(apiClient, GPT_MODEL)
         
