@@ -37,6 +37,7 @@ class ChatGPT():
             
             return textResponse
         except openai.APIError as e:
+            print("Text to text Api call failed!")
             print(e)
             raise e
         
@@ -49,13 +50,13 @@ class ChatGPT():
                 input=text,
                 response_format="mp3",
             )
-            
-            self.write_audio_to_file(audioResponse)
                
         except openai.APIError as e:
-            print("Api call failed!")
+            print("Text to Audio Api call failed!")
             print(e)
-            raise e 
+            raise e
+        
+        self.write_audio_to_file(audioResponse)
         
     
     def audio_to_text(self, prompt="", model ="whisper-1"):
@@ -70,11 +71,12 @@ class ChatGPT():
                 )
                 
             return transcript.text
-        except openai.APIError as e:
-            print("Api call failed!")
+        except OSError as e: 
+            print(f"Failed to open file {self.file_user_input}")
             print(e)
-            raise e 
-        except Exception as e:
+            raise e
+        except openai.APIError as e:
+            print("Audio to text Api call failed!")
             print(e)
             raise e
         
@@ -83,18 +85,25 @@ class ChatGPT():
         samplerate = 44100 
         
         print("Speak now...")
-        data = sd.rec(int(samplerate * duration), samplerate, channels=2)
         
-        while duration > 0:
-            print(duration)
-            duration = duration - 1
-            time.sleep(1)
-                    
-        sd.wait()
-        
-        print("Recording finished!")
-        
-        wavWrite(self.file_user_input, samplerate, data) 
+        try:
+            data = sd.rec(int(samplerate * duration), samplerate, channels=2)
+
+            while duration > 0:
+                print(duration)
+                duration = duration - 1
+                time.sleep(1)
+
+            sd.wait()
+
+            print("Recording finished!")
+
+
+            wavWrite(self.file_user_input, samplerate, data) 
+        except OSError as e: 
+            print("Failed to recored audio!")
+            print(e)
+            raise e
         
     
     def write_audio_to_file(self, audio_data):
@@ -103,9 +112,10 @@ class ChatGPT():
                 for chunk in audio_data.iter_bytes(chunk_size=1024):
                     if chunk:
                         audio_file.write(chunk)
-        except Exception as e: 
+        except OSError as e: 
             print(f"Failed to write to audio file!")
             print(e)
+            raise e
         
         
     def construct_message(self, userInput, system_prompt):
