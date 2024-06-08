@@ -8,9 +8,8 @@ from functools import partial
 
 class ChatGPT():
 
-    def __init__(self, client, gpt_model="gpt-3.5-turbo", max_history_length=5):
+    def __init__(self, client, max_history_length=5):
         self.client = client
-        self.gpt_model = gpt_model
         self._history = []
         self.max_length = max_history_length
         
@@ -31,7 +30,7 @@ class ChatGPT():
         #try api call, return response object 
         try:
             textResponse = self.client.chat.completions.create(
-                model=self.gpt_model,
+                model=model,
                 messages=message,
                 temperature=temperature
             ) 
