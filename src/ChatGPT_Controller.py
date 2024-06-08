@@ -138,9 +138,28 @@ class ChatGPT():
         if len(self._history) >= self.max_length * 2:
             del self._history[0]
             del self._history[0]  
+   
+   
+    @staticmethod
+    def __error_handling(method):
+        count = 0
+       
+        while count < 3:
+            try:
+                result = method()
+                return result
+            except openai.APIError as e: 
+                count += 1
+                exception = e
+            except OSError as e:
+                raise e
+            
+            time.sleep(3)
+        
+        raise exception
     
                   
-    def TTS_test(self, text=None):
+    def __TTS_test(self, text=None):
         import pygame
         
         TTS = ChatGPT(self.client)
