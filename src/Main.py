@@ -5,7 +5,7 @@ from ChatGPT_Controller import ChatGPT
 from GameHandler import GameHandler
 from Player import Player
 from Screen import Screen
-import queue, threading, time
+import queue, threading, time, openai
 import numpy as np
 
 """
@@ -43,9 +43,9 @@ def get_chatgpt_response():
     """
     apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
 
-    chatgpt = ChatGPT(apiClient, GPT_MODEL)
+    chatgpt = ChatGPT(apiClient)
         
-    movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, system_prompt=PROMPT)
+    movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, system_prompt=PROMPT, model=GPT_MODEL)
     
     while not gameOver_event.is_set():
 
@@ -59,9 +59,15 @@ def get_chatgpt_response():
             move_Vector, content = movmentChatGPT.get_vector(msg, TEMPERATURE)
 
             chatgpt_queue.put(item=[move_Vector, content])
-        except Exception as e:
+        except OSError as e:
+            #This is a huge problem. We most certainly need to restart the entire program.
+            print("FATAL ERROR")
+            pass
+        except openai.APIError as e: 
             #Let the user now that something went wrong
-            print(e)
+            print("API CALL ERROR")
+            pass
+            
 
 """
 Game loop variables

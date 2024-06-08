@@ -4,8 +4,9 @@ from ChatGPT_Controller import ChatGPT
 
 class chatgpt_movment():
     
-    def __init__(self, chatgpt, system_prompt):
+    def __init__(self, chatgpt, system_prompt, model):
         self.chatgpt = chatgpt
+        self.model = model
         self.sysPrompt = system_prompt
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
         
@@ -16,8 +17,8 @@ class chatgpt_movment():
         
         #api response 
         try:
-            chat_response = self.chatgpt.text_to_text(message, temperature)
-        except Exception as e: 
+            chat_response = self.chatgpt.text_to_text(message, temperature, self.model)
+        except openai.APIError as e: 
             raise e 
         
         content = chat_response.choices[0].message.content.lower().strip()
