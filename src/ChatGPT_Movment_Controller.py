@@ -18,7 +18,7 @@ class chatgpt_movment():
         #api response 
         try:
             chat_response = self.chatgpt.text_to_text(message, temperature, self.model)
-        except Exception as e: 
+        except openai.APIError as e: 
             raise e 
         
         content = chat_response.choices[0].message.content.lower().strip()
