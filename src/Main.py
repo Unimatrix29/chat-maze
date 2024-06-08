@@ -45,7 +45,7 @@ def get_chatgpt_response():
 
     chatgpt = ChatGPT(apiClient)
         
-    movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, system_prompt=PROMPT)
+    movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, system_prompt=PROMPT, model=GPT_MODEL)
     
     while not gameOver_event.is_set():
 
