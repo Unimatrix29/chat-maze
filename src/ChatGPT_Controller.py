@@ -4,6 +4,7 @@ import time
 import sounddevice as sd
 from pathlib import Path
 from scipy.io.wavfile import write as wavWrite
+from functools import partial
 
 class ChatGPT():
 
@@ -26,7 +27,7 @@ class ChatGPT():
             self.file_user_input.touch()
         
 
-    def text_to_text(self, message, temperature=1):
+    def text_to_text(self, message, temperature=1, model="gpt-3.5-turbo", _retrie=False):
         #try api call, return response object 
         try:
             textResponse = self.client.chat.completions.create(
@@ -36,30 +37,41 @@ class ChatGPT():
             ) 
             
             return textResponse
+        except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
+            if _retrie:
+                raise e
+            ttt_partial = partial(self.text_to_text, message, temperature, model)
+            return ChatGPT.__error_handling(ttt_partial)
         except openai.APIError as e:
             print("Text to text Api call failed!")
             print(e)
-            raise e
+                    
         
     
-    def text_to_audio(self, text, voice="onyx", model="tts-1"):
+    def text_to_audio(self, text, voice="onyx", model="tts-1", _retrie=False):
         try:
             audioResponse = self.client.audio.speech.create(
                 model=model,
                 voice=voice,
                 input=text,
-                response_format="mp3",
+                response_format="wav",
             )
-               
+        except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
+            if _retrie:
+                raise e
+            tts_partial = partial(self.text_to_audio, text, voice, model)
+            ChatGPT.__error_handling(tts_partial)
         except openai.APIError as e:
             print("Text to Audio Api call failed!")
             print(e)
-            raise e
+            
         
         self.write_audio_to_file(audioResponse)
         
+        return True
+        
     
-    def audio_to_text(self, prompt="", model ="whisper-1"):
+    def audio_to_text(self, prompt="", model ="whisper-1", _retrie=False):   
         try:
             with open(self.file_user_input, "rb") as audio_file:
                 transcript = self.client.audio.transcriptions.create(
@@ -75,10 +87,14 @@ class ChatGPT():
             print(f"Failed to open file {self.file_user_input}")
             print(e)
             raise e
+        except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
+            if _retrie:
+                raise e
+            stt_partial = partial(self.audio_to_text, prompt, model)
+            return ChatGPT.__error_handling(stt_partial)  
         except openai.APIError as e:
             print("Audio to text Api call failed!")
             print(e)
-            raise e
         
     
     def get_user_audio(self, duration=10):
