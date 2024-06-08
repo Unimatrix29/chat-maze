@@ -61,9 +61,11 @@ def get_chatgpt_response():
             chatgpt_queue.put(item=[move_Vector, content])
         except OSError as e:
             #This is a huge problem. We most certainly need to restart the entire program.
+            print("FATAL ERROR")
             pass
         except openai.APIError as e: 
             #Let the user now that something went wrong
+            print("API CALL ERROR")
             pass
             
 
