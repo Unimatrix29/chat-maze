@@ -43,7 +43,7 @@ def get_chatgpt_response():
     """
     apiClient = ApiClientCreator.get_client(file_name=CONFIG_FILE_NAME)
 
-    chatgpt = ChatGPT(apiClient, GPT_MODEL)
+    chatgpt = ChatGPT(apiClient)
         
     movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, system_prompt=PROMPT)
     
