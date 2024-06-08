@@ -5,7 +5,7 @@ from ChatGPT_Controller import ChatGPT
 from GameHandler import GameHandler
 from Player import Player
 from Screen import Screen
-import queue, threading, time
+import queue, threading, time, openai
 import numpy as np
 
 """
@@ -59,9 +59,13 @@ def get_chatgpt_response():
             move_Vector, content = movmentChatGPT.get_vector(msg, TEMPERATURE)
 
             chatgpt_queue.put(item=[move_Vector, content])
-        except Exception as e:
+        except OSError as e:
+            #This is a huge problem. We most certainly need to restart the entire program.
+            pass
+        except openai.APIError as e: 
             #Let the user now that something went wrong
-            print(e)
+            pass
+            
 
 """
 Game loop variables
