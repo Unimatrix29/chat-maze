@@ -67,18 +67,15 @@ class GameHandler():
         self.difficulty = self.DIFFICULTY[userChoice]
         
         # Getting a (random) maze preset
-        # preset = f"maze_{self.difficulty[0]}.{random.randint(1, 5)}.0"
-        self.startMazePreset = f"maze_{self.difficulty[0]}.2.0"
-        self.activeMazePreset = f"maze_{self.difficulty[0]}.2.0"
+        preset = f"maze_{self.difficulty[0]}.{random.randint(1, 3)}.0"
+        self.startMazePreset = preset
+        self.activeMazePreset = preset
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         
         # Getting a (random) GPT prompt
-        # promptNumber = random.choice([0, 1])
-        promptNumber = 0
+        promptNumber = random.choice([0, 1])
         key = list(self.PROMPT_LIBRARY[userChoice][promptNumber].keys())[0]
-        # self.PROMPT = self.PROMPT_LIBRARY[userChoice][promptNumber][key]
-        # self.PROMPT = self.PROMPT_LIBRARY[userChoice][promptNumber][key]
-        self.PROMPT = self.PROMPT_LIBRARY["TEST"][promptNumber]["TEST 1"]
+        self.PROMPT = self.PROMPT_LIBRARY[userChoice][promptNumber][key]
             
         print(f"Selected difficulty: {userChoice}")
         print(f"Getting maze preset: {self.startMazePreset}")
