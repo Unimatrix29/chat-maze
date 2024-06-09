@@ -105,7 +105,7 @@ while running:
             # Showing end screen if finish arrived
             if gameHandler.check_finish(player.currentPosition):
                 gameHandler.end_game(player)
-                mVector = [0, 0]
+                break
                     
             nextStep = [player.currentPosition[0] + mVector[0], player.currentPosition[1] + mVector[1]]
             # Going to the next section
@@ -135,10 +135,6 @@ while running:
         # # Applying debuffs in case of rough request
         # if mVector == [-1, -1]:
         #     gameHandler.apply_debuffs(player, maze, 3)
-        # # Applying debuffs in case of running against walls
-        # if gameHandler.check_wall(player.currentPosition):
-        #     player.move([-mVector[0], -mVector[1]])
-        #     gameHandler.apply_debuffs(player, maze, 1)
             
         gameStats = gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
         maze = gameStats[1]
