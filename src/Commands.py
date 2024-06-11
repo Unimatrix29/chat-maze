@@ -8,6 +8,7 @@ class Command():
         self.screen = self.game.screen
         self.gameHandler = self.game.gameHandler
         self.player = self.game.player
+        self.chatgpt = self.game.chatgpt
 
         #self.chatgpt = chatgpt
         
@@ -93,4 +94,10 @@ class Command():
             print(e)
         
     def __get_help_txt(self):
-        pass
+        message = self.chatgpt.construct_message(userInput=self.game.prompt, system_prompt=self.help_prompt)
+        
+        chat_response = self.chatgpt.text_to_text(message=message, model="gpt-4o")
+        
+        content = chat_response.choices[0].message.content
+        
+        return content
