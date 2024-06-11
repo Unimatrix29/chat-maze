@@ -13,7 +13,7 @@ class Command():
         #self.chatgpt = chatgpt
         
         self.info_txt = "This is a info text, it texts infos"
-        self.help_txt = "This is a help texts , it texts hepls"
+        self.command_list = "This is a help texts , it texts hepls"
         
         self.help_prompt = ""
         
@@ -82,7 +82,7 @@ class Command():
             with open(display_texts_file, "r") as file:
                 data = json.load(file)
                 
-                self.help_txt = data["help_text"]
+                self.command_list = data["help_text"]
                 self.info_txt = data["info_text"]
                 self.help_prompt = data["help_prompt"]
         except FileNotFoundError as e: 
