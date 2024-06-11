@@ -10,9 +10,15 @@ class Command():
         self.game = game
         #self.chatgpt = chatgpt
         
-        
-        self.info_txt = self.__get_info_txt_from_json()
+        self.info_txt = ""
         self.help_txt = "This is a help texts , it texts hepls"
+        
+        self.help_prompt = ""
+        
+        self.__get_command_txt_from_json()
+        
+        
+
         
         self.commands = {
             "help"      :   self.__help,
@@ -64,7 +70,7 @@ class Command():
         pass
     
     
-    def __get_info_txt_from_json(self):
+    def __get_command_txt_from_json(self):
         display_texts_file = Path(__file__).parent / "command_texts.json"
         display_texts_file.resolve()
         
@@ -72,7 +78,8 @@ class Command():
             with open(file, "r") as file:
                 data = json.load(file)
                 
-                return data["info_text"]
+                self.info_txt = data["info_text"]
+                self.help_prompt = data["help_prompt"]
         except FileNotFoundError as e: 
             print("display_texts.json was not found")
             print(e)
