@@ -184,25 +184,6 @@ class GameHandler():
         for i in range(self.rotationCounter):
             self.maze_rotation(player, self.maze)
     """
-    Restarts and resets the session depending on request
-    """
-    def restart_game(self, player, resetRequest = False):
-        if resetRequest:
-            self.set_level()
-        
-        self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
-        self.activeMazePreset = str(self.startMazePreset)
-        
-        self.remove_debuffs(player)
-        self.debuffDuration = 0
-        self.rotationCounter = 0
-        
-        self.gameOver = False
-        
-        player.set_position(self.maze[1])
-        # Sleep to avoid call spamming while reset keys are pressed
-        time.sleep(0.5)
-    """
     Finishes the session depending on end event
     """
     def end_game(self, player, case = "FINISH"):
