@@ -65,7 +65,7 @@ class Command():
     
     
     def __get_info_txt_from_json(self):
-        display_texts_file = Path(__file__).parent / "display_texts.json"
+        display_texts_file = Path(__file__).parent / "command_texts.json"
         display_texts_file.resolve()
         
         try:
