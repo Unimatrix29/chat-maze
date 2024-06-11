@@ -1,3 +1,5 @@
+from ChatGPT_Client import ApiClientCreator
+from ChatGPT_Controller import ChatGPT
 from GameHandler import GameHandler
 from Commands import Command
 from Player import Player
@@ -8,6 +10,12 @@ import queue, threading, time
 class Game():
     
     def __init__(self):
+        ###################################################################################################
+        #The ChatGPT_Controller expects the json file to be in the same directory as ChatGPT_Controller.py
+        #and it musst contain a key-value-pair where the key is called: "api_key"
+        ###################################################################################################
+        config_file_name = "config.json"
+        
         """
         Game session set up
         """
@@ -20,11 +28,16 @@ class Game():
         self.maze = self.gameStats[1]
         self.player = Player(self.maze)
         
+        apiClient = ApiClientCreator.get_client(file_name=config_file_name)
+
+        self.chatgpt = ChatGPT(apiClient)
+        
         self.gameOver_event = threading.Event()
         self.screen_queue = queue.Queue()
         self.chatgpt_queue = queue.Queue()
         self.chatGPT_thread = threading.Thread(target=self.__get_chatgpt_response, kwargs={
-            "prompt"            : self.prompt
+            "chatgpt"   : self.chatgpt,
+            "prompt"    : self.prompt
         })
 
         """
@@ -116,26 +129,12 @@ class Game():
         self.__init__()
        
        
-    def __get_chatgpt_response(self, prompt):
+    def __get_chatgpt_response(self, chatgpt, prompt):
         from ChatGPT_Movment_Controller import chatgpt_movment
-        from ChatGPT_Client import ApiClientCreator
-        from ChatGPT_Controller import ChatGPT
         import openai
         
-        ###################################################################################################
-        #The ChatGPT_Controller expects the json file to be in the same directory as ChatGPT_Controller.py
-        #and it musst contain a key-value-pair where the key is called: "api_key"
-        ###################################################################################################
-        config_file_name = "config.json"
         gpt_model = "gpt-4o"
         temperatur = 0.25
-
-        """
-        Chat-GPT client initialization
-        """
-        apiClient = ApiClientCreator.get_client(file_name=config_file_name)
-
-        chatgpt = ChatGPT(apiClient)
 
         movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, model=gpt_model)
 
