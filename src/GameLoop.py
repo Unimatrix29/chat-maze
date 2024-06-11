@@ -108,6 +108,14 @@ class Game():
         self.gameOver_event.set()
         self.chatGPT_thread.join()
         
+        
+    def restart(self):
+        self.screen.quit_screen()
+        self.gameOver_event.set()
+        self.chatGPT_thread.join()
+        
+        self.__init__()
+       
        
     def __get_chatgpt_response(self, prompt):
         from ChatGPT_Movment_Controller import chatgpt_movment
