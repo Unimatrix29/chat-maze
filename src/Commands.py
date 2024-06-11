@@ -1,3 +1,6 @@
+from pathlib import Path
+import json
+
 class Command():
     
     def __init__(self, screen, gameHandler, player, game):
@@ -8,7 +11,7 @@ class Command():
         #self.chatgpt = chatgpt
         
         
-        self.info_txt = "This is a info text, it texts infos."
+        self.info_txt = self.__get_info_txt_from_json()
         self.help_txt = "This is a help texts , it texts hepls"
         
         self.commands = {
@@ -59,5 +62,25 @@ class Command():
     
     def __audio_off(self):
         pass
+    
+    
+    def __get_info_txt_from_json(self):
+        display_texts_file = Path(__file__).parent / "display_texts.json"
+        display_texts_file.resolve()
+        
+        try:
+            with open(file, "r") as file:
+                data = json.load(file)
+                
+                return data["info_text"]
+        except FileNotFoundError as e: 
+            print("display_texts.json was not found")
+            print(e)
+        except json.JSONDecodeError as e: 
+            print("There was an Erorr while decoding display_texts.json")
+            print(e)
+        except OSError as e: 
+            print("There was an Erorr while reading a File")
+            print(e)
         
     
