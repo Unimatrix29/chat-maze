@@ -1,4 +1,5 @@
 {
+    "help_text" : "Command List\n\nhelp                Short explanation of the geme + list of all commands\ninfo                Information about the game and its creators\nclear               clears the konsole window\nreset               loads a new Maze\ndifficulty [num]    changes the difficulty of the game\naudio [on/off]      enabels/disables audio inpu",
     "info_text" : "This is a info text, it texts infos.",
     "help_prompt" : "Test"
 }
