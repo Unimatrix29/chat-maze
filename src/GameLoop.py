@@ -32,8 +32,7 @@ class Game():
         """
         self.screen = Screen()
         self.screen.setup_screen()
-        #self.screen.update_screen(self.maze, self.player)
-        self.commandHandler = Command(self.screen, self.gameHandler, self.player, self)
+        self.commandHandler = Command(self)
         
         self.chatGPT_thread.start()
         
