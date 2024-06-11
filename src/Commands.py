@@ -3,10 +3,7 @@ import json
 
 class Command():
     
-    def __init__(self, screen, gameHandler, player, game):
-        self.screen = screen
-        self.gameHandler = gameHandler
-        self.player = player
+    def __init__(self, game):
         self.game = game
         #self.chatgpt = chatgpt
         
