@@ -15,7 +15,7 @@ class Command():
         self.info_txt = "This is a info text, it texts infos"
         self.command_list = "This is a help texts , it texts hepls"
         
-        self.help_prompt = ""
+        self.help_prompt = "Du bekommst einen Text übergeben. Bitte fass ihn in drei Sätzen zusammen."
         
         self.__get_command_txt_from_json()
         
@@ -46,7 +46,7 @@ class Command():
     
     def __help(self):
         help_txt_combined = f"{self.__get_help_txt()}\n{self.command_list}"
-        
+        print(help_txt_combined)
         self.screen.response_text = help_txt_combined
     
     
@@ -96,6 +96,7 @@ class Command():
             print(e)
         
     def __get_help_txt(self):
+        #print(self.game.prompt)
         message = self.chatgpt.construct_message(userInput=self.game.prompt, system_prompt=self.help_prompt)
         
         chat_response = self.chatgpt.text_to_text(message=message, model="gpt-4o")
