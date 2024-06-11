@@ -5,6 +5,10 @@ class Command():
     
     def __init__(self, game):
         self.game = game
+        self.screen = self.game.screen
+        self.gameHandler = self.game.gameHandler
+        self.player = self.game.player
+
         #self.chatgpt = chatgpt
         
         self.info_txt = "This is a info text, it texts infos"
