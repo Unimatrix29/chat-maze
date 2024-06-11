@@ -76,7 +76,7 @@ class Command():
         display_texts_file.resolve()
         
         try:
-            with open(file, "r") as file:
+            with open(display_texts_file, "r") as file:
                 data = json.load(file)
                 
                 self.info_txt = data["info_text"]
@@ -91,4 +91,5 @@ class Command():
             print("There was an Erorr while reading a File")
             print(e)
         
-    
+    def __get_help_txt(self):
+        pass
