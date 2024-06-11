@@ -7,7 +7,7 @@ class Command():
         self.game = game
         #self.chatgpt = chatgpt
         
-        self.info_txt = ""
+        self.info_txt = "This is a info text, it texts infos"
         self.help_txt = "This is a help texts , it texts hepls"
         
         self.help_prompt = ""
