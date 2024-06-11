@@ -45,7 +45,7 @@ class Command():
     
     
     def __help(self):
-        help_txt_combined = f"{self.__get_help_txt}\n{self.help_txt}"
+        help_txt_combined = f"{self.__get_help_txt()}\n{self.command_list}"
         
         self.screen.response_text = help_txt_combined
     
