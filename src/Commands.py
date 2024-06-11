@@ -79,6 +79,7 @@ class Command():
             with open(display_texts_file, "r") as file:
                 data = json.load(file)
                 
+                self.help_txt = data["help_text"]
                 self.info_txt = data["info_text"]
                 self.help_prompt = data["help_prompt"]
         except FileNotFoundError as e: 
