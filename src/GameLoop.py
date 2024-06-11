@@ -48,7 +48,7 @@ class Game():
                 user_input = self.screen.get_user_input()
                 print(user_input)
 
-                if not self.commandHandler.get(user_input):
+                if not self.commandHandler.execute(user_input):
                     self.screen_queue.put(user_input)
 
             mVector = [0, 0]

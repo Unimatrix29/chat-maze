@@ -22,7 +22,7 @@ class Command():
         }
         
         
-    def get(self, input):
+    def execute(self, input):
         command = self.commands.get(input.lower().strip(), None)
 
         if command == None:
