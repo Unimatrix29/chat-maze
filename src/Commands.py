@@ -57,7 +57,12 @@ class Command():
     
     
     def __reset(self):
-        self.game.restart()
+        self.game.reset()
+        
+    
+    def __restart(self):
+        #self.game.restart()
+        pass
     
     
     def __clear(self):
