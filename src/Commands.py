@@ -49,11 +49,11 @@ class Command():
     def __help(self):
         help_txt_combined = f"{self.__get_help_txt()}\n{self.command_list}"
         print(help_txt_combined)
-        self.screen.response_text = help_txt_combined
+        self.screen.add_chat_text(help_txt_combined, "System")
     
     
     def __info(self):
-        self.screen.response_text = self.info_txt
+        self.screen.add_chat_text(self.info_txt, "System")
     
     
     def __reset(self):
