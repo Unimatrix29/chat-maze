@@ -20,13 +20,13 @@ class chatgpt_movment():
         except openai.APIError as e: 
             raise e 
         
-        content = chat_response.choices[0].message.content.lower().strip()
+        content = chat_response.choices[0].message.content
         self.chatgpt.set_history( "assistant", content)
         
         print("ChatGPT: " + content)
     
         #convert to vector
-        direction = content.split('|')[0]
+        direction = content.split('|')[0].lower().strip()
         if direction in self.move_options:
             move_vector = self.move_options[direction]
         else:
