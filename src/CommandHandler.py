@@ -63,7 +63,14 @@ class Command():
     
     
     def __difficulty(self):
-        pass
+        split_user_input = self.game.screen.get_user_input().strip().split(" ")
+        try:
+            level = int(split_user_input[1])
+        except ValueError: 
+            self.game.screen.add_chat_text("Please enter /difficulty followed by a number between 1-3 to change the difficulty.", "System")
+            return None
+        
+        self.game.gameHandler.set_level(level)
     
     
     def __audio_on(self):
