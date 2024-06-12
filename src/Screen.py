@@ -47,9 +47,6 @@ class Screen():
         self.input_rect = pygame.Rect(self.chat_horizontal_offset, 570, 140, 24)
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
-        self.help_text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-        self.duck_text = "____________________________________________$$$$$$______________________________________$$_____$$___________________________________$__(•)____$$_______________________________$$__________$___________________________________$$_____$____________________________________$____$______________________________________$____$__$$$__$$______$_____________________$$_____$_____$$__$$__$$$_____________________$______$___________$$__$_____________________$$_______$______$$_____$_____________________$$________$$$$$$______$_______________________$$$________________$___________________________$$$$__________$$_______________________________$$$$$$$$$$$$__________________________"
-
         self.return_text = False
         self.active = True
         self.restart_request = False
@@ -91,22 +88,10 @@ class Screen():
                 if self.active:
                     if event.key == pygame.K_RETURN:
                         if self.user_text != "":
+                            self.return_text = True
+                            self.message = self.user_text
+                            self.last_response = self.response_text
                             self.add_chat_text(self.user_text, "You")
-                            if self.user_text == "/help":
-                                self.add_chat_text(self.help_text, "System")                                
-                            elif self.user_text == "/restart":                                
-                                self.add_chat_text("Game restarting", "System")
-                                self.restart_request = True                                
-                            elif self.user_text == "/reset":
-                                self.add_chat_text("Game reset", "System")
-                                self.reset_request = True                               
-                            elif self.user_text == "/duck":
-                                self.add_chat_text(self.duck_text, "System")
-                            else:
-                                self.return_text = True
-                                self.message = self.user_text
-                                self.last_response = self.response_text
-                                self.add_chat_text(self.user_text, "You")
                             self.user_text = ""
                         break
                     elif event.key == pygame.K_BACKSPACE:
