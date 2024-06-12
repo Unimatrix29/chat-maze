@@ -1,7 +1,7 @@
 from ChatGPT_Client import ApiClientCreator
 from ChatGPT_Controller import ChatGPT
 from GameHandler import GameHandler
-from Commands import Command
+from CommandHandler import Command
 from Player import Player
 from Screen import Screen
 import queue, threading, time
@@ -24,8 +24,8 @@ class Game():
         self.gameHandler = GameHandler()
         self.gameHandler.set_level()
         self.prompt = self.gameHandler.get_prompt()
-        self.gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
-        self.maze = self.gameStats[1]
+        self.start_gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
+        self.maze = self.start_gameStats[1]
         self.player = Player(self.maze)
         
         apiClient = ApiClientCreator.get_client(file_name=config_file_name)
@@ -124,13 +124,26 @@ class Game():
         self.gameOver_event.set()
         self.chatGPT_thread.join()
         
-        
-    def restart(self):
+    #sets up a new game with new maze and Prompt     
+    def reset(self):
         self.screen.quit_screen()
         self.gameOver_event.set()
         self.chatGPT_thread.join()
         
         self.__init__()
+        
+    #lets the user retry the current maze with the current prompt, dosent reset chatgpt history 
+    def restart(self):
+        self.gameHandler.remove_debuffs(self.player)
+        maze = self.start_gameStats[1]
+        self.player = Player(maze)
+        
+        self.gameHandler.difficulty = self.start_gameStats[0]
+        self.gameHandler.maze = maze
+        self.gameHandler.debuffDuration = self.start_gameStats[2][0]
+        self.gameHandler.renderDistance = self.start_gameStats[2][1]
+        
+        self.screen.update_screen(maze, self.player, self.start_gameStats[2][1])
        
        
     def __get_chatgpt_response(self, chatgpt, prompt):
