@@ -1,6 +1,7 @@
 **/*.pyc
 **/*.mp3
 **/*.wav
+**/*.pdf 
 DONT LEAK RODNERS API KEY :D
 src/config.json
 
