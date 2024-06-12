@@ -66,7 +66,7 @@ class Command():
     
     
     def __clear(self):
-        pass
+        self.screen.clear_chat_text()
     
     
     def __difficulty(self):
