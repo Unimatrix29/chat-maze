@@ -22,7 +22,7 @@ class Game():
         self.running = True
 
         self.gameHandler = GameHandler()
-        self.gameHandler.set_level()
+        self.gameHandler.get_userInput_for_level_via_console()
         self.prompt = self.gameHandler.get_prompt()
         self.start_gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
         self.maze = self.start_gameStats[1]
