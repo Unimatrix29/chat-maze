@@ -67,7 +67,11 @@ class Game():
             try: 
                 data = self.chatgpt_queue.get(False)
                 mVector = data[0]
-                self.screen.response_text = data[1]
+                
+                # BITTE NOCH ANPASSEN
+                clear_text = str(data[1]).split("|")
+                self.screen.response_text = clear_text[1]
+
             except queue.Empty:
                 pass
 
