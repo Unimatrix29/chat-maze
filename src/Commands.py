@@ -23,13 +23,15 @@ class Command():
 
         
         self.commands = {
-            "help"      :   self.__help,
-            "info"      :   self.__info,
-            "reset"     :   self.__reset,
-            "clear"     :   self.__clear,
-            "difficulty":   self.__difficulty,
-            "audio on"  :   self.__audio_on,
-            "audio off" :   self.__audio_off
+            "/help"      :   self.__help,
+            "/info"      :   self.__info,
+            "/reset"     :   self.__reset,
+            "/restart"   :   self.__restart,
+            "/clear"     :   self.__clear,
+            "/difficulty":   self.__difficulty,
+            "/audio on"  :   self.__audio_on,
+            "/audio off" :   self.__audio_off,
+            "/quack"     :   self.__quack   
         }
         
         
