@@ -5,7 +5,6 @@ class Command():
     
     def __init__(self, game):
         self.game = game
-        self.screen = self.game.screen
         self.chatgpt = self.game.chatgpt
 
         #self.chatgpt = chatgpt
@@ -44,11 +43,11 @@ class Command():
     def __help(self):
         help_txt_combined = f"{self.__get_help_txt()}\n{self.command_list}"
         print(help_txt_combined)
-        self.screen.add_chat_text(help_txt_combined, "System")
+        self.game.screen.add_chat_text(help_txt_combined, "System")
     
     
     def __info(self):
-        self.screen.add_chat_text(self.info_txt, "System")
+        self.game.screen.add_chat_text(self.info_txt, "System")
     
     
     def __reset(self):
@@ -60,7 +59,7 @@ class Command():
     
     
     def __clear(self):
-        self.screen.clear_chat_text()
+        self.game.screen.clear_chat_text()
     
     
     def __difficulty(self):
@@ -76,7 +75,7 @@ class Command():
     
     
     def __quack(self):
-        self.screen.add_chat_text(self.quack_txt, "System")
+        self.game.screen.add_chat_text(self.quack_txt, "System")
     
     
     def __get_command_txt_from_json(self):
@@ -103,9 +102,9 @@ class Command():
         
     def __get_help_txt(self):
         
-        message = self.chatgpt.construct_message(userInput=self.game.prompt, system_prompt=self.help_prompt)
+        message = self.game.chatgpt.construct_message(userInput=self.game.prompt, system_prompt=self.help_prompt)
         print(message)
-        chat_response = self.chatgpt.text_to_text(message=message, model="gpt-4o")
+        chat_response = self.game.chatgpt.text_to_text(message=message, model="gpt-4o")
         
         content = chat_response.choices[0].message.content
         
