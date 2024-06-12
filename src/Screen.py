@@ -1,5 +1,6 @@
 import random 
 import pygame, sys
+import textwrap
 
 class Screen():
     
@@ -7,8 +8,8 @@ class Screen():
         
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
-        self.GREY = (127, 127, 127)
-        self.PINK = (199,21,133)
+        self.GREY = (140, 140, 140)
+        self.PINK = (255, 0, 149)
         self.RED = (255, 0, 0)
     
         self.SCREEN_SIZE = screen_size
@@ -21,28 +22,40 @@ class Screen():
         pygame.init()
 
         #Maze
-        self.screen = pygame.display.set_mode([600, 600], pygame.NOFRAME)
+        self.screen = pygame.display.set_mode([1000, 600], pygame.NOFRAME)
 
         pygame.display.set_caption("Chat_Leap")
+        pygame.transform.scale2x
 
         #Input
-        self.title_font = pygame.font.Font(None, 16)
-        self.base_font = pygame.font.Font(None, 24)
-        self.response_font = pygame.font.Font(None, 16)
+        self.title_font = pygame.font.SysFont('monospace821', 10)
+        self.base_font = pygame.font.SysFont('monospace821', 12)
+        self.response_font = pygame.font.SysFont('monospace821', 12)
         self.user_text = ""
-        self.title_text = "Input your message to ChatGPT:"
-        self.response_text = "-----"
+        self.title_text = "User Input:"
+        self.response_text = ""
 
-        self.input_rect = pygame.Rect(10, 540, 140, 24)
         self.color_active = pygame.Color('limegreen')
-        self.color_passive = pygame.Color('gray15')
+        self.color_passive = (100, 100, 100)
         self.color = self.color_passive
         self.message = ""
+        self.last_response = ""
+        self.chat_line_offset = 20
+        self.chat_horizontal_offset = 600
+        self.chat_max_len = 24
+        self.chat = ["  " for x in range(self.chat_max_len)]
+        self.input_rect = pygame.Rect(self.chat_horizontal_offset, 570, 140, 24)
+        self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
+        self.help_text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+        self.duck_text = "____________________________________________$$$$$$______________________________________$$_____$$___________________________________$__(•)____$$_______________________________$$__________$___________________________________$$_____$____________________________________$____$______________________________________$____$__$$$__$$______$_____________________$$_____$_____$$__$$__$$$_____________________$______$___________$$__$_____________________$$_______$______$$_____$_____________________$$________$$$$$$______$_______________________$$$________________$___________________________$$$$__________$$_______________________________$$$$$$$$$$$$__________________________"
+
         self.return_text = False
         self.active = True
         self.restart_request = False
         self.reset_request = False
+
+        
 
     def draw_wall(self, surface, color, x, y, size, maze):
         half = size / 2
@@ -66,6 +79,9 @@ class Screen():
  
     def update_screen(self, maze, player, render = 16):
 
+        self.restart_request = False
+        self.reset_request = False
+
         #Input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -75,8 +91,22 @@ class Screen():
                 if self.active:
                     if event.key == pygame.K_RETURN:
                         if self.user_text != "":
-                            self.return_text = True
-                            self.message = self.user_text
+                            self.add_chat_text(self.user_text, "You")
+                            if self.user_text == "/help":
+                                self.add_chat_text(self.help_text, "System")                                
+                            elif self.user_text == "/restart":                                
+                                self.add_chat_text("Game restarting", "System")
+                                self.restart_request = True                                
+                            elif self.user_text == "/reset":
+                                self.add_chat_text("Game reset", "System")
+                                self.reset_request = True                               
+                            elif self.user_text == "/duck":
+                                self.add_chat_text(self.duck_text, "System")
+                            else:
+                                self.return_text = True
+                                self.message = self.user_text
+                                self.last_response = self.response_text
+                                self.add_chat_text(self.user_text, "You")
                             self.user_text = ""
                         break
                     elif event.key == pygame.K_BACKSPACE:
@@ -90,7 +120,9 @@ class Screen():
                 self.reset_request = self.restart_request and keys[pygame.K_LCTRL]
             
         self.screen.fill((0,0,0))
-            
+        
+        if self.on_response_change():
+            self.add_chat_text(self.response_text, "GPT-4")
             
         #Maze
         for y in range(self.GRID_SIZE):
@@ -110,14 +142,42 @@ class Screen():
             #    for x in range(self.GRID_SIZE):
                 
         pygame.draw.rect(self.screen, self.color, self.input_rect, 2)
+        pygame.draw.rect(self.screen, self.color, self.maze_rect, 2)
         self.text_surface = self.base_font.render(self.user_text, True, (255,255,255))
         self.text_title = self.title_font.render(self.title_text, True, self.color)
+        self.cursor = self.base_font.render("_", True, (255,255,255))
         self.screen.blit(self.text_surface,(self.input_rect.x + 5, self.input_rect.y + 5))
-        self.screen.blit(self.text_title,(10, 520))
-        self.input_rect.w = max(10, self.text_surface.get_width() + 20)
-        self.write_response()
+        self.screen.blit(self.text_title,(self.input_rect.x, self.input_rect.y - 15))
+        self.screen.blit(self.cursor,(self.input_rect.x + self.text_surface.get_width() + 5, self.input_rect.y + 5))
+        self.input_rect.w = max(250, self.text_surface.get_width() + 20)
+        self.draw_chat_text()
+
 
         pygame.display.flip()
+
+    def draw_chat_text(self):
+        color = self.color_passive
+        for i in range(0, self.chat_max_len):
+            if self.chat[i][0] == "Y":
+                color = self.color_passive
+            if self.chat[i][0] == "G": 
+                color = self.PINK
+            if self.chat[i][0] == "S": 
+                color = self.color_active
+            self.text_response = self.response_font.render(self.chat[i], True, color)
+            self.screen.blit(self.text_response, (self.chat_horizontal_offset, (self.maze_offset_y + i * self.chat_line_offset)))
+
+    def add_chat_text(self, raw_text, author):
+        lines = textwrap.wrap(author + ": " + raw_text, 45)
+        first_line = True
+        for line in lines:
+            for i in range(0, self.chat_max_len - 1):
+                self.chat[i] = self.chat[i + 1]
+            if first_line:
+                self.chat[self.chat_max_len - 1] = line
+            else:
+                self.chat[self.chat_max_len - 1] = line
+            first_line = False
 
     def quit_screen(self): 
         pygame.quit()
@@ -131,12 +191,16 @@ class Screen():
             return True
         return False
     
-    def write_response(self):
-        self.text_response = self.response_font.render("ChatGPT: " + self.response_text, True, self.PINK)
-        self.screen.blit(self.text_response,(10, 580))
     
     def has_restart_request(self):
         return self.restart_request
     
     def has_reset_request(self):
         return self.reset_request
+    
+    def on_response_change(self):
+        if self.response_text != self.last_response:
+            self.last_response = self.response_text
+            return True
+        return False
+

@@ -95,7 +95,10 @@ while running:
     try: 
         data = chatgpt_queue.get(False)
         mVector = data[0]
-        screen.response_text = data[1]
+
+        # BITTE NOCH ANPASSEN
+        clear_text = str(data[1]).split("|")
+        screen.response_text = clear_text[1]
     except queue.Empty:
         pass
 
