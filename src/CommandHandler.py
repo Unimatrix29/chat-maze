@@ -6,8 +6,6 @@ class Command():
     def __init__(self, game):
         self.game = game
         self.screen = self.game.screen
-        self.gameHandler = self.game.gameHandler
-        self.player = self.game.player
         self.chatgpt = self.game.chatgpt
 
         #self.chatgpt = chatgpt
@@ -18,9 +16,6 @@ class Command():
         self.quack_txt = "quack"
         
         self.__get_command_txt_from_json()
-        
-        
-
         
         self.commands = {
             "/help"      :   self.__help,
@@ -61,8 +56,7 @@ class Command():
         
     
     def __restart(self):
-        #self.game.restart()
-        pass
+        self.game.restart()
     
     
     def __clear(self):
