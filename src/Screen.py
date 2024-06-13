@@ -54,27 +54,11 @@ class Screen():
 
         
 
-    def draw_wall(self, surface, color, x, y, size, maze):
-        half = size / 2
-        quarter = size / 4
-        if maze[0][x][y] == 1:
-            pygame.draw.circle(surface, color, (x * size + half, y * size + half), half)
-            if x < 15:
-                if maze[0][x+1][y] == 1:
-                    pygame.draw.rect(surface, color, (x * size + size, y * size, half, size))
-            if x > 0:        
-                if maze[0][x-1][y] == 1:
-                    pygame.draw.rect(surface, color, (x * size - half, y * size, half, size))
-            if y < 15:
-                if maze[0][x][y+1] == 1:
-                    pygame.draw.rect(surface, color, (x * size, y * size + size, size, half))
-            if y > 0:        
-                if maze[0][x][y-1] == 1:
-                    pygame.draw.rect(surface, color, (x * size , y * size - half, size, half))
+    
 
         
  
-    def update_screen(self, maze, player, render = 16):
+    def update_screen(self, maze=None, player=None, render = 16):
 
         self.restart_request = False
         self.reset_request = False
