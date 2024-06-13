@@ -44,10 +44,10 @@ class Screen():
         self.last_response = ""
         self.chat_line_offset = 20
         self.chat_horizontal_offset = 600
-        self.chat_max_len = 24
+        self.chat_max_len = 21
         self.chat = ["  " for x in range(self.chat_max_len)]
         self.chat_color = [self.color_passive for x in range(self.chat_max_len)]
-        self.input_rect = pygame.Rect(self.chat_horizontal_offset, 570, 140, 24)
+        self.input_rect = pygame.Rect(self.chat_horizontal_offset, self.maze_offset_y + 16 * self.CELL_SIZE - 24, 140, 24)
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
         self.return_text = False
