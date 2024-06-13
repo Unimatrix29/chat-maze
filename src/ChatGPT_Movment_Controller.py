@@ -24,12 +24,14 @@ class chatgpt_movment():
         self.chatgpt.set_history( "assistant", content)
         
         print("ChatGPT: " + content)
+        
+        text = content.split("|")
     
         #convert to vector
-        direction = content.split('|')[0].lower().strip()
+        direction = text[0].lower().strip()
         if direction in self.move_options:
             move_vector = self.move_options[direction]
         else:
             move_vector = self.move_options["deny"]
             
-        return move_vector, content
+        return move_vector, text[1]

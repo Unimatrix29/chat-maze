@@ -63,7 +63,7 @@ class Game():
                 user_input = self.screen.get_user_input()
                 print(user_input)
 
-                if not self.commandHandler.execute(user_input.split(" ")[0]):
+                if not self.commandHandler.execute(user_input):
                     self.screen_queue.put(user_input)
 
             mVector = [0, 0]
@@ -71,8 +71,7 @@ class Game():
                 data = self.chatgpt_queue.get(False)
                 mVector = data[0]
                 
-                # BITTE NOCH ANPASSEN
-                clear_text = str(data[1]).split("|")
+                clear_text = data[1]
                 self.screen.response_text = clear_text[1]
 
             except queue.Empty:
