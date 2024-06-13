@@ -61,7 +61,7 @@ class Command():
     def __clear(self):
         self.game.screen.clear_chat_text()
     
-    
+    #obsolete
     def __difficulty(self):
         split_user_input = self.game.screen.get_user_input().strip().split(" ")
         try:

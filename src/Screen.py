@@ -182,6 +182,7 @@ class Screen():
     def get_user_input(self):
         return_message = self.message
         self.message = ""
+        self.return_text = False
         return return_message
     
     def on_return(self):
