@@ -108,23 +108,9 @@ class Screen():
         
         if self.on_response_change():
             self.add_chat_text(self.response_text, "GPT-4")
-            
-        #Maze
-        for y in range(self.GRID_SIZE):
-            for x in range(self.GRID_SIZE):
-                isRendered = (x - render < player.currentPosition[0] < x + render) and (y - render < player.currentPosition[1] < y + render)
-                if not isRendered:
-                    continue
-                
-                if maze[0][y][x] == 1:
-                    pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
-                #self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
-                if player.currentPosition == [x, y] and (not player.isHidden):
-                    pygame.draw.rect(self.screen, self.color_active, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
-                if maze[2] == [x, y]:
-                    pygame.draw.rect(self.screen, self.RED, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
-            #for y in range(self.GRID_SIZE):
-            #    for x in range(self.GRID_SIZE):
+        
+        if (player and maze) != None:
+            self.draw_maze(maze, player, render)
                 
         pygame.draw.rect(self.screen, self.color, self.input_rect, 2)
         pygame.draw.rect(self.screen, self.color, self.maze_rect, 2)
