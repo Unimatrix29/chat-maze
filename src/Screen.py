@@ -139,7 +139,46 @@ class Screen():
 
 
         pygame.display.flip()
-
+        
+        
+    def draw_wall(self, surface, color, x, y, size, maze):
+        half = size / 2
+        quarter = size / 4
+        if maze[0][x][y] == 1:
+            pygame.draw.circle(surface, color, (x * size + half, y * size + half), half)
+            if x < 15:
+                if maze[0][x+1][y] == 1:
+                    pygame.draw.rect(surface, color, (x * size + size, y * size, half, size))
+            if x > 0:        
+                if maze[0][x-1][y] == 1:
+                    pygame.draw.rect(surface, color, (x * size - half, y * size, half, size))
+            if y < 15:
+                if maze[0][x][y+1] == 1:
+                    pygame.draw.rect(surface, color, (x * size, y * size + size, size, half))
+            if y > 0:        
+                if maze[0][x][y-1] == 1:
+                    pygame.draw.rect(surface, color, (x * size , y * size - half, size, half))    
+                    
+                    
+    def draw_maze(self, maze, player, render=16):
+        #Maze
+        for y in range(self.GRID_SIZE):
+            for x in range(self.GRID_SIZE):
+                isRendered = (x - render < player.currentPosition[0] < x + render) and (y - render < player.currentPosition[1] < y + render)
+                if not isRendered:
+                    continue
+                
+                if maze[0][y][x] == 1:
+                    #wall
+                    pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+                if player.currentPosition == [x, y] and (not player.isHidden):
+                    #player
+                    pygame.draw.rect(self.screen, self.color_active, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+                if maze[2] == [x, y]:
+                    #finish
+                    pygame.draw.rect(self.screen, self.RED, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+        
+        
     def draw_chat_text(self):
         color = self.color_passive
         for i in range(0, self.chat_max_len):
@@ -171,7 +210,9 @@ class Screen():
         pygame.quit()
 
     def get_user_input(self):
-        return self.message
+        return_message = self.message
+        self.message = ""
+        return return_message
     
     def on_return(self):
         if self.return_text:
