@@ -1,6 +1,7 @@
 import random 
 import pygame, sys
 import textwrap
+from pathlib import Path
 
 class Screen():
     
@@ -20,6 +21,7 @@ class Screen():
 
     def setup_screen(self):
         pygame.init()
+        pygame.mixer.init()
 
         #Maze
         self.screen = pygame.display.set_mode([1000, 600], pygame.NOFRAME)
@@ -52,11 +54,7 @@ class Screen():
         self.restart_request = False
         self.reset_request = False
 
-        
-
     
-
-        
  
     def update_screen(self, maze=None, player=None, render = 16):
 
@@ -204,3 +202,16 @@ class Screen():
             return True
         return False
 
+
+    def play(self):
+        file_tts_out = Path(__file__).parent / "tts_out.mp3"
+        file_tts_out.resolve()
+        
+        pygame.mixer.music.load(file_tts_out)
+        
+        pygame.mixer.music.play()
+        
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock.tick(10)
+        
+        pygame.mixer.music.unload()
