@@ -46,6 +46,7 @@ class Screen():
         self.chat_horizontal_offset = 600
         self.chat_max_len = 24
         self.chat = ["  " for x in range(self.chat_max_len)]
+        self.chat_color = [self.color_passive for x in range(self.chat_max_len)]
         self.input_rect = pygame.Rect(self.chat_horizontal_offset, 570, 140, 24)
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
@@ -53,6 +54,12 @@ class Screen():
         self.active = True
         self.restart_request = False
         self.reset_request = False
+
+        self.author_to_color = {
+            "System": self.color_active,
+            "You": self.color_passive,
+            "GPT-4": self.PINK
+        }
 
     
  
@@ -148,27 +155,25 @@ class Screen():
         
         
     def draw_chat_text(self):
-        color = self.color_passive
         for i in range(0, self.chat_max_len):
-            if self.chat[i][0] == "Y":
-                color = self.color_passive
-            if self.chat[i][0] == "G": 
-                color = self.PINK
-            if self.chat[i][0] == "S": 
-                color = self.color_active
-            self.text_response = self.response_font.render(self.chat[i], True, color)
+            
+            self.text_response = self.response_font.render(self.chat[i], True, self.chat_color[i])
             self.screen.blit(self.text_response, (self.chat_horizontal_offset, (self.maze_offset_y + i * self.chat_line_offset)))
 
     def add_chat_text(self, raw_text, author):
         lines = textwrap.wrap(author + ": " + raw_text, 45)
         first_line = True
+        color = self.author_to_color.get(author, self.color_passive)
         for line in lines:
             for i in range(0, self.chat_max_len - 1):
                 self.chat[i] = self.chat[i + 1]
+                self.chat_color[i] = self.chat_color[i + 1]
             if first_line:
                 self.chat[self.chat_max_len - 1] = line
+                self.chat_color[self.chat_max_len - 1] = color
             else:
                 self.chat[self.chat_max_len - 1] = line
+                self.chat_color[self.chat_max_len - 1] = color
             first_line = False
             
     def clear_chat_text(self):
