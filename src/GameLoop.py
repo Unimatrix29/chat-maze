@@ -25,7 +25,9 @@ class Game():
         self.screen.setup_screen()
         
         self.gameHandler = GameHandler()
-        self.gameHandler.get_userInput_for_level_via_console()
+        
+        self.chose_difficulty()
+        
         self.prompt = self.gameHandler.get_prompt()
         self.start_gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
         self.maze = self.start_gameStats[1]
@@ -146,6 +148,29 @@ class Game():
         
         self.screen.update_screen(maze, self.player, self.start_gameStats[2][1])
        
+       
+    def chose_difficulty(self):
+        level = ""
+        
+        self.screen.add_chat_text("#################### : #####", "##### ")
+        self.screen.add_chat_text("Welcome to Chat Leap : #####", "##### ")
+        self.screen.add_chat_text("#################### : #####", "##### ")
+        self.screen.add_chat_text("                            ", "##### ")
+        self.screen.add_chat_text("Please chose a difficulty: EASY, NORMAL, HARD", "System")
+        
+        while level == "":    
+            level = self.screen.get_user_input()
+            level = level.strip().upper()
+            
+            self.screen.update_screen()
+            if level != "":
+                if not self.gameHandler.set_level(level):
+                    self.screen.add_chat_text("A vaild one, please.", "System")
+                    level = ""
+                    print(f"<{level}>")
+                
+        self.screen.clear_chat_text()
+        
        
     def __get_chatgpt_response(self, chatgpt, prompt):
         from ChatGPT_Movment_Controller import chatgpt_movment
