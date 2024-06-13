@@ -74,11 +74,11 @@ class Command():
     
     
     def __audio_on(self):
-        pass
+        self.game.audio_event.set()
     
     
     def __audio_off(self):
-        pass
+        self.game.audio_event.clear()
     
     
     def __quack(self):

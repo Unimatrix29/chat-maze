@@ -37,6 +37,9 @@ class Game():
 
         self.chatgpt = ChatGPT(apiClient)
         
+        
+        self.audio_event = threading.Event()
+        self.audio_is_ready_event = threading.Event()
         self.gameOver_event = threading.Event()
         self.screen_queue = queue.Queue()
         self.chatgpt_queue = queue.Queue()
@@ -73,7 +76,11 @@ class Game():
                 
                 clear_text = data[1]
                 self.screen.response_text = clear_text[1]
-
+                
+                if self.audio_event.is_set():
+                    self.audio_is_ready_event.wait()
+                    self.screen.play()
+                    self.audio_is_ready_event.clear()
             except queue.Empty:
                 pass
 
@@ -185,6 +192,10 @@ class Game():
                 msg = self.screen_queue.get(False)
                 #chatGPT call
                 move_Vector, content = movmentChatGPT.get_vector(msg, temperatur, prompt)
+                
+                if self.audio_event.is_set():
+                    chatgpt.text_to_audio(content)
+                    self.audio_is_ready_event.set()
 
                 self.chatgpt_queue.put(item=[move_Vector, content])
             except queue.Empty:
@@ -197,5 +208,3 @@ class Game():
                 #Let the user now that something went wrong
                 print("API CALL ERROR")
                 pass
-
-   
