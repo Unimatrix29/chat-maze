@@ -209,7 +209,7 @@ class Screen():
 
 
     def play(self):
-        file_tts_out = Path(__file__).parent / "tts_out.mp3"
+        file_tts_out = Path(__file__).parent / "tts_out.wav"
         file_tts_out.resolve()
         
         pygame.mixer.music.load(file_tts_out)

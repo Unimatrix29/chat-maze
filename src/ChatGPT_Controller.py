@@ -13,7 +13,7 @@ class ChatGPT():
         self._history = []
         self.max_length = max_history_length
         
-        self.file_tts_out = Path(__file__).parent / "tts_out.mp3"
+        self.file_tts_out = Path(__file__).parent / "tts_out.wav"
         self.file_tts_out.resolve()
         
         if not self.file_tts_out.exists():
