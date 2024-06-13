@@ -10,15 +10,12 @@ class GameHandler():
     
     def __init__(self):
         self.DIFFICULTY = {
-            "TEST":
-            [0, 1, 1],
-            "EASY":
-            [1, 0, 2], #[maze_preset_level, wall_penalties, debuff_duration]
-            "NORMAL":
-            [2, 1, 5],
-            "HARD":
-            [3, 3, 10]
+            "TEST"  :   [0, 1, 1],
+            "EASY"  :   [1, 0, 2], #[maze_preset_level, wall_penalties, debuff_duration]
+            "NORMAL":   [2, 1, 5],
+            "HARD"  :   [3, 3, 10]
             }
+        
         self.options = ["TEST", "EASY", "NORMAL", "HARD"]
         self.PROMPT_LIBRARY = {}
         self.PROMPT = ""
@@ -69,13 +66,16 @@ class GameHandler():
         
         
     def set_level(self, level):
-        userChoice = self.options[int(level)]
-        print(f"Selected difficulty: {userChoice}")
-        
-        self.difficulty = self.DIFFICULTY[userChoice]
+        self.difficulty = self.DIFFICULTY.get(level, False)
+        if self.difficulty == False:
+            return False
+    
+        print(f"Selected difficulty: {level}")
         
         self.__get_random_maze()
-        self.__get_random_prompt(userChoice)
+        self.__get_random_prompt(level)
+        
+        return True
     
     
     def __get_random_maze(self):
