@@ -19,7 +19,7 @@ class Command():
         self.commands = {
             "/help"      :   self.__help,
             "/info"      :   self.__info,
-            "/reset"     :   self.__reset,
+            "/new game"     :   self.__new_game,
             "/restart"   :   self.__restart,
             "/clear"     :   self.__clear,
             #"/difficulty":   self.__difficulty,
@@ -50,7 +50,7 @@ class Command():
         self.game.screen.add_chat_text(self.info_txt, "System")
     
     
-    def __reset(self):
+    def __new_game(self):
         self.game.reset()
         
     
