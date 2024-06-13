@@ -20,7 +20,10 @@ class Game():
         Game session set up
         """
         self.running = True
-
+        
+        self.screen = Screen()
+        self.screen.setup_screen()
+        
         self.gameHandler = GameHandler()
         self.gameHandler.get_userInput_for_level_via_console()
         self.prompt = self.gameHandler.get_prompt()
@@ -43,8 +46,6 @@ class Game():
         """
         Output window set up
         """
-        self.screen = Screen()
-        self.screen.setup_screen()
         self.commandHandler = Command(self)
         
         self.chatGPT_thread.start()
