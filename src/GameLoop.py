@@ -29,8 +29,8 @@ class Game():
         self.chose_difficulty()
         
         self.prompt = self.gameHandler.get_prompt()
-        self.start_gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
-        self.maze = self.start_gameStats[1]
+        self.gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
+        self.maze = self.gameStats[1]
         self.player = Player(self.maze)
         
         apiClient = ApiClientCreator.get_client(file_name=config_file_name)
@@ -86,7 +86,7 @@ class Game():
 
             if not self.gameHandler.is_game_over():
                 # Running till a wall
-                while not mVector == [0, 0]:
+                while not mVector in [[0, 0], [-1, -1]]:
                     # Showing end screen if finish arrived
                     if self.gameHandler.check_finish(self.player.currentPosition):
                         self.gameHandler.end_game(self.player)
@@ -99,32 +99,28 @@ class Game():
                         self.gameHandler.switch_section(self.player)
                         nextStep = [self.player.currentPosition[0] + mVector[0], self.player.currentPosition[1] + mVector[1]]
 
-                    gameStats = self.gameHandler.get_game_stats()
-                    maze = gameStats[1]
+                    self.update_game_stats()
 
                     # Stop moving in front of a wall
                     if self.gameHandler.check_wall(nextStep):
+                        self.gameHandler.reduce_debuffs()
                         break
 
                     self.player.move(mVector)
 
-                    self.screen.update_screen(maze, self.player, gameStats[2][1])
+                    self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
                     time.sleep(0.3)
 
-                # TODO: Rework debuff system
                 # # Removing debuffs by expiring their's duration
-                # if not mVector == [0, 0]:
-                #     gameHandler.reduce_debuffs()
-                # if gameStats[2][0] == 0:
-                #     gameHandler.remove_debuffs(player)
-                # # Applying debuffs in case of rough request
-                # if mVector == [-1, -1]:
-                #     gameHandler.apply_debuffs(player, maze, 3)
+                if self.gameStats[2][0] == 0:
+                    self.gameHandler.remove_debuffs(self.player)
+                # Applying debuffs in case of rough request
+                if mVector == [-1, -1]:
+                    self.gameHandler.apply_debuffs(self.player, self.maze)
 
-                gameStats = self.gameHandler.get_game_stats()    #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
-                maze = gameStats[1]
-
-            self.screen.update_screen(maze, self.player, gameStats[2][1])
+                self.update_game_stats()
+                
+            self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
     
         """
         Programm finish
@@ -143,16 +139,11 @@ class Game():
         
     #lets the user retry the current maze with the current prompt, dosent reset chatgpt history 
     def restart(self):
-        self.gameHandler.remove_debuffs(self.player)
-        maze = self.start_gameStats[1]
-        self.player = Player(maze)
+        self.gameHandler.restart_game(self.player)
         
-        self.gameHandler.difficulty = self.start_gameStats[0]
-        self.gameHandler.maze = maze
-        self.gameHandler.debuffDuration = self.start_gameStats[2][0]
-        self.gameHandler.renderDistance = self.start_gameStats[2][1]
-        
-        self.screen.update_screen(maze, self.player, self.start_gameStats[2][1])
+        self.update_game_stats()
+                
+        self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
        
        
     def chose_difficulty(self):
@@ -208,3 +199,7 @@ class Game():
                 #Let the user now that something went wrong
                 print("API CALL ERROR")
                 pass
+            
+    def update_game_stats(self):
+        self.gameStats = self.gameHandler.get_game_stats()      #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
+        self.maze = self.gameStats[1]

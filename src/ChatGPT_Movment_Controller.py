@@ -7,7 +7,7 @@ class chatgpt_movment():
     def __init__(self, chatgpt, model):
         self.chatgpt = chatgpt
         self.model = model
-        self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
+        self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0], "weird": [-1, -1]}
         
         
     def get_vector(self, userInput, temperature, sysPrompt):

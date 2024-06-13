@@ -93,7 +93,6 @@ class GameHandler():
         promptNumber = random.choice([0, 1])
         key = list(self.PROMPT_LIBRARY[userChoice][promptNumber].keys())[0]
         self.PROMPT = self.PROMPT_LIBRARY[userChoice][promptNumber][key]
-        
         print(f"In this round ChatGPT is {key}")
         
 
@@ -144,17 +143,17 @@ class GameHandler():
     Applying debuffs whether because of running against a wall (case = 1)
     or rough request (case = 3)
     """
-    def apply_debuffs(self, player, maze, case):
+    def apply_debuffs(self, player, maze):
         DEBUFF = {
             1: ["ROTATION", self.maze_rotation],
             2: ["BLINDNESS", self.blind],
-            3: ["RANDOM MOVE", self.random_move],
-            4: ["TELEPORT", self.teleport],
-            5: ["INVISIBILITY", self.set_invisible]
+            3: ["INVISIBILITY", self.set_invisible],
+            4: ["RANDOM MOVE", self.random_move],
+            5: ["TELEPORT", self.teleport]
             }
-        
+        cases = 3 if self.startMazePreset[5:-2] == "3.3" else 5
         for i in range(self.difficulty[1]):
-            choice = random.randint(case, case + 2)
+            choice = random.randint(1, cases)
             DEBUFF[choice][1](player, maze)
             
             print(f"{DEBUFF[choice][0]} were applied")
@@ -200,6 +199,19 @@ class GameHandler():
 
         for i in range(self.rotationCounter):
             self.maze_rotation(player, self.maze)
+    """
+    Restarts current session without changing difficulty and GPT prompt
+    """
+    def restart_game(self, player):
+        self.remove_debuffs(player)
+        self.gameOver = False
+        
+        self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
+        player.set_position(self.maze[1])
+
+        self.debuffDuration = 0
+        self.renderDistance = 16
+        self.rotationCounter = 0
     """
     Finishes the session depending on end event
     """
