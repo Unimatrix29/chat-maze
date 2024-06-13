@@ -10,15 +10,13 @@ class GameHandler():
     
     def __init__(self):
         self.DIFFICULTY = {
-            "TEST":
-            [0, 1, 1],
-            "EASY":
-            [1, 0, 2], #[maze_preset_level, wall_penalties, debuff_duration]
-            "NORMAL":
-            [2, 1, 5],
-            "HARD":
-            [3, 3, 10]
+            "TEST"  :   [0, 1, 1],
+            "EASY"  :   [1, 0, 2], #[maze_preset_level, wall_penalties, debuff_duration]
+            "NORMAL":   [2, 1, 5],
+            "HARD"  :   [3, 3, 10]
             }
+        
+        self.options = ["TEST", "EASY", "NORMAL", "HARD"]
         self.PROMPT_LIBRARY = {}
         self.PROMPT = ""
         
@@ -47,11 +45,12 @@ class GameHandler():
         self.difficulty = self.DIFFICULTY["TEST"]
         
         self.gameOver = False
+        
+        
     """
     Asking for difficulty choice
-    """
-    def set_level(self):
-        options = ["TEST", "EASY", "NORMAL", "HARD"]
+    """ 
+    def get_userInput_for_level_via_console(self):
         level = ""
         # Waiting for correct input (int)
         while not (isinstance(level, int)):
@@ -62,24 +61,42 @@ class GameHandler():
                     raise ValueError
             except ValueError:
                 print("Bad input >:( Enter the number of chosen difficulty")
-        # Translating user input into difficulty preset
-        userChoice = options[int(level)]
-        self.difficulty = self.DIFFICULTY[userChoice]
         
+        self.set_level(level)
+        
+        
+    def set_level(self, level):
+        self.difficulty = self.DIFFICULTY.get(level, False)
+        if self.difficulty == False:
+            return False
+    
+        print(f"Selected difficulty: {level}")
+        
+        self.__get_random_maze()
+        self.__get_random_prompt(level)
+        
+        return True
+    
+    
+    def __get_random_maze(self):
         # Getting a (random) maze preset
         preset = f"maze_{self.difficulty[0]}.{random.randint(1, 3)}.0"
         self.startMazePreset = preset
         self.activeMazePreset = preset
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         
+        print(f"Getting maze preset: {self.startMazePreset}")
+    
+    
+    def __get_random_prompt(self, userChoice):
         # Getting a (random) GPT prompt
         promptNumber = random.choice([0, 1])
         key = list(self.PROMPT_LIBRARY[userChoice][promptNumber].keys())[0]
         self.PROMPT = self.PROMPT_LIBRARY[userChoice][promptNumber][key]
-            
-        print(f"Selected difficulty: {userChoice}")
-        print(f"Getting maze preset: {self.startMazePreset}")
+        
         print(f"In this round ChatGPT is {key}")
+        
+
     """
     Returns True if player stucks against a wall
     """
@@ -183,25 +200,6 @@ class GameHandler():
 
         for i in range(self.rotationCounter):
             self.maze_rotation(player, self.maze)
-    """
-    Restarts and resets the session depending on request
-    """
-    def restart_game(self, player, resetRequest = False):
-        if resetRequest:
-            self.set_level()
-        
-        self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
-        self.activeMazePreset = str(self.startMazePreset)
-        
-        self.remove_debuffs(player)
-        self.debuffDuration = 0
-        self.rotationCounter = 0
-        
-        self.gameOver = False
-        
-        player.set_position(self.maze[1])
-        # Sleep to avoid call spamming while reset keys are pressed
-        time.sleep(0.5)
     """
     Finishes the session depending on end event
     """

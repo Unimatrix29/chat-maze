@@ -4,16 +4,15 @@ from ChatGPT_Controller import ChatGPT
 
 class chatgpt_movment():
     
-    def __init__(self, chatgpt, system_prompt, model):
+    def __init__(self, chatgpt, model):
         self.chatgpt = chatgpt
         self.model = model
-        self.sysPrompt = system_prompt
         self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "deny": [0, 0]}
         
         
-    def get_vector(self, userInput, temperature):
+    def get_vector(self, userInput, temperature, sysPrompt):
         
-        message = self.chatgpt.construct_message(userInput, self.sysPrompt)                
+        message = self.chatgpt.construct_message(userInput, sysPrompt)                
         
         #api response 
         try:
@@ -21,19 +20,18 @@ class chatgpt_movment():
         except openai.APIError as e: 
             raise e 
         
-        content = chat_response.choices[0].message.content.lower().strip()
+        content = chat_response.choices[0].message.content
         self.chatgpt.set_history( "assistant", content)
         
         print("ChatGPT: " + content)
+        
+        text = content.split("|")
     
         #convert to vector
-        direction = content.split('|')[0]
+        direction = text[0].lower().strip()
         if direction in self.move_options:
             move_vector = self.move_options[direction]
         else:
             move_vector = self.move_options["deny"]
             
-        return move_vector, content
-    
-    def update_prompt(self, PROMPT):
-        self.sysPrompt = PROMPT
+        return move_vector, text[1]

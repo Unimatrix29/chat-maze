@@ -1,6 +1,7 @@
 import random 
 import pygame, sys
 import textwrap
+from pathlib import Path
 
 class Screen():
     
@@ -20,6 +21,7 @@ class Screen():
 
     def setup_screen(self):
         pygame.init()
+        pygame.mixer.init()
 
         #Maze
         self.screen = pygame.display.set_mode([1000, 600], pygame.NOFRAME)
@@ -47,37 +49,14 @@ class Screen():
         self.input_rect = pygame.Rect(self.chat_horizontal_offset, 570, 140, 24)
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
-        self.help_text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-        self.duck_text = "____________________________________________$$$$$$______________________________________$$_____$$___________________________________$__(•)____$$_______________________________$$__________$___________________________________$$_____$____________________________________$____$______________________________________$____$__$$$__$$______$_____________________$$_____$_____$$__$$__$$$_____________________$______$___________$$__$_____________________$$_______$______$$_____$_____________________$$________$$$$$$______$_______________________$$$________________$___________________________$$$$__________$$_______________________________$$$$$$$$$$$$__________________________"
-
         self.return_text = False
         self.active = True
         self.restart_request = False
         self.reset_request = False
 
-        
-
-    def draw_wall(self, surface, color, x, y, size, maze):
-        half = size / 2
-        quarter = size / 4
-        if maze[0][x][y] == 1:
-            pygame.draw.circle(surface, color, (x * size + half, y * size + half), half)
-            if x < 15:
-                if maze[0][x+1][y] == 1:
-                    pygame.draw.rect(surface, color, (x * size + size, y * size, half, size))
-            if x > 0:        
-                if maze[0][x-1][y] == 1:
-                    pygame.draw.rect(surface, color, (x * size - half, y * size, half, size))
-            if y < 15:
-                if maze[0][x][y+1] == 1:
-                    pygame.draw.rect(surface, color, (x * size, y * size + size, size, half))
-            if y > 0:        
-                if maze[0][x][y-1] == 1:
-                    pygame.draw.rect(surface, color, (x * size , y * size - half, size, half))
-
-        
+    
  
-    def update_screen(self, maze, player, render = 16):
+    def update_screen(self, maze=None, player=None, render = 16):
 
         self.restart_request = False
         self.reset_request = False
@@ -91,22 +70,10 @@ class Screen():
                 if self.active:
                     if event.key == pygame.K_RETURN:
                         if self.user_text != "":
+                            self.return_text = True
+                            self.message = self.user_text
+                            self.last_response = self.response_text
                             self.add_chat_text(self.user_text, "You")
-                            if self.user_text == "/help":
-                                self.add_chat_text(self.help_text, "System")                                
-                            elif self.user_text == "/restart":                                
-                                self.add_chat_text("Game restarting", "System")
-                                self.restart_request = True                                
-                            elif self.user_text == "/reset":
-                                self.add_chat_text("Game reset", "System")
-                                self.reset_request = True                               
-                            elif self.user_text == "/duck":
-                                self.add_chat_text(self.duck_text, "System")
-                            else:
-                                self.return_text = True
-                                self.message = self.user_text
-                                self.last_response = self.response_text
-                                self.add_chat_text(self.user_text, "You")
                             self.user_text = ""
                         break
                     elif event.key == pygame.K_BACKSPACE:
@@ -123,23 +90,9 @@ class Screen():
         
         if self.on_response_change():
             self.add_chat_text(self.response_text, "GPT-4")
-            
-        #Maze
-        for y in range(self.GRID_SIZE):
-            for x in range(self.GRID_SIZE):
-                isRendered = (x - render < player.currentPosition[0] < x + render) and (y - render < player.currentPosition[1] < y + render)
-                if not isRendered:
-                    continue
-                
-                if maze[0][y][x] == 1:
-                    pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
-                #self.draw_wall(self.screen, self.WHITE, x, y, self.CELL_SIZE, maze)
-                if player.currentPosition == [x, y] and (not player.isHidden):
-                    pygame.draw.rect(self.screen, self.color_active, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
-                if maze[2] == [x, y]:
-                    pygame.draw.rect(self.screen, self.RED, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
-            #for y in range(self.GRID_SIZE):
-            #    for x in range(self.GRID_SIZE):
+        
+        if (player and maze) != None:
+            self.draw_maze(maze, player, render)
                 
         pygame.draw.rect(self.screen, self.color, self.input_rect, 2)
         pygame.draw.rect(self.screen, self.color, self.maze_rect, 2)
@@ -154,7 +107,46 @@ class Screen():
 
 
         pygame.display.flip()
-
+        
+        
+    def draw_wall(self, surface, color, x, y, size, maze):
+        half = size / 2
+        quarter = size / 4
+        if maze[0][x][y] == 1:
+            pygame.draw.circle(surface, color, (x * size + half, y * size + half), half)
+            if x < 15:
+                if maze[0][x+1][y] == 1:
+                    pygame.draw.rect(surface, color, (x * size + size, y * size, half, size))
+            if x > 0:        
+                if maze[0][x-1][y] == 1:
+                    pygame.draw.rect(surface, color, (x * size - half, y * size, half, size))
+            if y < 15:
+                if maze[0][x][y+1] == 1:
+                    pygame.draw.rect(surface, color, (x * size, y * size + size, size, half))
+            if y > 0:        
+                if maze[0][x][y-1] == 1:
+                    pygame.draw.rect(surface, color, (x * size , y * size - half, size, half))    
+                    
+                    
+    def draw_maze(self, maze, player, render=16):
+        #Maze
+        for y in range(self.GRID_SIZE):
+            for x in range(self.GRID_SIZE):
+                isRendered = (x - render < player.currentPosition[0] < x + render) and (y - render < player.currentPosition[1] < y + render)
+                if not isRendered:
+                    continue
+                
+                if maze[0][y][x] == 1:
+                    #wall
+                    pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+                if player.currentPosition == [x, y] and (not player.isHidden):
+                    #player
+                    pygame.draw.rect(self.screen, self.color_active, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+                if maze[2] == [x, y]:
+                    #finish
+                    pygame.draw.rect(self.screen, self.RED, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+        
+        
     def draw_chat_text(self):
         color = self.color_passive
         for i in range(0, self.chat_max_len):
@@ -178,12 +170,18 @@ class Screen():
             else:
                 self.chat[self.chat_max_len - 1] = line
             first_line = False
+            
+    def clear_chat_text(self):
+        self.chat = ["  " for x in range(self.chat_max_len)]
 
     def quit_screen(self): 
         pygame.quit()
 
     def get_user_input(self):
-        return self.message
+        return_message = self.message
+        self.message = ""
+        self.return_text = False
+        return return_message
     
     def on_return(self):
         if self.return_text:
@@ -204,3 +202,16 @@ class Screen():
             return True
         return False
 
+
+    def play(self):
+        file_tts_out = Path(__file__).parent / "tts_out.mp3"
+        file_tts_out.resolve()
+        
+        pygame.mixer.music.load(file_tts_out)
+        
+        pygame.mixer.music.play()
+        
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock.tick(10)
+        
+        pygame.mixer.music.unload()
