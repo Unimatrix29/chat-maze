@@ -34,4 +34,4 @@ class chatgpt_movment():
         else:
             move_vector = self.move_options["deny"]
             
-        return move_vector, text[1]
+        return move_vector, text
