@@ -2,6 +2,7 @@ import random
 import pygame, sys
 import textwrap
 from pathlib import Path
+import time
 
 class Screen():
     
@@ -44,9 +45,11 @@ class Screen():
         self.last_response = ""
         self.chat_line_offset = 20
         self.chat_horizontal_offset = 600
-        self.chat_max_len = 24
+        self.chat_max_len = 21
         self.chat = ["  " for x in range(self.chat_max_len)]
-        self.input_rect = pygame.Rect(self.chat_horizontal_offset, 570, 140, 24)
+        self.chat_color = [self.color_passive for x in range(self.chat_max_len)]
+        self.input_rect_normal_height = 24
+        self.input_rect = pygame.Rect(self.chat_horizontal_offset, self.maze_offset_y + 16 * self.CELL_SIZE - self.input_rect_normal_height, 140, self.input_rect_normal_height)
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
         self.return_text = False
@@ -54,12 +57,21 @@ class Screen():
         self.restart_request = False
         self.reset_request = False
 
+        self.backspace_hold = False
+
+        self.author_to_color = {
+            "System": self.color_active,
+            "You": self.color_passive,
+            "GPT-4": self.PINK
+        }
+
     
  
     def update_screen(self, maze=None, player=None, render = 16):
 
         self.restart_request = False
         self.reset_request = False
+        
 
         #Input
         for event in pygame.event.get():
@@ -77,14 +89,21 @@ class Screen():
                             self.user_text = ""
                         break
                     elif event.key == pygame.K_BACKSPACE:
-                        self.user_text = self.user_text[:-1]
+                        self.backspace_hold = True
                     else:
                         self.user_text += event.unicode
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_BACKSPACE: 
+                    self.backspace_hold = False
             #Reset keys listener
             if not self.active:            
                 keys = pygame.key.get_pressed()
                 self.restart_request = keys[pygame.K_r]
                 self.reset_request = self.restart_request and keys[pygame.K_LCTRL]
+
+        if self.backspace_hold:
+            self.user_text = self.user_text[:-1]
+            time.sleep(0.1)
             
         self.screen.fill((0,0,0))
         
@@ -96,14 +115,15 @@ class Screen():
                 
         pygame.draw.rect(self.screen, self.color, self.input_rect, 2)
         pygame.draw.rect(self.screen, self.color, self.maze_rect, 2)
-        self.text_surface = self.base_font.render(self.user_text, True, (255,255,255))
+        #self.text_surface = self.base_font.render(self.user_text, True, (255,255,255))
         self.text_title = self.title_font.render(self.title_text, True, self.color)
         self.cursor = self.base_font.render("_", True, (255,255,255))
-        self.screen.blit(self.text_surface,(self.input_rect.x + 5, self.input_rect.y + 5))
+        #self.screen.blit(self.text_surface,(self.input_rect.x + 5, self.input_rect.y + 5))
         self.screen.blit(self.text_title,(self.input_rect.x, self.input_rect.y - 15))
-        self.screen.blit(self.cursor,(self.input_rect.x + self.text_surface.get_width() + 5, self.input_rect.y + 5))
-        self.input_rect.w = max(250, self.text_surface.get_width() + 20)
+        #self.screen.blit(self.cursor,(self.input_rect.x + self.text_surface.get_width() + 5, self.input_rect.y + 5))
+        #self.input_rect.w = max(250, self.text_surface.get_width() + 20)
         self.draw_chat_text()
+        self.draw_input_text()
 
 
         pygame.display.flip()
@@ -148,27 +168,39 @@ class Screen():
         
         
     def draw_chat_text(self):
-        color = self.color_passive
         for i in range(0, self.chat_max_len):
-            if self.chat[i][0] == "Y":
-                color = self.color_passive
-            if self.chat[i][0] == "G": 
-                color = self.PINK
-            if self.chat[i][0] == "S": 
-                color = self.color_active
-            self.text_response = self.response_font.render(self.chat[i], True, color)
+            
+            self.text_response = self.response_font.render(self.chat[i], True, self.chat_color[i])
             self.screen.blit(self.text_response, (self.chat_horizontal_offset, (self.maze_offset_y + i * self.chat_line_offset)))
+
+    def draw_input_text(self): 
+        lines = textwrap.wrap(self.user_text, 45)
+        if lines == []:
+            lines = [""]
+        max_line = len(lines) - 1
+        for i in range(len(lines)):
+            rendered_line = self.base_font.render(lines[i], True, (255,255,255))
+            self.screen.blit(rendered_line,(self.input_rect.x + 5, self.input_rect.y + 5 + i * self.input_rect_normal_height))
+        current_line = self.base_font.render(lines[max_line], True, (255,255,255))
+        first_line = self.base_font.render(lines[0], True, (255,255,255))
+        self.screen.blit(self.cursor,(self.input_rect.x + current_line.get_width() + 5, self.input_rect.y + 5 + max_line * self.input_rect_normal_height))
+        self.input_rect.w = max(200, first_line.get_width() + 15)
+        self.input_rect.h = self.input_rect_normal_height * (max_line + 1)
 
     def add_chat_text(self, raw_text, author):
         lines = textwrap.wrap(author + ": " + raw_text, 45)
         first_line = True
+        color = self.author_to_color.get(author, self.color_passive)
         for line in lines:
             for i in range(0, self.chat_max_len - 1):
                 self.chat[i] = self.chat[i + 1]
+                self.chat_color[i] = self.chat_color[i + 1]
             if first_line:
                 self.chat[self.chat_max_len - 1] = line
+                self.chat_color[self.chat_max_len - 1] = color
             else:
                 self.chat[self.chat_max_len - 1] = line
+                self.chat_color[self.chat_max_len - 1] = color
             first_line = False
             
     def clear_chat_text(self):
@@ -204,7 +236,7 @@ class Screen():
 
 
     def play(self):
-        file_tts_out = Path(__file__).parent / "tts_out.mp3"
+        file_tts_out = Path(__file__).parent / "tts_out.wav"
         file_tts_out.resolve()
         
         pygame.mixer.music.load(file_tts_out)

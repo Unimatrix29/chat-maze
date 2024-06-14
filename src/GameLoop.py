@@ -75,7 +75,7 @@ class Game():
                 mVector = data[0]
                 
                 clear_text = data[1]
-                self.screen.response_text = clear_text[1]
+                self.screen.response_text = clear_text
                 
                 if self.audio_event.is_set():
                     self.audio_is_ready_event.wait()
