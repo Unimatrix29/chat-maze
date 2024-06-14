@@ -72,10 +72,14 @@ class Game():
             mVector = [0, 0]
             try: 
                 data = self.chatgpt_queue.get(False)
-                mVector = data[0]
+                mVector = data.get("mVector")
                 
-                clear_text = data[1]
-                self.screen.response_text = clear_text
+                clear_text = data.get("content")
+                
+                if data.get("role") == "Error":
+                    self.screen.add_chat_text(clear_text, "Error")
+                else:
+                    self.screen.response_text = clear_text
                 
                 if self.audio_event.is_set():
                     self.audio_is_ready_event.wait()
@@ -175,6 +179,11 @@ class Game():
         
         gpt_model = "gpt-4o"
         temperatur = 0.25
+        data = {
+            "content": "",
+            "role": "GPT-4o",
+            "mVector": [0, 0]
+        }
 
         movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, model=gpt_model)
 
@@ -182,13 +191,14 @@ class Game():
             try:        
                 msg = self.screen_queue.get(False)
                 #chatGPT call
-                move_Vector, content = movmentChatGPT.get_vector(msg, temperatur, prompt)
+                data["mVector"], data["content"] = movmentChatGPT.get_vector(msg, temperatur, prompt)
                 
                 if self.audio_event.is_set():
-                    chatgpt.text_to_audio(content)
+                    chatgpt.text_to_audio(data["content"])
                     self.audio_is_ready_event.set()
-
-                self.chatgpt_queue.put(item=[move_Vector, content])
+                
+                data["role"] = "GPT-4o" 
+                self.chatgpt_queue.put(data)
             except queue.Empty:
                 pass
             except OSError as e:
@@ -196,7 +206,10 @@ class Game():
                 print("FATAL ERROR")
                 pass
             except openai.APIError as e: 
-                #Let the user now that something went wrong
+                data["mVector"] = [0, 0]
+                data["content"] = "I'm sorry, it appears that I can't reach the OpenAI server right now."
+                data["role"] = "Error"
+                self.chatgpt_queue.put(data)
                 print("API CALL ERROR")
                 pass
             
