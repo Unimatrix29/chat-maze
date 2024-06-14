@@ -16,19 +16,17 @@ class Screen():
     
         self.SCREEN_SIZE = screen_size
         self.GRID_SIZE = 16
-        self.CELL_SIZE = 30
-        self.maze_offset_x = 60
-        self.maze_offset_y = 30
+        
+        
+    
 
     def setup_screen(self):
         pygame.init()
         pygame.mixer.init()
 
-        #Maze
-        self.screen = pygame.display.set_mode([1000, 600], pygame.NOFRAME)
+        self.resize_to_resolution(1280, 720)
 
         pygame.display.set_caption("Chat_Leap")
-        pygame.transform.scale2x
 
         #Input
         self.title_font = pygame.font.SysFont('monospace821', 10)
@@ -43,12 +41,10 @@ class Screen():
         self.color = self.color_passive
         self.message = ""
         self.last_response = ""
-        self.chat_line_offset = 20
-        self.chat_horizontal_offset = 600
-        self.chat_max_len = 21
+        self.chat_line_offset = 18
         self.chat = ["  " for x in range(self.chat_max_len)]
         self.chat_color = [self.color_passive for x in range(self.chat_max_len)]
-        self.input_rect_normal_height = 24
+        self.input_rect_normal_height = 20
         self.input_rect = pygame.Rect(self.chat_horizontal_offset, self.maze_offset_y + 16 * self.CELL_SIZE - self.input_rect_normal_height, 140, self.input_rect_normal_height)
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
@@ -62,10 +58,17 @@ class Screen():
         self.author_to_color = {
             "System": self.color_active,
             "You": self.color_passive,
-            "GPT-4": self.PINK
+            "GPT-4": self.PINK,
+            "Error:": self.RED
         }
 
-    
+    def resize_to_resolution(self, res_x, res_y):
+        self.screen = pygame.display.set_mode([res_x, res_y], pygame.NOFRAME)
+        self.chat_horizontal_offset = round(res_x * 0.6)
+        self.chat_max_len = round(res_y * 0.0375)
+        self.maze_offset_x = round(res_x * 0.06)
+        self.maze_offset_y = round(res_x * 0.06)
+        self.CELL_SIZE = round(res_y * 0.05)
  
     def update_screen(self, maze=None, player=None, render = 16):
 
@@ -180,12 +183,12 @@ class Screen():
         max_line = len(lines) - 1
         for i in range(len(lines)):
             rendered_line = self.base_font.render(lines[i], True, (255,255,255))
-            self.screen.blit(rendered_line,(self.input_rect.x + 5, self.input_rect.y + 5 + i * self.input_rect_normal_height))
+            self.screen.blit(rendered_line,(self.input_rect.x + 5, self.input_rect.y + 3 + i * self.input_rect_normal_height))
         current_line = self.base_font.render(lines[max_line], True, (255,255,255))
         first_line = self.base_font.render(lines[0], True, (255,255,255))
         self.screen.blit(self.cursor,(self.input_rect.x + current_line.get_width() + 5, self.input_rect.y + 5 + max_line * self.input_rect_normal_height))
         self.input_rect.w = max(200, first_line.get_width() + 15)
-        self.input_rect.h = self.input_rect_normal_height * (max_line + 1)
+        self.input_rect.h = self.input_rect_normal_height * (max_line + 1) + 5
 
     def add_chat_text(self, raw_text, author):
         lines = textwrap.wrap(author + ": " + raw_text, 45)
