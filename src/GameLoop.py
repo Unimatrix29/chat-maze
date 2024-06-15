@@ -26,12 +26,15 @@ class Game():
         
         self.gameHandler = GameHandler()
         
+        self.maze = self.gameHandler.get_game_stats()[1]
+        self.player = Player(self.maze)
+
         self.chose_difficulty()
         
         self.prompt = self.gameHandler.get_prompt()
         self.gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
         self.maze = self.gameStats[1]
-        self.player = Player(self.maze)
+        self.player.set_position(self.maze[1])
 
         apiClient = ApiClientCreator.get_client(file_name=config_file_name)
 
@@ -132,13 +135,21 @@ class Game():
         self.gameOver_event.set()
         self.chatGPT_thread.join()
         
-    #sets up a new game with new maze and Prompt     
     def reset(self):
-        self.screen.quit_screen()
-        self.gameOver_event.set()
-        self.chatGPT_thread.join()
+        self.gameHandler.reset_game(self.player)
+        self.update_game_stats()
+
+        self.chose_difficulty()
         
-        self.__init__()
+        self.update_game_stats()
+        self.prompt = self.gameHandler.get_prompt()
+        self.player.set_position(self.maze[1])
+        
+        self.audio_event.clear()
+
+        self.clear_queues()
+        if not self.chatGPT_thread.is_alive():
+            self.restart_chatGPT_thread()
         
     #lets the user retry the current maze with the current prompt, dosent reset chatgpt history 
     def restart(self):
@@ -147,9 +158,13 @@ class Game():
         self.update_game_stats()
                 
         self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
-       
+        
+        self.clear_queues()
+        if not self.chatGPT_thread.is_alive():
+            self.restart_chatGPT_thread()       
        
     def chose_difficulty(self):
+        self.screen.clear_chat_text()
         level = ""
         
         self.screen.add_chat_text("#################### : #####", "##### ")
@@ -162,7 +177,7 @@ class Game():
             level = self.screen.get_user_input()
             level = level.strip().upper()
             
-            self.screen.update_screen()
+            self.screen.update_screen(self.maze, self.player)
             if level != "":
                 if not self.gameHandler.set_level(level):
                     self.screen.add_chat_text("A vaild one, please.", "System")
@@ -207,6 +222,21 @@ class Game():
         self.gameStats = self.gameHandler.get_game_stats()      #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
         self.maze = self.gameStats[1]
         
+    def clear_queues(self):
+        self.chatgpt_queue.queue.clear()
+        self.screen_queue.queue.clear()
+        
+    def restart_chatGPT_thread(self):
+        self.gameOver_event.set()
+        self.chatGPT_thread.join()
+        self.gameOver_event.clear()
+
+        self.chatGPT_thread = threading.Thread(target=self.__get_chatgpt_response, kwargs={
+        "chatgpt"   : self.chatgpt,
+        "prompt"    : self.prompt
+        })
+        self.chatGPT_thread.start()
+
     def run_idle(self):
         self.idleAnimationTicks += 1
         frameTicks = self.maze[3]

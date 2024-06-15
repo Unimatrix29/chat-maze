@@ -39,9 +39,9 @@ class GameHandler():
         self.rotationCounter = 0
         
         self.mazeGenerator = MazeGenerator()
-        self.startMazePreset = ""
-        self.activeMazePreset = ""
-        self.maze = []
+        self.startMazePreset = "FINISH_2.0"
+        self.activeMazePreset = "FINISH_2.0"
+        self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         self.difficulty = self.DIFFICULTY["TEST"]
         
         self.gameOver = False
@@ -212,6 +212,16 @@ class GameHandler():
         self.debuffDuration = 0
         self.renderDistance = 16
         self.rotationCounter = 0
+        
+    def reset_game(self, player):
+        self.restart_game(player)
+        
+        self.startMazePreset = f"FINISH_2.0"
+        self.activeMazePreset = f"FINISH_2.0"
+        
+        self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
+        player.set_position(self.maze[1])
+
     """
     Finishes the session depending on end event
     """

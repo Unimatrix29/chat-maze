@@ -70,7 +70,7 @@ class Screen():
         self.maze_offset_y = round(res_x * 0.06)
         self.CELL_SIZE = round(res_y * 0.05)
  
-    def update_screen(self, maze=None, player=None, render = 16):
+    def update_screen(self, maze=None, player=None, render = 17):
 
         self.restart_request = False
         self.reset_request = False
@@ -151,7 +151,7 @@ class Screen():
                     pygame.draw.rect(surface, color, (x * size , y * size - half, size, half))    
                     
                     
-    def draw_maze(self, maze, player, render=16):
+    def draw_maze(self, maze, player, render=17):
         #Maze
         for y in range(self.GRID_SIZE):
             for x in range(self.GRID_SIZE):
