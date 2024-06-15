@@ -32,7 +32,7 @@ class Game():
         self.gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
         self.maze = self.gameStats[1]
         self.player = Player(self.maze)
-        
+
         apiClient = ApiClientCreator.get_client(file_name=config_file_name)
 
         self.chatgpt = ChatGPT(apiClient)
@@ -54,8 +54,9 @@ class Game():
         self.commandHandler = Command(self)
         
         self.chatGPT_thread.start()
+
+        self.idleAnimationTicks = 0
         
- 
     def run(self):
         """
         Game loop
@@ -84,7 +85,16 @@ class Game():
             except queue.Empty:
                 pass
 
-            if not self.gameHandler.is_game_over():
+            if self.gameHandler.is_game_over():
+                self.run_idle()
+            else:
+                # # Removing debuffs by expiring their's duration
+                if self.gameStats[2][0] == 0:
+                    self.gameHandler.remove_debuffs(self.player)
+                # Applying debuffs in case of rough request
+                if mVector == [-1, -1]:
+                    self.gameHandler.apply_debuffs(self.player, self.maze)
+                    
                 # Running till a wall
                 while not mVector in [[0, 0], [-1, -1]]:
                     # Showing end screen if finish arrived
@@ -110,13 +120,6 @@ class Game():
 
                     self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
                     time.sleep(0.3)
-
-                # # Removing debuffs by expiring their's duration
-                if self.gameStats[2][0] == 0:
-                    self.gameHandler.remove_debuffs(self.player)
-                # Applying debuffs in case of rough request
-                if mVector == [-1, -1]:
-                    self.gameHandler.apply_debuffs(self.player, self.maze)
 
                 self.update_game_stats()
                 
@@ -203,3 +206,15 @@ class Game():
     def update_game_stats(self):
         self.gameStats = self.gameHandler.get_game_stats()      #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
         self.maze = self.gameStats[1]
+        
+    def run_idle(self):
+        self.idleAnimationTicks += 1
+        frameTicks = self.maze[3]
+        if not self.idleAnimationTicks == frameTicks:
+            return
+
+        self.idleAnimationTicks = 0
+        
+        nextFrame = self.maze[4]
+
+        self.maze = self.gameHandler.get_idle_maze(nextFrame)
