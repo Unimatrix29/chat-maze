@@ -221,11 +221,28 @@ class GameHandler():
         if case == "FINISH":
             player.hide(True)
             
-            preset = f"FINISH.0.{random.randint(0, 1)}"
-            self.maze = self.mazeGenerator.get_preset(preset)
+            self.activeMazePreset = f"FINISH_{random.randint(0, 2)}.0"
+            self.maze = self.mazeGenerator.get_preset(self.activeMazePreset)
             self.gameOver = True
     """
     Returns selected prompt
     """
     def get_prompt(self):
         return self.PROMPT
+    """
+    Returns the name of active maze section
+    """
+    def get_active_maze_preset(self):
+        return self.activeMazePreset
+    """
+    Returns the [nextFrame]th idle screen's frame
+    !Only used with FINISH and IDLE presets!
+    """
+    def get_idle_maze(self, nextFrame):
+        preset = self.activeMazePreset[-3]
+        animationPreset = f"IDLE_{preset}"
+        
+        self.activeMazePreset = f"{animationPreset}.{nextFrame}"
+        frame = self.mazeGenerator.get_preset(self.activeMazePreset)
+        
+        return frame
