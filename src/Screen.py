@@ -59,7 +59,7 @@ class Screen():
             "System": self.color_active,
             "You": self.color_passive,
             "GPT-4": self.PINK,
-            "Error:": self.RED
+            "Error": self.RED
         }
 
     def resize_to_resolution(self, res_x, res_y):
