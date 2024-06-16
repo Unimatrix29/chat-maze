@@ -49,6 +49,7 @@ class GameHandler():
         self.activeMazePreset = "FINISH_2.0"
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         self.difficulty = self.DIFFICULTY["TEST"]
+        self.promptName = "TEST 1"
         
         self.gameOver = False        
         
@@ -77,6 +78,7 @@ class GameHandler():
         promptPreset = options[self.difficulty[0]]
         promptNumber = random.choice([0, 1])
         key = list(self.PROMPT_LIBRARY[promptPreset][promptNumber].keys())[0]
+        self.promptName = key
         self.PROMPT = self.PROMPT_LIBRARY[promptPreset][promptNumber][key]
         print(f"In this round ChatGPT is {key}")
 
@@ -208,7 +210,7 @@ class GameHandler():
     Access function for use in GameLoop class
     """
     def get_game_stats(self):
-        return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance]]
+        return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance], self.promptName]
     """
     Returns session's status (finish arrived)
     """

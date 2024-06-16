@@ -35,6 +35,9 @@ class ChatGPT():
                 temperature=temperature
             ) 
             
+            #dummy Error
+            #raise openai.APIError("Test Error", message, body={"error": {"message": "Dies ist ein simulierter Fehler."}})
+            
             return textResponse
         except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
             if _retrie:
@@ -44,6 +47,7 @@ class ChatGPT():
         except openai.APIError as e:
             print("Text to text Api call failed!")
             print(e)
+            raise e
                     
         
     
@@ -63,6 +67,7 @@ class ChatGPT():
         except openai.APIError as e:
             print("Text to Audio Api call failed!")
             print(e)
+            raise e
             
         
         self.write_audio_to_file(audioResponse)
@@ -94,6 +99,7 @@ class ChatGPT():
         except openai.APIError as e:
             print("Audio to text Api call failed!")
             print(e)
+            raise e
         
     
     def get_user_audio(self, duration=10):
