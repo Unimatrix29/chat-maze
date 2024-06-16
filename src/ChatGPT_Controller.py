@@ -44,6 +44,7 @@ class ChatGPT():
         except openai.APIError as e:
             print("Text to text Api call failed!")
             print(e)
+            raise e
                     
         
     
@@ -63,6 +64,7 @@ class ChatGPT():
         except openai.APIError as e:
             print("Text to Audio Api call failed!")
             print(e)
+            raise e
             
         
         self.write_audio_to_file(audioResponse)
