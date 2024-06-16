@@ -22,7 +22,7 @@ class Command():
             "/newgame"     :   self.__newgame,
             "/restart"   :   self.__restart,
             "/clear"     :   self.__clear,
-            #"/difficulty":   self.__difficulty,
+            "/commands"  :   self.__commands,
             "/audio on"  :   self.__audio_on,
             "/audio off" :   self.__audio_off,
             "/quack"     :   self.__quack   
@@ -60,17 +60,10 @@ class Command():
     
     def __clear(self):
         self.game.screen.clear_chat_text()
-    
-    #obsolete
-    def __difficulty(self):
-        split_user_input = self.game.screen.get_user_input().strip().split(" ")
-        try:
-            level = int(split_user_input[1])
-        except ValueError: 
-            self.game.screen.add_chat_text("Please enter /difficulty followed by a number between 1-3 to change the difficulty.", "System")
-            return None
         
-        self.game.gameHandler.set_level(level)
+    
+    def __commands(self):
+        self.game.screen.add_chat_text(self.command_list, "System")
     
     
     def __audio_on(self):
