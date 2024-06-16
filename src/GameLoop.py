@@ -1,7 +1,7 @@
 from ChatGPT_Client import ApiClientCreator
 from ChatGPT_Controller import ChatGPT
-from GameHandler import GameHandler
 from CommandHandler import Command
+from GameHandler import GameHandler
 from Player import Player
 from Screen import Screen
 import queue, threading, time
@@ -26,8 +26,9 @@ class Game():
         # Setting start idle frame (maze)
         self.maze = self.gameHandler.get_game_stats()[1]
         self.player = Player(self.maze)
-        self.idleAnimationTicks = 0
-
+        # A timer for switching idle frames
+        self.idleTimer = threading.Timer(self.maze[3], self.switch_idle_frame)
+        
         self.choose_difficulty()
         
         self.prompt = self.gameHandler.get_prompt()
@@ -49,7 +50,7 @@ class Game():
             "chatgpt"   : self.chatgpt,
             "prompt"    : self.prompt
         })
-
+        
         self.commandHandler = Command(self)
         
         self.chatGPT_thread.start()
@@ -130,8 +131,8 @@ class Game():
     Resets the game to the start instance
     """
     def reset(self):
+        self.stop_idle()
         self.gameHandler.reset_game(self.player)
-        self.idleAnimationTicks = 0
         # Updating active maze to a FINISH preset
         self.update_game_stats()
 
@@ -151,8 +152,8 @@ class Game():
     Dosen't reset chatgpt history
     """
     def restart(self):
+        self.stop_idle()
         self.gameHandler.restart_game(self.player)
-        self.idleAnimationTicks = 0
         
         self.update_game_stats()
 
@@ -176,6 +177,7 @@ class Game():
             level = self.screen.get_user_input()
             level = level.strip().upper()
             # Drawing idle frame (maze)
+            self.run_idle()
             self.screen.update_screen(self.maze, self.player)
             if level != "":
                 if not self.gameHandler.set_level(level):
@@ -183,6 +185,7 @@ class Game():
                     level = ""
                     print(f"<{level}>")
                 
+        self.stop_idle()
         self.screen.clear_chat_text()
         
        
@@ -217,20 +220,33 @@ class Game():
                 print("API CALL ERROR")
                 pass
     """
+    Updates idleTimer by it's expiring
+    according to time stamp of current idle frame
+    """
+    def run_idle(self):
+        if self.idleTimer.is_alive():
+            return
+        
+        runTime = self.maze[3]
+        
+        self.idleTimer = threading.Timer(runTime, self.switch_idle_frame)
+        self.idleTimer.start()
+    """
+    Stops idle animations
+    """
+    def stop_idle(self):
+        self.idleTimer.cancel()
+        self.idleTimer.join()
+        # Avoiding saving idle frame
+        self.update_game_stats()
+    """
     Switches active maze (idle frame) to the next one
     every frameTicks' amount of game ticks
     !Only used with FINISH and IDLE presets!
     """
-    def run_idle(self):
-        self.idleAnimationTicks += 1
-        frameTicks = self.maze[3]
-        if not self.idleAnimationTicks == frameTicks:
-            return
-
-        self.idleAnimationTicks = 0
-        
+    def switch_idle_frame(self):
         nextFrame = self.maze[4]
-
+        
         self.maze = self.gameHandler.get_idle_maze(nextFrame)
     """
     Gets new gameStats[] with active(switched/rotated) maze
