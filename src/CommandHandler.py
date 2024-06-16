@@ -6,12 +6,11 @@ class Command():
     def __init__(self, game):
         self.game = game
         self.chatgpt = self.game.chatgpt
-
-        #self.chatgpt = chatgpt
         
         self.info_txt = "This is a info text, it texts infos"
         self.command_list = "This is a help texts , it texts hepls"
-        self.help_prompt = "Du bekommst einen Text übergeben. Bitte fass ihn in drei Sätzen zusammen."
+        self.help_txt = {"placeholder" : "This is a help text, it texts helps"}
+        self.help_prompt = "Du bekommst einen Text übergeben. Bitte fass ihn in drei Sätzen zusammen."        
         self.quack_txt = "quack"
         
         self.__get_command_txt_from_json()
@@ -41,9 +40,8 @@ class Command():
     
     
     def __help(self):
-        help_txt_combined = f"{self.__get_help_txt()}\n{self.command_list}"
-        print(help_txt_combined)
-        self.game.screen.add_chat_text(help_txt_combined, "System")
+        currentPrompt = self.game.gameStats[3]
+        self.game.screen.add_chat_text(self.help_txt.get(currentPrompt), "System")
     
     
     def __info(self):
@@ -86,21 +84,22 @@ class Command():
             with open(display_texts_file, "r") as file:
                 data = json.load(file)
                 
-                self.command_list = data["help_text"]
+                self.command_list = data["command_list"]
                 self.info_txt = data["info_text"]
                 self.help_prompt = data["help_prompt"]
+                self.help_txt = data["help_text"]
                 self.quack_txt = data["quack_text"]
         except FileNotFoundError as e: 
             print("display_texts.json was not found")
             print(e)
         except json.JSONDecodeError as e: 
-            print("There was an Erorr while decoding display_texts.json")
+            print("There was an Erorr while decoding command_texts.json")
             print(e)
         except OSError as e: 
             print("There was an Erorr while reading a File")
             print(e)
         
-    def __get_help_txt(self):
+    def __get_help_txt_from_chatgpt(self):
         
         message = self.game.chatgpt.construct_message(userInput=self.game.prompt, system_prompt=self.help_prompt)
         print(message)
