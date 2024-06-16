@@ -15,7 +15,13 @@ class GameHandler():
             "NORMAL":   [2, 1, 5],
             "HARD"  :   [3, 3, 10]
             }
-        
+        self.DEBUFFS = {
+            1: ["ROTATION", self.maze_rotation],
+            2: ["BLINDNESS", self.blind],
+            3: ["INVISIBILITY", self.set_invisible],
+            4: ["RANDOM MOVE", self.random_move],
+            5: ["TELEPORT", self.teleport]
+            }
         self.options = ["TEST", "EASY", "NORMAL", "HARD"]
         self.PROMPT_LIBRARY = {}
         self.PROMPT = ""
@@ -144,19 +150,13 @@ class GameHandler():
     or rough request (case = 3)
     """
     def apply_debuffs(self, player, maze):
-        DEBUFF = {
-            1: ["ROTATION", self.maze_rotation],
-            2: ["BLINDNESS", self.blind],
-            3: ["INVISIBILITY", self.set_invisible],
-            4: ["RANDOM MOVE", self.random_move],
-            5: ["TELEPORT", self.teleport]
-            }
+        
         cases = 3 if self.startMazePreset[5:-2] == "3.3" else 5
         for i in range(self.difficulty[1]):
             choice = random.randint(1, cases)
-            DEBUFF[choice][1](player, maze)
+            self.DEBUFFS[choice][1](player, maze)
             
-            print(f"{DEBUFF[choice][0]} were applied")
+            print(f"{self.DEBUFFS[choice][0]} were applied")
     """
     Reducing debuff duration by 1 (every step)
     """
@@ -216,8 +216,9 @@ class GameHandler():
     def reset_game(self, player):
         self.restart_game(player)
         
-        self.startMazePreset = f"FINISH_2.0"
-        self.activeMazePreset = f"FINISH_2.0"
+        choice = random.randint(1, 2)
+        self.startMazePreset = f"FINISH_{choice}.0"
+        self.activeMazePreset = f"FINISH_{choice}.0"
         
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         player.set_position(self.maze[1])
