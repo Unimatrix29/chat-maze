@@ -16,20 +16,19 @@ class Game():
         ###################################################################################################
         config_file_name = "config.json"
         
-        """
-        Game session set up
-        """
+        # Game session set up
         self.running = True
         
         self.screen = Screen()
         self.screen.setup_screen()
         
         self.gameHandler = GameHandler()
-        
+        # Setting start idle frame (maze)
         self.maze = self.gameHandler.get_game_stats()[1]
         self.player = Player(self.maze)
+        self.idleAnimationTicks = 0
 
-        self.chose_difficulty()
+        self.choose_difficulty()
         
         self.prompt = self.gameHandler.get_prompt()
         self.gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
@@ -51,21 +50,15 @@ class Game():
             "prompt"    : self.prompt
         })
 
-        """
-        Output window set up
-        """
         self.commandHandler = Command(self)
         
         self.chatGPT_thread.start()
-
-        self.idleAnimationTicks = 0
-        
+    """
+    Game loop
+    """
     def run(self):
-        """
-        Game loop
-        """
         while self.running:
-
+            # Processing user input
             if(self.screen.on_return()):
                 user_input = self.screen.get_user_input()
                 print(user_input)
@@ -73,6 +66,7 @@ class Game():
                 if not self.commandHandler.execute(user_input):
                     self.screen_queue.put(user_input)
 
+            # Getting a movement vector from chatGPT
             mVector = [0, 0]
             try: 
                 data = self.chatgpt_queue.get(False)
@@ -103,6 +97,7 @@ class Game():
                     # Showing end screen if finish arrived
                     if self.gameHandler.check_finish(self.player.currentPosition):
                         self.gameHandler.end_game(self.player)
+                        self.gameOver_event.set()
                         break
 
                     nextStep = [self.player.currentPosition[0] + mVector[0], self.player.currentPosition[1] + mVector[1]]
@@ -127,20 +122,21 @@ class Game():
                 self.update_game_stats()
                 
             self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
-    
-        """
-        Programm finish
-        """
+        # Programm finish
         self.screen.quit_screen()
         self.gameOver_event.set()
         self.chatGPT_thread.join()
-        
+    """
+    Resets the game to the start instance
+    """
     def reset(self):
         self.gameHandler.reset_game(self.player)
+        self.idleAnimationTicks = 0
+        # Updating active maze to a FINISH preset
         self.update_game_stats()
 
-        self.chose_difficulty()
-        
+        self.choose_difficulty()
+        # Getting new maze
         self.update_game_stats()
         self.prompt = self.gameHandler.get_prompt()
         self.player.set_position(self.maze[1])
@@ -150,20 +146,23 @@ class Game():
         self.clear_queues()
         if not self.chatGPT_thread.is_alive():
             self.restart_chatGPT_thread()
-        
-    #lets the user retry the current maze with the current prompt, dosent reset chatgpt history 
+    """
+    Lets the user retry the current maze with the current prompt
+    Dosen't reset chatgpt history
+    """
     def restart(self):
         self.gameHandler.restart_game(self.player)
+        self.idleAnimationTicks = 0
         
         self.update_game_stats()
-                
+
         self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
         
         self.clear_queues()
         if not self.chatGPT_thread.is_alive():
             self.restart_chatGPT_thread()       
        
-    def chose_difficulty(self):
+    def choose_difficulty(self):
         self.screen.clear_chat_text()
         level = ""
         
@@ -176,7 +175,7 @@ class Game():
         while level == "":    
             level = self.screen.get_user_input()
             level = level.strip().upper()
-            
+            # Drawing idle frame (maze)
             self.screen.update_screen(self.maze, self.player)
             if level != "":
                 if not self.gameHandler.set_level(level):
@@ -217,26 +216,11 @@ class Game():
                 #Let the user now that something went wrong
                 print("API CALL ERROR")
                 pass
-            
-    def update_game_stats(self):
-        self.gameStats = self.gameHandler.get_game_stats()      #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
-        self.maze = self.gameStats[1]
-        
-    def clear_queues(self):
-        self.chatgpt_queue.queue.clear()
-        self.screen_queue.queue.clear()
-        
-    def restart_chatGPT_thread(self):
-        self.gameOver_event.set()
-        self.chatGPT_thread.join()
-        self.gameOver_event.clear()
-
-        self.chatGPT_thread = threading.Thread(target=self.__get_chatgpt_response, kwargs={
-        "chatgpt"   : self.chatgpt,
-        "prompt"    : self.prompt
-        })
-        self.chatGPT_thread.start()
-
+    """
+    Switches active maze (idle frame) to the next one
+    every frameTicks' amount of game ticks
+    !Only used with FINISH and IDLE presets!
+    """
     def run_idle(self):
         self.idleAnimationTicks += 1
         frameTicks = self.maze[3]
@@ -248,3 +232,26 @@ class Game():
         nextFrame = self.maze[4]
 
         self.maze = self.gameHandler.get_idle_maze(nextFrame)
+    """
+    Gets new gameStats[] with active(switched/rotated) maze
+    as well as debuff's infos
+    """
+    def update_game_stats(self):
+        self.gameStats = self.gameHandler.get_game_stats()      #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
+        self.maze = self.gameStats[1]
+
+    def clear_queues(self):
+        self.chatgpt_queue.queue.clear()
+        self.screen_queue.queue.clear()
+        
+    def restart_chatGPT_thread(self):
+        self.gameOver_event.set()
+        self.chatGPT_thread.join()
+        self.gameOver_event.clear()
+
+        self.chatGPT_thread = threading.Thread(target=self.__get_chatgpt_response,
+                                               kwargs={
+                                                "chatgpt"   : self.chatgpt,
+                                                "prompt"    : self.prompt
+                                                })
+        self.chatGPT_thread.start()
