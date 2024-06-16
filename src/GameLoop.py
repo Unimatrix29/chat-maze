@@ -32,7 +32,7 @@ class Game():
         self.choose_difficulty()
         
         self.prompt = self.gameHandler.get_prompt()
-        self.gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance]]
+        self.gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance], promptName]
         self.maze = self.gameStats[1]
         self.player.set_position(self.maze[1])
 
