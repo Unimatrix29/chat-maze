@@ -15,15 +15,14 @@ class ChatGPT():
         
         self.file_tts_out = Path(__file__).parent / "tts_out.wav"
         self.file_tts_out.resolve()
-        
+        self.file_user_input = Path(__file__).parent / "user_input.wav"
+        self.file_user_input.resolve()
+
         if not self.file_tts_out.exists():
             self.file_tts_out.touch()
         
-        self.file_user_input = Path(__file__).parent / "user_input.wav"
-        self.file_user_input.resolve()
-                     
-        if not self.file_user_input.exists():
-            self.file_user_input.touch()
+
+
         
 
     def text_to_text(self, message, temperature=1, model="gpt-3.5-turbo", _retrie=False):
@@ -51,7 +50,9 @@ class ChatGPT():
                     
         
     
-    def text_to_audio(self, text, voice="onyx", model="tts-1", _retrie=False):
+    def text_to_audio(self, text, name="onyx", model="tts-1", _retrie=False):
+        voices={ "Prinz Reginald":"onyx", "Larry":"echo","Clyde":"shimmer","Lawrie":"fable", "Imane":"alloy","Sophia":"nova"}
+        voice = voices[name]
         try:
             audioResponse = self.client.audio.speech.create(
                 model=model,

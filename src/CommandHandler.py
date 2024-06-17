@@ -66,6 +66,8 @@ class Command():
     
     def __audio_on(self):
         self.game.audio_event.set()
+        self.game.screen.add_chat_text("Drücke STRG und Lehrtaste zum sprechen", "System")
+
     
     
     def __audio_off(self):
