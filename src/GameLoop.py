@@ -1,3 +1,4 @@
+from AutoPlayer import AutoPlayer
 from ChatGPT_Client import ApiClientCreator
 from ChatGPT_Controller import ChatGPT
 from CommandHandler import Command
@@ -17,6 +18,8 @@ class Game():
         config_file_name = "config.json"
         
         # Game session set up
+        self.bot = AutoPlayer()
+        self.autoPlay = False
         self.running = True
         
         self.screen = Screen()
@@ -69,6 +72,8 @@ class Game():
 
             # Getting a movement vector from chatGPT
             mVector = [0, 0]
+            if self.autoPlay:
+                mVector = self.bot.make_random_move()
             try: 
                 data = self.chatgpt_queue.get(False)
                 mVector = data.get("mVector")
@@ -78,7 +83,7 @@ class Game():
                 if data.get("role") == "Error":
                     self.screen.add_chat_text(clear_text, "Error")
                 else:
-                    self.screen.response_text = clear_text
+                    self.screen.add_chat_text(clear_text, self.gameStats[3])
                 
                 if self.audio_event.is_set():
                     self.audio_is_ready_event.wait()
@@ -149,8 +154,7 @@ class Game():
         self.audio_event.clear()
 
         self.clear_queues()
-        if not self.chatGPT_thread.is_alive():
-            self.restart_chatGPT_thread()
+        self.restart_chatGPT_thread()
     """
     Lets the user retry the current maze with the current prompt
     Dosen't reset chatgpt history
@@ -164,8 +168,7 @@ class Game():
         self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
         
         self.clear_queues()
-        if not self.chatGPT_thread.is_alive():
-            self.restart_chatGPT_thread()       
+        self.restart_chatGPT_thread()       
        
     def choose_difficulty(self):
         self.screen.clear_chat_text()
