@@ -24,7 +24,7 @@ class Screen():
         pygame.init()
         pygame.mixer.init()
 
-        self.resize_to_resolution(1280, 720)
+        self.resize_to_resolution(1600, 800)
 
         pygame.display.set_caption("Chat_Leap")
 
@@ -58,7 +58,6 @@ class Screen():
         self.author_to_color = {
             "System": self.color_active,
             "You": self.color_passive,
-            "GPT-4": self.PINK,
             "Error": self.RED
         }
 
@@ -193,7 +192,7 @@ class Screen():
     def add_chat_text(self, raw_text, author):
         lines = textwrap.wrap(author + ": " + raw_text, 45)
         first_line = True
-        color = self.author_to_color.get(author, self.color_passive)
+        color = self.author_to_color.get(author, self.PINK)
         for line in lines:
             for i in range(0, self.chat_max_len - 1):
                 self.chat[i] = self.chat[i + 1]
