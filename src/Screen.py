@@ -24,13 +24,16 @@ class Screen():
         pygame.init()
         pygame.mixer.init()
 
-        self.resize_to_resolution(1280, 720)
+        infoObject = pygame.display.Info()
+
+        self.resize_to_resolution(infoObject.current_w, infoObject.current_h)
 
         pygame.display.set_caption("Chat_Leap")
 
         #Input
+        self.base_font_size = 12
         self.title_font = pygame.font.SysFont('monospace821', 10)
-        self.base_font = pygame.font.SysFont('monospace821', 12)
+        self.base_font = pygame.font.SysFont('monospace821', self.base_font_size)
         self.response_font = pygame.font.SysFont('monospace821', 12)
         self.user_text = ""
         self.title_text = "User Input:"
@@ -44,7 +47,7 @@ class Screen():
         self.chat_line_offset = 18
         self.chat = ["  " for x in range(self.chat_max_len)]
         self.chat_color = [self.color_passive for x in range(self.chat_max_len)]
-        self.input_rect_normal_height = 20
+        self.input_rect_normal_height = self.base_font_size + 8
         self.input_rect = pygame.Rect(self.chat_horizontal_offset, self.maze_offset_y + 16 * self.CELL_SIZE - self.input_rect_normal_height, 140, self.input_rect_normal_height)
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
@@ -191,20 +194,23 @@ class Screen():
         self.input_rect.h = self.input_rect_normal_height * (max_line + 1) + 5
 
     def add_chat_text(self, raw_text, author):
-        lines = textwrap.wrap(author + ": " + raw_text, 45)
-        first_line = True
-        color = self.author_to_color.get(author, self.color_passive)
-        for line in lines:
-            for i in range(0, self.chat_max_len - 1):
-                self.chat[i] = self.chat[i + 1]
-                self.chat_color[i] = self.chat_color[i + 1]
-            if first_line:
-                self.chat[self.chat_max_len - 1] = line
-                self.chat_color[self.chat_max_len - 1] = color
-            else:
-                self.chat[self.chat_max_len - 1] = line
-                self.chat_color[self.chat_max_len - 1] = color
-            first_line = False
+        paragraphs = str(author + ": " + raw_text).split("|")
+        for paragraph in paragraphs:
+            lines = textwrap.wrap(paragraph, 45)
+            first_line = True
+            color = self.author_to_color.get(author, self.color_passive)
+            for line in lines:
+                for i in range(0, self.chat_max_len - 1):
+                    self.chat[i] = self.chat[i + 1]
+                    self.chat_color[i] = self.chat_color[i + 1]
+                if first_line:
+                    self.chat[self.chat_max_len - 1] = line
+                    self.chat_color[self.chat_max_len - 1] = color
+                else:
+                    self.chat[self.chat_max_len - 1] = line
+                    self.chat_color[self.chat_max_len - 1] = color
+                first_line = False
+
             
     def clear_chat_text(self):
         self.chat = ["  " for x in range(self.chat_max_len)]
