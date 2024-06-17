@@ -1,4 +1,4 @@
-from AutoPlayer import AutoPlayer
+#from AutoPlayer import AutoPlayer
 from ChatGPT_Client import ApiClientCreator
 from ChatGPT_Controller import ChatGPT
 from CommandHandler import Command
@@ -18,7 +18,7 @@ class Game():
         config_file_name = "config.json"
         
         # Game session set up
-        self.bot = AutoPlayer()
+        #self.bot = AutoPlayer()
         self.autoPlay = False
         self.running = True
         
@@ -63,17 +63,26 @@ class Game():
     def run(self):
         while self.running:
             # Processing user input
+            if self.audio_event.is_set():
+                self.screen.audio_mode=True
             if(self.screen.on_return()):
+                if self.screen.ppt():
+                    audio_input=self.chatgpt.audio_to_text()
                 user_input = self.screen.get_user_input()
                 print(user_input)
 
                 if not self.commandHandler.execute(user_input):
-                    self.screen_queue.put(user_input)
+                    if self.audio_event.is_set():
+                        self.screen.add_chat_text(audio_input, "You")
+                        self.screen_queue.put(audio_input)
+                        print(audio_input)
+                    else:
+                        self.screen_queue.put(user_input)
 
             # Getting a movement vector from chatGPT
             mVector = [0, 0]
-            if self.autoPlay:
-                mVector = self.bot.make_random_move()
+            # if self.autoPlay:
+            #     mVector = self.bot.make_random_move()
             try: 
                 data = self.chatgpt_queue.get(False)
                 mVector = data.get("mVector")
@@ -217,7 +226,8 @@ class Game():
                 data["mVector"], data["content"] = movmentChatGPT.get_vector(msg, temperatur, prompt)
                 
                 if self.audio_event.is_set():
-                    chatgpt.text_to_audio(data["content"])
+                    name = self.gameStats[3]
+                    chatgpt.text_to_audio(data["content"],name=name)
                     self.audio_is_ready_event.set()
                 
                 data["role"] = "GPT-4o" 

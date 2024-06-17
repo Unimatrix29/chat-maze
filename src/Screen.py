@@ -1,8 +1,12 @@
 import random 
 import pygame, sys
 import textwrap
+import sounddevice as sd
+import soundfile as sf
 from pathlib import Path
+from scipy.io.wavfile import write as wavWrite
 import time
+import queue
 
 class Screen():
     
@@ -16,9 +20,18 @@ class Screen():
     
         self.SCREEN_SIZE = screen_size
         self.GRID_SIZE = 16
-        
-        
-    
+        self.file_user_input = Path(__file__).parent / "user_input.wav"
+        self.file_user_input.resolve()
+        # if not self.file_user_input.exists():
+        #     self.file_user_input.touch()
+        self.q = queue.Queue()
+
+
+    def callback(self,indata, frames, time, status):
+        """This is called (from a separate thread) for each audio block."""
+        if status:
+            print(status, file=sys.stderr)
+        self.q.put(indata.copy())
 
     def setup_screen(self):
         pygame.init()
@@ -54,12 +67,13 @@ class Screen():
         self.reset_request = False
 
         self.backspace_hold = False
-
+        
         self.author_to_color = {
             "System": self.color_active,
             "You": self.color_passive,
             "Error": self.RED
         }
+        self.audio_mode = False
 
     def resize_to_resolution(self, res_x, res_y):
         self.screen = pygame.display.set_mode([res_x, res_y], pygame.NOFRAME)
@@ -73,6 +87,8 @@ class Screen():
 
         self.restart_request = False
         self.reset_request = False
+        self.record = False
+
         
 
         #Input
@@ -80,6 +96,21 @@ class Screen():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if self.audio_mode: 
+                if event.type == pygame.KEYDOWN: 
+                    if event.mod & pygame.KMOD_LCTRL and event.key== pygame.K_SPACE:
+                        print("ptt")
+                        record = True
+                        with sf.SoundFile(self.file_user_input, mode='wb', samplerate=44100,channels=2) as file:
+                            with sd.InputStream(samplerate=44100,channels=2, callback=self.callback):
+                                while record:
+                                    file.write(self.q.get())
+                                    for event in pygame.event.get():
+                                        if event.type == pygame.KEYUP:
+                                            record = False
+                        self.return_text = True
+                if event.type == pygame.KEYUP:
+                    print("end ptt")
             if event.type == pygame.KEYDOWN:
                 if self.active:
                     if event.key == pygame.K_RETURN:
@@ -217,6 +248,11 @@ class Screen():
         self.return_text = False
         return return_message
     
+    def ppt(self):
+        if not self.record:
+            return True
+
+
     def on_return(self):
         if self.return_text:
             self.return_text = False
@@ -244,8 +280,10 @@ class Screen():
         pygame.mixer.music.load(file_tts_out)
         
         pygame.mixer.music.play()
-        
+        clock = pygame.time.Clock()
         while pygame.mixer.music.get_busy():
-            pygame.time.Clock.tick(10)
+            clock.tick(10)
         
         pygame.mixer.music.unload()
+
+        
