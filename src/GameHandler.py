@@ -24,7 +24,7 @@ class GameHandler():
             5: ["TELEPORT", self.teleport]
             }
         self.PROMPT_LIBRARY = {}
-        self.PROMPT = ""
+        self.PROMPT = [] # [name, prompt_line]
         
         file_prompts = Path(__file__).parent / "prompts.json"
         file_prompts.resolve()
@@ -37,7 +37,7 @@ class GameHandler():
             item = data["TEST"][0]
             key = "TEST 1"
             
-            self.PROMPT = item[key]
+            self.PROMPT = [key, item[key]]
         
         self.moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
         self.debuffDuration = 0
@@ -49,7 +49,6 @@ class GameHandler():
         self.activeMazePreset = "FINISH_2.0"
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         self.difficulty = self.DIFFICULTY["TEST"]
-        self.promptName = "TEST 1"
         
         self.gameOver = False        
         
@@ -75,11 +74,14 @@ class GameHandler():
     
     def __get_random_prompt(self):
         options = ["TEST", "EASY", "NORMAL", "HARD"]
+        
         promptPreset = options[self.difficulty[0]]
         promptNumber = random.choice([0, 1])
+        
         key = list(self.PROMPT_LIBRARY[promptPreset][promptNumber].keys())[0]
-        self.promptName = key
-        self.PROMPT = self.PROMPT_LIBRARY[promptPreset][promptNumber][key]
+        promptLine = self.PROMPT_LIBRARY[promptPreset][promptNumber][key]
+
+        self.PROMPT = [key, promptLine]
         print(f"In this round ChatGPT is {key}")
 
     """
