@@ -32,17 +32,21 @@ class Game():
         # A timer for switching idle frames
         self.idleTimer = threading.Timer(self.maze[3], self.switch_idle_frame)
         
+        apiClient = ApiClientCreator.get_client(file_name=config_file_name)
+
+        self.chatgpt = ChatGPT(apiClient)
+        # Print welcome message by initializing CommandHandler
+        self.commandHandler = Command(self)
+        
         self.choose_difficulty()
+        # Print start message
+        self.commandHandler.execute("__/start")
         
         self.prompt = self.gameHandler.get_prompt()        # [name, promptLine]
         self.gameStats = self.gameHandler.get_game_stats() # [difficulty, (active)maze, [debuffDuration, renderDistance]]
         self.maze = self.gameStats[1]
         self.player.change_name(self.prompt[0])
         self.player.set_position(self.maze[1])
-
-        apiClient = ApiClientCreator.get_client(file_name=config_file_name)
-
-        self.chatgpt = ChatGPT(apiClient)
         
         self.audio_event = threading.Event()
         self.audio_is_ready_event = threading.Event()
@@ -53,8 +57,6 @@ class Game():
             "chatgpt"   : self.chatgpt,
             "prompt"    : self.prompt[1]
         })
-        
-        self.commandHandler = Command(self)
         
         self.chatGPT_thread.start()
     """
@@ -124,6 +126,8 @@ class Game():
                     if self.gameHandler.check_finish(self.player.currentPosition):
                         self.gameHandler.end_game(self.player)
                         self.gameOver_event.set()
+                        # Print end message
+                        self.commandHandler.execute("__/finish")
                         break
 
                     nextStep = [self.player.currentPosition[0] + mVector[0], self.player.currentPosition[1] + mVector[1]]
@@ -188,13 +192,8 @@ class Game():
         self.restart_chatGPT_thread()       
        
     def choose_difficulty(self):
-        self.screen.clear_chat_text()
         level = ""
         
-        self.screen.add_chat_text("#################### : #####", "##### ")
-        self.screen.add_chat_text("Welcome to Chat Leap : #####", "##### ")
-        self.screen.add_chat_text("#################### : #####", "##### ")
-        self.screen.add_chat_text("                            ", "##### ")
         self.screen.add_chat_text("Please chose a difficulty: EASY, NORMAL, HARD", "System")
         
         while level == "":    
