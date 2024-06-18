@@ -24,7 +24,7 @@ class GameHandler():
             5: ["TELEPORT", self.teleport]
             }
         self.PROMPT_LIBRARY = {}
-        self.PROMPT = [] # [name, prompt_line]
+        self.PROMPT = [] # [name, promptLine]
         
         file_prompts = Path(__file__).parent / "prompts.json"
         file_prompts.resolve()
@@ -212,7 +212,7 @@ class GameHandler():
     Access function for use in GameLoop class
     """
     def get_game_stats(self):
-        return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance], self.promptName]
+        return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance]]
     """
     Returns session's status (finish arrived)
     """
