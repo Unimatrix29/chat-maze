@@ -1,6 +1,11 @@
+"""
+Player class represents a chatGPT
+character on a playfield
+"""
 class Player:
-    def __init__(self, maze):
+    def __init__(self, maze, name = ""):
         self.currentPosition = [int(maze[1][0]), int(maze[1][1])]
+        self.name = name
         self.isHidden = False
     """
     Changes currentPosition by a move vector
@@ -28,3 +33,9 @@ class Player:
     """
     def hide(self, request: bool):
         self.isHidden = request
+    """
+    Changes player's name
+    (by switching prompts)
+    """
+    def change_name(self, newName: str):
+        self.name = newName

@@ -11,11 +11,18 @@ import queue
 class Screen():
     
     def __init__(self, screen_size = [16, 16]):
-        self.WHITE = (255, 255, 255)
-        self.BLACK = (0, 0, 0)
-        self.GREY = (140, 140, 140)
+        self.WHITE = (255, 255, 255)        # Walls
+        self.BLACK = (0, 0, 0)              # Canvas
+        self.RED = (255, 0, 0)              # Finish
+        self.LIMEGREEN = (50, 205, 50)      # System (active)
+        self.GREY = (100 ,100, 100)         # System (inactive)
+        
+        self.BLUE = (0, 0, 255)             # ChatGPT-Role colours
+        self.CYAN = (0, 204, 153)           # (Player colours)
+        self.GREEN = (0, 255, 0)
+        self.ORANGE = (204, 102, 0)
         self.PINK = (255, 0, 149)
-        self.RED = (255, 0, 0)
+        self.YELLOW = (255, 255, 0)
     
         self.SCREEN_SIZE = screen_size
         self.GRID_SIZE = 16
@@ -56,8 +63,8 @@ class Screen():
         self.title_text = "User Input:"
         self.response_text = ""
 
-        self.color_active = pygame.Color('limegreen')
-        self.color_passive = (100, 100, 100)
+        self.color_active = self.LIMEGREEN
+        self.color_passive = self.GREY
         self.color = self.color_passive
         self.message = ""
         self.last_response = ""
@@ -78,6 +85,12 @@ class Screen():
         self.author_to_color = {
             "System": self.color_active,
             "You": self.color_passive,
+            "Prinz Reginald": self.YELLOW,
+            "Larry": self.CYAN,
+            "Clyde": self.BLUE,
+            "Lawrie": self.ORANGE,
+            "Imane": self.PINK,
+            "Sophia": self.GREEN,
             "Error": self.RED
         }
         self.audio_mode = False
@@ -188,7 +201,7 @@ class Screen():
                     pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
                 if player.currentPosition == [x, y] and (not player.isHidden):
                     #player
-                    pygame.draw.rect(self.screen, self.color_active, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+                    pygame.draw.rect(self.screen, self.author_to_color.get(player.name, "Error"), (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
                 if maze[2] == [x, y]:
                     #finish
                     pygame.draw.rect(self.screen, self.RED, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
