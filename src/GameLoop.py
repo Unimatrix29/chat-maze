@@ -34,15 +34,15 @@ class Game():
         
         self.choose_difficulty()
         
-        self.prompt = self.gameHandler.get_prompt()
-        self.gameStats = self.gameHandler.get_game_stats() #[difficulty, (active)maze, [debuffDuration, renderDistance], promptName]
+        self.prompt = self.gameHandler.get_prompt()        # [name, promptLine]
+        self.gameStats = self.gameHandler.get_game_stats() # [difficulty, (active)maze, [debuffDuration, renderDistance]]
         self.maze = self.gameStats[1]
+        self.player.change_name(self.prompt[0])
         self.player.set_position(self.maze[1])
 
         apiClient = ApiClientCreator.get_client(file_name=config_file_name)
 
         self.chatgpt = ChatGPT(apiClient)
-        
         
         self.audio_event = threading.Event()
         self.audio_is_ready_event = threading.Event()
@@ -51,7 +51,7 @@ class Game():
         self.chatgpt_queue = queue.Queue()
         self.chatGPT_thread = threading.Thread(target=self.__get_chatgpt_response, kwargs={
             "chatgpt"   : self.chatgpt,
-            "prompt"    : self.prompt
+            "prompt"    : self.prompt[1]
         })
         
         self.commandHandler = Command(self)
@@ -99,7 +99,7 @@ class Game():
                 if data.get("role") == "Error":
                     self.screen.add_chat_text(clear_text, "Error")
                 else:
-                    self.screen.add_chat_text(clear_text, self.gameStats[3])
+                    self.screen.add_chat_text(clear_text, self.prompt[0])
                 
                 if self.audio_event.is_set():
                     self.audio_is_ready_event.wait()
@@ -165,6 +165,7 @@ class Game():
         # Getting new maze
         self.update_game_stats()
         self.prompt = self.gameHandler.get_prompt()
+        self.player.change_name(self.prompt[0])
         self.player.set_position(self.maze[1])
         
         self.audio_event.clear()
@@ -233,7 +234,7 @@ class Game():
                 data["mVector"], data["content"] = movmentChatGPT.get_vector(msg, temperatur, prompt)
                 
                 if self.audio_event.is_set():
-                    name = self.gameStats[3]
+                    name = self.prompt[0]
                     chatgpt.text_to_audio(data["content"],name=name)
                     self.audio_is_ready_event.set()
                 
@@ -301,6 +302,6 @@ class Game():
         self.chatGPT_thread = threading.Thread(target=self.__get_chatgpt_response,
                                                kwargs={
                                                 "chatgpt"   : self.chatgpt,
-                                                "prompt"    : self.prompt
+                                                "prompt"    : self.prompt[1]
                                                 })
         self.chatGPT_thread.start()
