@@ -23,7 +23,7 @@ class Game():
         self.running = True
         
         self.screen = Screen()
-        self.screen.setup_screen()
+        self.screen.setup_screen(1)
         
         self.gameHandler = GameHandler()
         # Setting start idle frame (maze)
