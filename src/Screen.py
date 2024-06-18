@@ -43,6 +43,7 @@ class Screen():
             displaySizeX , displaySizeY = self.displaySizes[screenNumber]
         else:
             displaySizeX , displaySizeY = self.displaySizes[0]
+            screenNumber = 0
 
         self.resize_to_resolution(displaySizeX, displaySizeY, screenNumber)
 
