@@ -100,17 +100,11 @@ class Screen():
                 if event.type == pygame.KEYDOWN: 
                     if event.mod & pygame.KMOD_LCTRL and event.key== pygame.K_SPACE:
                         print("ptt")
-                        record = True
-                        with sf.SoundFile(self.file_user_input, mode='wb', samplerate=44100,channels=2) as file:
-                            with sd.InputStream(samplerate=44100,channels=2, callback=self.callback):
-                                while record:
-                                    file.write(self.q.get())
-                                    for event in pygame.event.get():
-                                        if event.type == pygame.KEYUP:
-                                            record = False
+                        self.record = True
+                        
+                        self.record_audio()
+
                         self.return_text = True
-                if event.type == pygame.KEYUP:
-                    print("end ptt")
             if event.type == pygame.KEYDOWN:
                 if self.active:
                     if event.key == pygame.K_RETURN:
@@ -160,6 +154,17 @@ class Screen():
 
 
         pygame.display.flip()
+        
+    def record_audio(self):
+        with sf.SoundFile(self.file_user_input, mode='wb', samplerate=44100,channels=2) as file:
+            with sd.InputStream(samplerate=44100,channels=2, callback=self.callback):
+                while self.record:
+                    file.write(self.q.get())
+                    for event in pygame.event.get():
+                        if event.type == pygame.KEYUP:
+                            print("end ptt")
+                            self.record = False
+                            
         
         
     def draw_wall(self, surface, color, x, y, size, maze):
