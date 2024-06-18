@@ -11,7 +11,6 @@ import queue
 class Screen():
     
     def __init__(self, screen_size = [16, 16]):
-        
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
         self.GREY = (140, 140, 140)
@@ -33,11 +32,19 @@ class Screen():
             print(status, file=sys.stderr)
         self.q.put(indata.copy())
 
-    def setup_screen(self):
+    def setup_screen(self, screenNumber = 0):
         pygame.init()
         pygame.mixer.init()
+        
+        
+        self.displaySizes = pygame.display.get_desktop_sizes()
+        
+        if len(self.displaySizes) >= screenNumber + 1:
+            displaySizeX , displaySizeY = self.displaySizes[screenNumber]
+        else:
+            displaySizeX , displaySizeY = self.displaySizes[0]
 
-        self.resize_to_resolution(1600, 800)
+        self.resize_to_resolution(displaySizeX, displaySizeY, screenNumber)
 
         pygame.display.set_caption("Chat_Leap")
 
@@ -75,8 +82,8 @@ class Screen():
         }
         self.audio_mode = False
 
-    def resize_to_resolution(self, res_x, res_y):
-        self.screen = pygame.display.set_mode([res_x, res_y], pygame.NOFRAME)
+    def resize_to_resolution(self, res_x, res_y, monitorNumber):
+        self.screen = pygame.display.set_mode([res_x, res_y], pygame.NOFRAME, display=monitorNumber)
         self.chat_horizontal_offset = round(res_x * 0.6)
         self.chat_max_len = round(res_y * 0.0375)
         self.maze_offset_x = round(res_x * 0.06)
@@ -100,17 +107,11 @@ class Screen():
                 if event.type == pygame.KEYDOWN: 
                     if event.mod & pygame.KMOD_LCTRL and event.key== pygame.K_SPACE:
                         print("ptt")
-                        record = True
-                        with sf.SoundFile(self.file_user_input, mode='wb', samplerate=44100,channels=2) as file:
-                            with sd.InputStream(samplerate=44100,channels=2, callback=self.callback):
-                                while record:
-                                    file.write(self.q.get())
-                                    for event in pygame.event.get():
-                                        if event.type == pygame.KEYUP:
-                                            record = False
+                        self.record = True
+                        
+                        self.record_audio()
+
                         self.return_text = True
-                if event.type == pygame.KEYUP:
-                    print("end ptt")
             if event.type == pygame.KEYDOWN:
                 if self.active:
                     if event.key == pygame.K_RETURN:
@@ -160,6 +161,17 @@ class Screen():
 
 
         pygame.display.flip()
+        
+    def record_audio(self):
+        with sf.SoundFile(self.file_user_input, mode='wb', samplerate=44100,channels=2) as file:
+            with sd.InputStream(samplerate=44100,channels=2, callback=self.callback):
+                while self.record:
+                    file.write(self.q.get())
+                    for event in pygame.event.get():
+                        if event.type == pygame.KEYUP:
+                            print("end ptt")
+                            self.record = False
+                            
         
         
     def draw_wall(self, surface, color, x, y, size, maze):

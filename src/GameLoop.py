@@ -23,7 +23,7 @@ class Game():
         self.running = True
         
         self.screen = Screen()
-        self.screen.setup_screen()
+        self.screen.setup_screen(1)
         
         self.gameHandler = GameHandler()
         # Setting start idle frame (maze)
@@ -65,16 +65,23 @@ class Game():
             # Processing user input
             if self.audio_event.is_set():
                 self.screen.audio_mode=True
-            if(self.screen.on_return()):
-                if self.screen.ppt():
-                    audio_input=self.chatgpt.audio_to_text()
+            else:
+                self.screen.audio_mode=False
+                
+            if self.screen.on_return():
+                
+                if self.screen.ppt() and self.audio_event.is_set():
+                    audio_input = self.chatgpt.audio_to_text()
                 user_input = self.screen.get_user_input()
+                
                 print(user_input)
 
                 if not self.commandHandler.execute(user_input):
+                    
                     if self.audio_event.is_set():
                         self.screen.add_chat_text(audio_input, "You")
                         self.screen_queue.put(audio_input)
+                        
                         print(audio_input)
                     else:
                         self.screen_queue.put(user_input)
