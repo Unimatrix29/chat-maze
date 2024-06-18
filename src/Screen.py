@@ -21,8 +21,6 @@ class Screen():
         self.GRID_SIZE = 16
         self.file_user_input = Path(__file__).parent / "user_input.wav"
         self.file_user_input.resolve()
-        # if not self.file_user_input.exists():
-        #     self.file_user_input.touch()
         self.q = queue.Queue()
 
 
@@ -36,9 +34,10 @@ class Screen():
         pygame.init()
         pygame.mixer.init()
         
-        
+        #get size of all connected screens
         self.displaySizes = pygame.display.get_desktop_sizes()
         
+        #chossing the right screen bsed on the screen number and the number of connected screens
         if len(self.displaySizes) >= screenNumber + 1:
             displaySizeX , displaySizeY = self.displaySizes[screenNumber]
         else:
@@ -83,6 +82,7 @@ class Screen():
         }
         self.audio_mode = False
 
+
     def resize_to_resolution(self, res_x, res_y, monitorNumber):
         self.screen = pygame.display.set_mode([res_x, res_y], pygame.NOFRAME, display=monitorNumber)
         self.chat_horizontal_offset = round(res_x * 0.6)
@@ -91,6 +91,7 @@ class Screen():
         self.maze_offset_y = round(res_x * 0.06)
         self.CELL_SIZE = round(res_y * 0.05)
  
+ 
     def update_screen(self, maze=None, player=None, render = 17):
 
         self.restart_request = False
@@ -98,22 +99,21 @@ class Screen():
         self.record = False
 
         
-
         #Input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                self.quit_screen()
                 sys.exit()
-            if self.audio_mode: 
-                if event.type == pygame.KEYDOWN: 
+                
+            if event.type == pygame.KEYDOWN:
+                if self.audio_mode:
                     if event.mod & pygame.KMOD_LCTRL and event.key== pygame.K_SPACE:
                         print("ptt")
                         self.record = True
                         
                         self.record_audio()
 
-                        self.return_text = True
-            if event.type == pygame.KEYDOWN:
+                        self.return_text = True      
                 if self.active:
                     if event.key == pygame.K_RETURN:
                         if self.user_text != "":
@@ -131,16 +131,16 @@ class Screen():
                 if event.key == pygame.K_BACKSPACE: 
                     self.backspace_hold = False
             #Reset keys listener
-            if not self.active:            
-                keys = pygame.key.get_pressed()
-                self.restart_request = keys[pygame.K_r]
-                self.reset_request = self.restart_request and keys[pygame.K_LCTRL]
+            # if not self.active:            
+            #     keys = pygame.key.get_pressed()
+            #     self.restart_request = keys[pygame.K_r]
+            #     self.reset_request = self.restart_request and keys[pygame.K_LCTRL]
 
         if self.backspace_hold:
             self.user_text = self.user_text[:-1]
-            time.sleep(0.1)
+            time.sleep(0.05)
             
-        self.screen.fill((0,0,0))
+        self.screen.fill("black")
         
         if self.on_response_change():
             self.add_chat_text(self.response_text, "GPT-4")
@@ -162,6 +162,7 @@ class Screen():
 
 
         pygame.display.flip()
+ 
         
     def record_audio(self):
         with sf.SoundFile(self.file_user_input, mode='wb', samplerate=44100,channels=2) as file:
@@ -171,27 +172,7 @@ class Screen():
                     for event in pygame.event.get():
                         if event.type == pygame.KEYUP:
                             print("end ptt")
-                            self.record = False
-                            
-        
-        
-    def draw_wall(self, surface, color, x, y, size, maze):
-        half = size / 2
-        quarter = size / 4
-        if maze[0][x][y] == 1:
-            pygame.draw.circle(surface, color, (x * size + half, y * size + half), half)
-            if x < 15:
-                if maze[0][x+1][y] == 1:
-                    pygame.draw.rect(surface, color, (x * size + size, y * size, half, size))
-            if x > 0:        
-                if maze[0][x-1][y] == 1:
-                    pygame.draw.rect(surface, color, (x * size - half, y * size, half, size))
-            if y < 15:
-                if maze[0][x][y+1] == 1:
-                    pygame.draw.rect(surface, color, (x * size, y * size + size, size, half))
-            if y > 0:        
-                if maze[0][x][y-1] == 1:
-                    pygame.draw.rect(surface, color, (x * size , y * size - half, size, half))    
+                            self.record = False  
                     
                     
     def draw_maze(self, maze, player, render=17):
@@ -219,6 +200,7 @@ class Screen():
             self.text_response = self.response_font.render(self.chat[i], True, self.chat_color[i])
             self.screen.blit(self.text_response, (self.chat_horizontal_offset, (self.maze_offset_y + i * self.chat_line_offset)))
 
+
     def draw_input_text(self): 
         lines = textwrap.wrap(self.user_text, 45)
         if lines == []:
@@ -232,6 +214,7 @@ class Screen():
         self.screen.blit(self.cursor,(self.input_rect.x + current_line.get_width() + 5, self.input_rect.y + 5 + max_line * self.input_rect_normal_height))
         self.input_rect.w = max(200, first_line.get_width() + 15)
         self.input_rect.h = self.input_rect_normal_height * (max_line + 1) + 5
+
 
     def add_chat_text(self, raw_text, author):
         lines = textwrap.wrap(author + ": " + raw_text, 45)
@@ -248,9 +231,11 @@ class Screen():
                 self.chat[self.chat_max_len - 1] = line
                 self.chat_color[self.chat_max_len - 1] = color
             first_line = False
+ 
             
     def clear_chat_text(self):
         self.chat = ["  " for x in range(self.chat_max_len)]
+
 
     def quit_screen(self): 
         pygame.quit()
@@ -260,6 +245,7 @@ class Screen():
         self.message = ""
         self.return_text = False
         return return_message
+   
     
     def ppt(self):
         if not self.record:
@@ -272,12 +258,6 @@ class Screen():
             return True
         return False
     
-    
-    def has_restart_request(self):
-        return self.restart_request
-    
-    def has_reset_request(self):
-        return self.reset_request
     
     def on_response_change(self):
         if self.response_text != self.last_response:
