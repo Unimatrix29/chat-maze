@@ -83,15 +83,16 @@ class Screen():
         self.backspace_hold = False
         
         self.author_to_color = {
-            "System": self.color_active,
-            "You": self.color_passive,
+            "##### ": self.PINK,
+            "System": self.LIMEGREEN,
+            "You"   : self.GREY,
             "Prinz Reginald": self.YELLOW,
-            "Larry": self.CYAN,
-            "Clyde": self.BLUE,
+            "Larry" : self.CYAN,
+            "Clyde" : self.BLUE,
             "Lawrie": self.ORANGE,
-            "Imane": self.PINK,
+            "Imane" : self.PINK,
             "Sophia": self.GREEN,
-            "Error": self.RED
+            "Error" : self.RED
         }
         self.audio_mode = False
 
@@ -229,10 +230,11 @@ class Screen():
         self.input_rect.h = self.input_rect_normal_height * (max_line + 1) + 5
 
 
-    def add_chat_text(self, raw_text, author):
-        lines = textwrap.wrap(author + ": " + raw_text, 45)
+    def add_chat_text(self, raw_text, author = ""):
+        sign = author + ": " + raw_text if author != "" else raw_text
+        lines = textwrap.wrap(sign, 45)
         first_line = True
-        color = self.author_to_color.get(author, self.PINK)
+        color = self.author_to_color.get(author, self.WHITE)
         for line in lines:
             for i in range(0, self.chat_max_len - 1):
                 self.chat[i] = self.chat[i + 1]
