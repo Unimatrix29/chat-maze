@@ -51,18 +51,18 @@ class Command():
         self.__commands()
     
     def __info(self):
-        self.game.screen.add_chat_text(self.info_txt, "System")
+        self.game.screen.add_chat_text(self.info_txt)
     
     
     def __newgame(self):
         self.__print_welcome_message()
         self.game.reset()
-        self.game.screen.add_chat_text(self.start_txt, "System")
+        self.game.screen.add_chat_text(self.start_txt)
         
     
     def __restart(self):
         self.game.restart()
-        self.game.screen.add_chat_text(self.start_txt, "System")
+        self.game.screen.add_chat_text(self.start_txt)
     
     
     def __clear(self):
@@ -85,17 +85,17 @@ class Command():
 
     def __print_welcome_message(self):
         self.__clear()
-        self.game.screen.add_chat_text("############################# : #####", "##### ")
-        self.game.screen.add_chat_text("     Welcome to Chat Leap     : #####", "##### ")
-        self.game.screen.add_chat_text("############################# : #####", "##### ")
+        self.game.screen.add_chat_text(" ########################## : #####", "##### ")
+        self.game.screen.add_chat_text("    Welcome to Chat Maze      : #####", "##### ")
+        self.game.screen.add_chat_text(" ########################## : #####", "##### ")
 
-        self.game.screen.add_chat_text(self.welcome_txt, "System")
+        self.game.screen.add_chat_text(self.welcome_txt)
     
     def __print_start_message(self):
-        self.game.screen.add_chat_text(self.start_txt, "System")
+        self.game.screen.add_chat_text(self.start_txt)
 
     def __print_end_message(self):
-        self.game.screen.add_chat_text(self.end_txt, "System")
+        self.game.screen.add_chat_text(self.end_txt)
         self.__info()
     
     def __quack(self):
