@@ -80,8 +80,6 @@ class GameHandler():
         
         key = list(self.PROMPT_LIBRARY[promptPreset][promptNumber].keys())[0]
         promptLine = self.PROMPT_LIBRARY[promptPreset][promptNumber][key]
-        key = "Prinz Reginald"
-        promptLine = self.PROMPT_LIBRARY["EASY"][0][key]
 
         self.PROMPT = [key, promptLine]
         print(f"In this round ChatGPT is {key}")
@@ -135,7 +133,6 @@ class GameHandler():
     """
     def apply_debuffs(self, player, maze):
         cases = 3 if self.startMazePreset[5:-2] == "3.3" else 5
-        cases = 1
         for i in range(self.difficulty[1]):
             choice = random.randint(1, cases)
             self.DEBUFFS[choice][1](player, maze)
