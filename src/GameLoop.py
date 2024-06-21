@@ -50,7 +50,6 @@ class Game():
         self.maze = self.gameStats[1]
         self.player.change_name(self.prompt[0])
         self.player.set_position(self.maze[1])
-        self.player.set_position([14, 8])
         
         self.audio_event = threading.Event()
         self.audio_is_ready_event = threading.Event()
