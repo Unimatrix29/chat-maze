@@ -25,7 +25,7 @@ class Player:
     def get_rotated_position(self, count = 1):
         rotatedPosition = [self.currentPosition[0], self.currentPosition[1]]
         for i in range(count):
-            rotatedPosition = [self.currentPosition[1], 15 - self.currentPosition[0]]
+            rotatedPosition = [rotatedPosition[1], 15 - rotatedPosition[0]]
             
         return rotatedPosition
     """
