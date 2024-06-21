@@ -1,6 +1,5 @@
-import openai
+import openai, time, traceback
 import numpy as np 
-import time
 import sounddevice as sd
 from pathlib import Path
 from scipy.io.wavfile import write as wavWrite
@@ -91,7 +90,8 @@ class ChatGPT():
         except OSError as e: 
             print(f"Failed to open file {self.file_user_input}")
             print(e)
-            raise e
+            traceback.print_exception(type(e), e, e.__traceback__)
+            raise e.with_traceback(e.__traceback__)
         except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
             if _retrie:
                 raise e
@@ -125,7 +125,8 @@ class ChatGPT():
         except OSError as e: 
             print("Failed to recored audio!")
             print(e)
-            raise e
+            traceback.print_exception(type(e), e, e.__traceback__)
+            raise e.with_traceback(e.__traceback__)
         
     
     def write_audio_to_file(self, audio_data):
@@ -137,7 +138,8 @@ class ChatGPT():
         except OSError as e: 
             print(f"Failed to write to audio file!")
             print(e)
-            raise e
+            traceback.print_exception(type(e), e, e.__traceback__)
+            raise e.with_traceback(e.__traceback__)
         
         
     def construct_message(self, userInput, system_prompt):

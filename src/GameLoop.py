@@ -5,7 +5,7 @@ from CommandHandler import Command
 from GameHandler import GameHandler
 from Player import Player
 from Screen import Screen
-import queue, threading, time
+import queue, threading, time, traceback
 
 
 class Game():
@@ -243,15 +243,20 @@ class Game():
                 pass
             except OSError as e:
                 #This is a huge problem. We most certainly need to restart the entire program.
+                data["mVector"] = [0, 0]
+                data["content"] = "Ohhhhhh, da ist etwas gewaltig schiefgelaufen, wenden sie sich bitte an die betreuenden Studenten :("
+                data["role"] = "Error"
                 print("FATAL ERROR")
                 pass
             except openai.APIError as e: 
                 data["mVector"] = [0, 0]
-                data["content"] = "I'm sorry, it appears that I can't reach the OpenAI server right now."
+                data["content"] = "Ups es scheint alls könnte ich die OpenAI Server nicht erreichen. Versuch es doch einfach nochmal :)"
                 data["role"] = "Error"
                 self.chatgpt_queue.put(data)
                 print("API CALL ERROR")
                 pass
+            
+            
     """
     Updates idleTimer by it's expiring
     according to time stamp of current idle frame
