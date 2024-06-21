@@ -5,7 +5,7 @@ from CommandHandler import Command
 from GameHandler import GameHandler
 from Player import Player
 from Screen import Screen
-import queue, threading, time
+import queue, threading, time, traceback, openai
 
 
 class Game():
@@ -73,7 +73,14 @@ class Game():
             if self.screen.on_return():
                 
                 if self.screen.ppt() and self.audio_event.is_set():
-                    audio_input = self.chatgpt.audio_to_text()
+                    try:
+                        audio_input = self.chatgpt.audio_to_text()
+                    except openai.BadRequestError as e:
+                        print("Audio to text Api call failed!")
+                        print(e)
+                        self.screen.add_chat_text("Ups, es scheint als könnte ich dich nicht verstehen. Versuch es doch einfach nochmal :)", "Error")
+                        audio_input = ""
+                        pass
                 user_input = self.screen.get_user_input()
                 
                 print(user_input)
@@ -81,11 +88,12 @@ class Game():
                 if not self.commandHandler.execute(user_input):
                     
                     if self.audio_event.is_set():
-                        self.screen.add_chat_text(audio_input, "You")
-                        self.screen_queue.put(audio_input)
-                        
                         print(audio_input)
-                    else:
+                        
+                        if audio_input.strip() != "":
+                            self.screen.add_chat_text(audio_input, "You")
+                            self.screen_queue.put(audio_input)
+                    elif user_input.strip() != "":
                         self.screen_queue.put(user_input)
 
             # Getting a movement vector from chatGPT
@@ -214,7 +222,6 @@ class Game():
        
     def __get_chatgpt_response(self, chatgpt, prompt):
         from ChatGPT_Movment_Controller import chatgpt_movment
-        import openai
         
         gpt_model = "gpt-4o"
         temperatur = 0.25
@@ -243,15 +250,20 @@ class Game():
                 pass
             except OSError as e:
                 #This is a huge problem. We most certainly need to restart the entire program.
+                data["mVector"] = [0, 0]
+                data["content"] = "Ohhhhhh, da ist etwas gewaltig schiefgelaufen, wenden sie sich bitte an die betreuenden Studenten :("
+                data["role"] = "Error"
                 print("FATAL ERROR")
                 pass
             except openai.APIError as e: 
                 data["mVector"] = [0, 0]
-                data["content"] = "I'm sorry, it appears that I can't reach the OpenAI server right now."
+                data["content"] = "Ups es scheint als könnte ich die OpenAI Server nicht erreichen. Versuch es doch einfach nochmal :)"
                 data["role"] = "Error"
                 self.chatgpt_queue.put(data)
                 print("API CALL ERROR")
                 pass
+            
+            
     """
     Updates idleTimer by it's expiring
     according to time stamp of current idle frame
