@@ -19,7 +19,10 @@ class Game():
         
         # Game session set up
         #self.bot = AutoPlayer()
-        self.autoPlay = False
+        #self.autoPlay = False
+        # Debug variable to track player position
+        self.movementStopped = False
+        # Main while loop variable
         self.running = True
         
         self.screen = Screen()
@@ -43,10 +46,11 @@ class Game():
         self.commandHandler.execute("__/start")
         
         self.prompt = self.gameHandler.get_prompt()        # [name, promptLine]
-        self.gameStats = self.gameHandler.get_game_stats() # [difficulty, (active)maze, [debuffDuration, renderDistance]]
+        self.gameStats = self.gameHandler.get_game_stats() # [difficulty, (active)maze, [debuffDuration, renderDistance, rotationCounter]]
         self.maze = self.gameStats[1]
         self.player.change_name(self.prompt[0])
         self.player.set_position(self.maze[1])
+        self.player.set_position([14, 8])
         
         self.audio_event = threading.Event()
         self.audio_is_ready_event = threading.Event()
@@ -83,7 +87,7 @@ class Game():
                         pass
                 user_input = self.screen.get_user_input()
                 
-                print(user_input)
+                print(f"[Interaction]\nUser: {user_input}")
 
                 if not self.commandHandler.execute(user_input):
                     
@@ -150,12 +154,19 @@ class Game():
                     # Stop moving in front of a wall
                     if self.gameHandler.check_wall(nextStep):
                         self.gameHandler.reduce_debuffs()
+                        self.movementStopped = True
                         break
 
                     self.player.move(mVector)
 
                     self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
                     time.sleep(0.3)
+                    
+                if self.movementStopped:
+                    self.movementStopped = False
+                    # Stock player position (in non-rotated maze)
+                    position = self.player.get_rotated_position(4 - self.gameStats[2][2])
+                    print(f"[Movement stopped]\nPlayer position: {position}")
 
                 self.update_game_stats()
                 
@@ -298,7 +309,7 @@ class Game():
     as well as debuff's infos
     """
     def update_game_stats(self):
-        self.gameStats = self.gameHandler.get_game_stats()      #[[difficulty], [(active)maze], [debuffDuration, renderDistance]]
+        self.gameStats = self.gameHandler.get_game_stats()      #[[difficulty], [(active)maze], [debuffDuration, renderDistance, rotationCounter]]
         self.maze = self.gameStats[1]
 
     def clear_queues(self):
