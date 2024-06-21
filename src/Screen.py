@@ -202,7 +202,7 @@ class Screen():
                     pygame.draw.rect(self.screen, self.WHITE, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
                 if player.currentPosition == [x, y] and (not player.isHidden):
                     #player
-                    pygame.draw.rect(self.screen, self.author_to_color.get(player.name, "Error"), (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
+                    pygame.draw.rect(self.screen, self.author_to_color.get(player.name, self.LIMEGREEN), (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))
                 if maze[2] == [x, y]:
                     #finish
                     pygame.draw.rect(self.screen, self.RED, (self.maze_offset_x + x * self.CELL_SIZE, self.maze_offset_y + y * self.CELL_SIZE, self.CELL_SIZE - 4, self.CELL_SIZE - 4))

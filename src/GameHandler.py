@@ -100,8 +100,8 @@ class GameHandler():
     def check_border(self, playerPosition):
         return not (playerPosition[0] in range(0, 16) and playerPosition[1] in range(0, 16))
     
-    def maze_rotation(self, player, maze):
-        self.rotationCounter = (self.rotationCounter + 1) % 4
+    def maze_rotation(self, player, maze = 0):
+        self.rotationCounter = (self.rotationCounter + 1) % 4 if maze != 0 else self.rotationCounter
         self.maze = self.mazeGenerator.rotate_maze(self.maze)
         
         newPosition = player.get_rotated_position()
@@ -158,18 +158,21 @@ class GameHandler():
         # Last int of a preset
         startSection = self.activeMazePreset[-1]
         # Stock player position (in non-rotated maze)
-        playerPosition = player.get_rotated_position((4 - self.rotationCounter) % 4);
+        playerPosition = player.get_rotated_position(4 - self.rotationCounter);
         
         # bridge = [target_section, start_point (active section), end_point]
         for bridge in graph[startSection]:
             if bridge[1] == playerPosition:
+                print(f"[Section switch]\nfrom: {self.activeMazePreset} : {playerPosition}")
                 self.activeMazePreset = f"{self.activeMazePreset[:-1]}{bridge[0]}"
                 self.maze = self.mazeGenerator.get_preset(self.activeMazePreset)
                 
                 player.set_position(bridge[2])
+                print(f"to {self.activeMazePreset} : {bridge[2]}")
+                break
 
         for i in range(self.rotationCounter):
-            self.maze_rotation(player, self.maze)
+            self.maze_rotation(player)
     """
     Restarts current session without changing difficulty and GPT prompt
     """
@@ -177,6 +180,7 @@ class GameHandler():
         self.remove_debuffs(player)
         self.gameOver = False
         
+        self.activeMazePreset = self.startMazePreset
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         player.set_position(self.maze[1])
 
@@ -212,7 +216,7 @@ class GameHandler():
     Access function for use in GameLoop class
     """
     def get_game_stats(self):
-        return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance]]
+        return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance, self.rotationCounter]]
     """
     Returns session's status (finish arrived)
     """

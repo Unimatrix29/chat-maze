@@ -37,7 +37,7 @@ class MazeGenerator():
 
         return graph
     """
-    Rotates maze by 90° counter clockwise
+    Rotates maze by 90° counterclockwise
     """
     def rotate_maze(self, maze):
         rotatedMaze = self.random_maze()
