@@ -32,9 +32,9 @@ class Game():
         # A timer for switching idle frames
         self.idleTimer = threading.Timer(self.maze[3], self.switch_idle_frame)
         
-        apiClient = ApiClientCreator.get_client(file_name=config_file_name)
+        self.apiClient = ApiClientCreator.get_client(file_name=config_file_name)
 
-        self.chatgpt = ChatGPT(apiClient)
+        self.chatgpt = ChatGPT(self.apiClient)
         # Print welcome message by initializing CommandHandler
         self.commandHandler = Command(self)
         
@@ -297,6 +297,8 @@ class Game():
         self.gameOver_event.set()
         self.chatGPT_thread.join()
         self.gameOver_event.clear()
+        
+        self.chatgpt = ChatGPT(self.apiClient)
 
         self.chatGPT_thread = threading.Thread(target=self.__get_chatgpt_response,
                                                kwargs={
