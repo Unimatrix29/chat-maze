@@ -66,7 +66,7 @@ class Command():
     
     def __clear(self):
         self.game.screen.clear_chat_text()
-        
+
     
     def __commands(self):
         self.game.screen.add_chat_text(self.command_list, "System")

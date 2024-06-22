@@ -232,22 +232,24 @@ class Screen():
         self.input_rect.h = self.input_rect_normal_height * (max_line + 1) + 5
 
 
-    def add_chat_text(self, raw_text, author = ""):
-        sign = author + ": " + raw_text if author != "" else raw_text
-        lines = textwrap.wrap(sign, 45)
-        first_line = True
-        color = self.author_to_color.get(author, self.WHITE)
-        for line in lines:
-            for i in range(0, self.chat_max_len - 1):
-                self.chat[i] = self.chat[i + 1]
-                self.chat_color[i] = self.chat_color[i + 1]
-            if first_line:
-                self.chat[self.chat_max_len - 1] = line
-                self.chat_color[self.chat_max_len - 1] = color
-            else:
-                self.chat[self.chat_max_len - 1] = line
-                self.chat_color[self.chat_max_len - 1] = color
-            first_line = False
+    def add_chat_text(self, raw_text, author = "You"):
+        paragraphs = str(author + ": " + raw_text).split("|")
+        for paragraph in paragraphs:
+            lines = textwrap.wrap(paragraph, 45)
+            first_line = True
+            color = self.author_to_color.get(author, self.color_passive)
+            for line in lines:
+                for i in range(0, self.chat_max_len - 1):
+                    self.chat[i] = self.chat[i + 1]
+                    self.chat_color[i] = self.chat_color[i + 1]
+                if first_line:
+                    self.chat[self.chat_max_len - 1] = line
+                    self.chat_color[self.chat_max_len - 1] = color
+                else:
+                    self.chat[self.chat_max_len - 1] = line
+                    self.chat_color[self.chat_max_len - 1] = color
+                first_line = False
+
  
             
     def clear_chat_text(self):
