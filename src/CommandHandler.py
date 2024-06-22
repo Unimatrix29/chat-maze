@@ -74,7 +74,7 @@ class Command():
     
     def __audio_on(self):
         self.game.audio_event.set()
-        self.game.screen.add_chat_text("Drücke STRG und Lehrtaste zum sprechen", "System")
+        self.game.screen.add_chat_text("Drücke STRG und Leertaste zum sprechen", "System")
 
     
     def __audio_off(self):
@@ -95,17 +95,17 @@ class Command():
         # self.game.screen.add_chat_text("    Welcome to Chat Maze    : *****", "***** ")
         # self.game.screen.add_chat_text(" ************************** : *****", "***** ")
 
-        self.game.screen.add_chat_text(self.welcome_txt)
+        self.game.screen.add_chat_text(self.welcome_txt, "")
     
     def __print_start_message(self):
-        self.game.screen.add_chat_text(self.start_txt)
+        self.game.screen.add_chat_text(self.start_txt, "")
 
     def __print_end_message(self):
         self.game.screen.add_chat_text("*********************************************", "")
         self.game.screen.add_chat_text("*            --Congratulations--            *", "")
         self.game.screen.add_chat_text("*********************************************", "")
 
-        self.game.screen.add_chat_text(self.end_txt)
+        self.game.screen.add_chat_text(self.end_txt, "")
         self.__info()
     
     def __quack(self):
