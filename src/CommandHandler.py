@@ -50,18 +50,18 @@ class Command():
         self.game.screen.add_chat_text(self.help_txt.get(promptKey), promptKey)
     
     def __info(self):
-        self.game.screen.add_chat_text(self.info_txt)
+        self.game.screen.add_chat_text(self.info_txt, "")
     
     
     def __newgame(self):
         self.__print_welcome_message()
         self.game.reset()
-        self.game.screen.add_chat_text(self.start_txt)
+        self.game.screen.add_chat_text(self.start_txt, "")
         
     
     def __restart(self):
         self.game.restart()
-        self.game.screen.add_chat_text(self.start_txt)
+        self.game.screen.add_chat_text(self.start_txt, "")
     
     
     def __clear(self):
