@@ -23,6 +23,15 @@ class GameHandler():
             4: ["RANDOM MOVE", self.random_move],
             5: ["TELEPORT", self.teleport]
             }
+        self.DEBUFF_INFOS = {}
+        file_debuffsTexts = Path(__file__).parent / "debuffs_texts.json"
+        file_debuffsTexts.resolve()
+        
+        # Loading prompt library and choosing a start ChatGPT prompt
+        with open(file_debuffsTexts) as json_file:
+            data = json.load(json_file)
+            self.DEBUFF_INFOS = data
+
         self.PROMPT_LIBRARY = {}
         self.PROMPT = [] # [name, promptLine]
         
@@ -253,6 +262,8 @@ class GameHandler():
     def get_applied_debuffs(self):
         debuffInfos = []
         for debuff in self.debuffList:
-            debuffInfos.append(self.DEBUFFS[debuff][0])
+            debuffName = self.DEBUFFS[debuff][0]
+            debuffInfos.append(self.DEBUFF_INFOS[debuffName])
             
+        self.debuffList.clear()
         return debuffInfos
