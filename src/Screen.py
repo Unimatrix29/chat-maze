@@ -233,7 +233,7 @@ class Screen():
 
 
     def add_chat_text(self, raw_text, author = "You"):
-        paragraphs = str(author + ": " + raw_text).split("|")
+        paragraphs = str(author + ": " + raw_text).split("|") 
         for paragraph in paragraphs:
             lines = textwrap.wrap(paragraph, 45)
             first_line = True
