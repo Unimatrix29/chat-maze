@@ -14,7 +14,7 @@ class Screen():
         self.WHITE = (255, 255, 255)        # Walls
         self.BLACK = (0, 0, 0)              # Canvas
         self.RED = (255, 0, 0)              # Finish
-        self.LIMEGREEN = (50, 205, 50)      # System (active)
+        self.LIMEGREEN = (150, 205, 50)      # System (active)
         self.GREY = (100 ,100, 100)         # System (inactive)
         
         self.BLUE = (0, 0, 255)             # ChatGPT-Role colours
@@ -104,6 +104,8 @@ class Screen():
         self.maze_offset_x = round(res_x * 0.06)
         self.maze_offset_y = round(res_x * 0.06)
         self.CELL_SIZE = round(res_y * 0.05)
+
+
  
  
     def update_screen(self, maze=None, player=None, render = 17):
@@ -225,7 +227,7 @@ class Screen():
             self.screen.blit(rendered_line,(self.input_rect.x + 5, self.input_rect.y + 3 + i * self.input_rect_normal_height))
         current_line = self.base_font.render(lines[max_line], True, (255,255,255))
         first_line = self.base_font.render(lines[0], True, (255,255,255))
-        self.screen.blit(self.cursor,(self.input_rect.x + current_line.get_width() + 5, self.input_rect.y + 5 + max_line * self.input_rect_normal_height))
+        self.screen.blit(self.cursor,(self.input_rect.x + current_line.get_width() + 5, self.input_rect.y + max_line * self.input_rect_normal_height))
         self.input_rect.w = max(200, first_line.get_width() + 15)
         self.input_rect.h = self.input_rect_normal_height * (max_line + 1) + 5
 
