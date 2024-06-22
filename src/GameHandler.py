@@ -23,6 +23,15 @@ class GameHandler():
             4: ["RANDOM MOVE", self.random_move],
             5: ["TELEPORT", self.teleport]
             }
+        self.DEBUFF_INFOS = {}
+        file_debuffsTexts = Path(__file__).parent / "debuffs_texts.json"
+        file_debuffsTexts.resolve()
+        
+        # Loading prompt library and choosing a start ChatGPT prompt
+        with open(file_debuffsTexts) as json_file:
+            data = json.load(json_file)
+            self.DEBUFF_INFOS = data
+
         self.PROMPT_LIBRARY = {}
         self.PROMPT = [] # [name, promptLine]
         
@@ -40,6 +49,7 @@ class GameHandler():
             self.PROMPT = [key, item[key]]
         
         self.moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
+        self.debuffList = []
         self.debuffDuration = 0
         self.renderDistance = 16
         self.rotationCounter = 0
@@ -133,11 +143,13 @@ class GameHandler():
     """
     def apply_debuffs(self, player, maze):
         cases = 3 if self.startMazePreset[5:-2] == "3.3" else 5
-        for i in range(self.difficulty[1]):
+        while not len(self.debuffList) == self.difficulty[1]:
             choice = random.randint(1, cases)
-            self.DEBUFFS[choice][1](player, maze)
+            if not choice in self.debuffList:
+                self.debuffList.append(choice)
+                self.DEBUFFS[choice][1](player, maze)
             
-            print(f"{self.DEBUFFS[choice][0]} were applied")
+                print(f"{self.DEBUFFS[choice][0]} were applied")
     """
     Reducing debuff duration by 1 (every step)
     """
@@ -244,3 +256,14 @@ class GameHandler():
         frame = self.mazeGenerator.get_preset(self.activeMazePreset)
         
         return frame
+    """
+    Returns an array with applied debuff's descriptions
+    """
+    def get_applied_debuffs(self):
+        debuffInfos = []
+        for debuff in self.debuffList:
+            debuffName = self.DEBUFFS[debuff][0]
+            debuffInfos.append(self.DEBUFF_INFOS[debuffName])
+            
+        self.debuffList.clear()
+        return debuffInfos
