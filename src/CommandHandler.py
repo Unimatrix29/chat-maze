@@ -102,9 +102,9 @@ class Command():
         self.game.screen.add_chat_text(self.start_txt)
 
     def __print_end_message(self):
-        self.game.screen.add_chat_text(" ########################## : #####", "##### ")
-        self.game.screen.add_chat_text("      Congratulations!      : #####", "##### ")
-        self.game.screen.add_chat_text(" ########################## : #####", "##### ")
+        self.game.screen.add_chat_text("*********************************************")
+        self.game.screen.add_chat_text("*            --Congratulations--            *")
+        self.game.screen.add_chat_text("*********************************************")
 
         self.game.screen.add_chat_text(self.end_txt)
         self.__info()
