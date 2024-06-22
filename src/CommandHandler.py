@@ -85,9 +85,16 @@ class Command():
 
     def __print_welcome_message(self):
         self.__clear()
-        self.game.screen.add_chat_text(" ########################## : #####", "##### ")
-        self.game.screen.add_chat_text("    Welcome to Chat Maze      : #####", "##### ")
-        self.game.screen.add_chat_text(" ########################## : #####", "##### ")
+        self.game.screen.add_chat_text("      __  __     ______   __     __          ")
+        self.game.screen.add_chat_text("     /\ \_\ \   /\__  _\ /\ \  _ \ \         ")
+        self.game.screen.add_chat_text("     \ \  __ \  \/_/\ \/ \ \ \/ \".\ \       ")
+        self.game.screen.add_chat_text("      \ \_\ \_\    \ \_\  \ \__/\".~\_\      ")
+        self.game.screen.add_chat_text("       \/_/\/_/     \/_/   \/_/   \/_/       ")
+        self.game.screen.add_chat_text("*********************************************")
+        
+        # self.game.screen.add_chat_text(" ************************** : *****", "***** ")
+        # self.game.screen.add_chat_text("    Welcome to Chat Maze    : *****", "***** ")
+        # self.game.screen.add_chat_text(" ************************** : *****", "***** ")
 
         self.game.screen.add_chat_text(self.welcome_txt)
     
@@ -95,9 +102,9 @@ class Command():
         self.game.screen.add_chat_text(self.start_txt)
 
     def __print_end_message(self):
-        self.game.screen.add_chat_text(" ########################## : #####", "##### ")
-        self.game.screen.add_chat_text("      Congratulations!      : #####", "##### ")
-        self.game.screen.add_chat_text(" ########################## : #####", "##### ")
+        self.game.screen.add_chat_text("*********************************************")
+        self.game.screen.add_chat_text("*            --Congratulations--            *")
+        self.game.screen.add_chat_text("*********************************************")
 
         self.game.screen.add_chat_text(self.end_txt)
         self.__info()

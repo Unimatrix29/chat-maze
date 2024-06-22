@@ -56,9 +56,9 @@ class Screen():
         pygame.display.set_caption("Chat_Leap")
 
         #Input
-        self.title_font = pygame.font.SysFont('monospace821', 10)
-        self.base_font = pygame.font.SysFont('monospace821', 12)
-        self.response_font = pygame.font.SysFont('monospace821', 12)
+        self.title_font = pygame.font.SysFont('monospace821', 14)
+        self.base_font = pygame.font.SysFont('monospace821', 16)
+        self.response_font = pygame.font.SysFont('monospace821', 16)
         self.user_text = ""
         self.title_text = "User Input:"
         self.response_text = ""
@@ -255,6 +255,7 @@ class Screen():
     def quit_screen(self): 
         pygame.quit()
 
+
     def get_user_input(self):
         return_message = self.message
         self.message = ""
@@ -293,5 +294,3 @@ class Screen():
             clock.tick(10)
         
         pygame.mixer.music.unload()
-
-        
