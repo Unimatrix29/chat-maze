@@ -48,7 +48,6 @@ class Command():
     def __help(self):
         promptKey = self.game.prompt[0]
         self.game.screen.add_chat_text(self.help_txt.get(promptKey), "System")
-        self.__commands()
     
     def __info(self):
         self.game.screen.add_chat_text(self.info_txt)
