@@ -18,9 +18,6 @@ class Screen():
         self.file_user_input.resolve()
         self.q = queue.Queue()
 
-        # makes background black
-        self.screen.fill(Colors.BLACK.value)
-
     def update_screen(self, maze=None, player=None, render = 17):
         
         self.restart_request = False
@@ -34,17 +31,20 @@ class Screen():
         self.__draw_chat_text()
         self.__draw_input_text()
 
+        # makes background black
+        self.screen.fill(Colors.BLACK.value)
+
         # updates pygame
         pygame.display.flip()
 
-    def __create_maze_border(self):
+    def __draw_maze_border(self):
 
-        # creates border around the maze
+        # draws border around the maze
         pygame.draw.rect(self.screen, Colors.WHITE.value, self.maze_rect, 2)
 
-    def __create_input_border(self):
+    def __draw_input_border(self):
 
-        # creates border around the input field
+        # draws border around the input field
         pygame.draw.rect(self.screen, Colors.WHITE.value, self.input_rect, 2)
 
     def __chatgpt_response_listener(self):
@@ -151,10 +151,6 @@ class Screen():
         self.title_font = pygame.font.SysFont('monospace821', 14)
         self.base_font = pygame.font.SysFont('monospace821', 16)
         self.response_font = pygame.font.SysFont('monospace821', 16)
-
-        # text above Input Box
-        self.title_text = "User Input:"
-        self.__draw_input_box_title()
         
         # declares dynamic text holders as empty
         self.user_text = ""
@@ -176,6 +172,10 @@ class Screen():
         self.restart_request = False
         self.reset_request = False
         self.backspace_hold = False
+
+        # text above Input Box
+        self.title_text = "User Input:"
+        self.__draw_input_box_title()
         
         # Dictionary that associates Authors with colors displayed in the chat
         self.personality_to_color = {
