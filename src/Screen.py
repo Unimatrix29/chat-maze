@@ -37,14 +37,14 @@ class Screen():
         # updates pygame
         pygame.display.flip()
 
-    def __draw_maze_border(self):
+    def __create_maze_border(self):
 
-        # draws a border around the maze
+        # creates border around the maze
         pygame.draw.rect(self.screen, Colors.WHITE.value, self.maze_rect, 2)
 
-    def __draw_input_border(self):
+    def __create_input_border(self):
 
-        # draws a border around the input field
+        # creates border around the input field
         pygame.draw.rect(self.screen, Colors.WHITE.value, self.input_rect, 2)
 
     def __chatgpt_response_listener(self):
@@ -263,9 +263,7 @@ class Screen():
     # displays the currently written user input inside the box
     def __draw_input_text(self): 
 
-        # draws 
-        self.text_title = self.title_font.render(self.title_text, True, Colors.GREY.value)
-        self.screen.blit(self.text_title,(self.input_rect.x, self.input_rect.y - 15))
+        # splits raw input text into 45 chars long lines and displays them in the input box
         lines = textwrap.wrap(self.user_text, 45)
         if lines == []:
             lines = [""]
@@ -276,21 +274,33 @@ class Screen():
         current_line = self.base_font.render(lines[max_line], True, Colors.WHITE.value)
         first_line = self.base_font.render(lines[0], True, Colors.WHITE.value)
 
+        # updates the cursor to the input text, where current line contains the width of the bottom line and max_line tells which line is the bottom one
         self.__draw_input_cursor(current_line, max_line)
         
+        # adapts the input border width and height to the currently written input text
         self.input_rect.w = max(200, first_line.get_width() + 15)
         self.input_rect.h = self.input_rect_normal_height * (max_line + 1) + 5
 
+    # adds text to the chat (optional with author)
+    def add_chat_text(self, raw_text, author = ""):
 
-    def add_chat_text(self, raw_text, author):
+        # if there is an author attached to the text that is added, it will be displayed 
         if author == "":
             paragraphs = str(raw_text).split("|") 
         else:
             paragraphs = str(author + ": " + raw_text).split("|")
+
+        # paragraphs are created by line breaks "|" in the handed over text
         for paragraph in paragraphs:
+
+            # each paragraph is splitted in 45 chars long parts
             lines = textwrap.wrap(paragraph, 45)
             first_line = True
+
+            # chooses text color based on author if registrated
             color = self.personality_to_color.get(author, Colors.GREY.value)
+
+            # scrolls the chat up so there is space for the new entry 
             for line in lines:
                 for i in range(0, self.chat_max_len - 1):
                     self.chat[i] = self.chat[i + 1]
@@ -303,6 +313,7 @@ class Screen():
                     self.chat_color[self.chat_max_len - 1] = color
                 first_line = False
 
+
     def clear_chat_text(self):
         self.chat = ["  " for x in range(self.chat_max_len)]
 
@@ -310,7 +321,7 @@ class Screen():
     def __quit_screen(self): 
         pygame.quit()
 
-
+    # transfers stored message after return to chatgpt and resets it 
     def get_user_input(self):
         return_message = self.message
         self.message = ""
@@ -321,18 +332,21 @@ class Screen():
         if not self.record:
             return True
 
+    # true in the moment in which input is returned / enter pressed
     def __on_return(self):
         if self.return_text:
             self.return_text = False
             return True
         return False 
     
+    # true in the moment in which chatgpts response is changed
     def __on_response_change(self):
         if self.response_text != self.last_response:
             self.last_response = self.response_text
             return True
         return False
 
+    # triggers text_to_speech on the current response 
     def __play(self):
         file_tts_out = Path(__file__).parent / "tts_out.wav"
         file_tts_out.resolve()
