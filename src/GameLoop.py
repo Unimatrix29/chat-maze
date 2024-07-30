@@ -29,8 +29,9 @@ class Game():
         self.gameHandler = GameHandler()
         # Setting start idle frame (maze)
         # and a timer for switching idle frames
-        self.maze = self.gameHandler.get_game_stats()[1]
+        self.maze = self.gameHandler.get_game_stats()[0]
         self.idleTimer = threading.Timer(self.maze[3], self.switch_idle_frame)
+        self.player = Player(self.maze)
         
         self.apiClient = ApiClientCreator.get_client(file_name=config_file_name)
 
@@ -43,10 +44,9 @@ class Game():
         self.commandHandler.execute("__/start")
         
         self.prompt = self.gameHandler.get_prompt()        # [name, promptLine]
-        self.gameStats = self.gameHandler.get_game_stats() # [difficulty, (active)maze, [debuffDuration, renderDistance, rotationCounter]]
+        self.gameStats = self.gameHandler.get_game_stats() # [[(active)maze], [debuffDuration, renderDistance, rotationCounter]]
         
-        self.maze = self.gameStats[1]
-        self.player = Player(self.maze)
+        self.maze = self.gameStats[0]
         self.player.change_name(self.prompt[0])
         self.player.set_position(self.maze[1])
         
@@ -122,7 +122,7 @@ class Game():
                 self.run_idle()
             else:
                 # # Removing debuffs by expiring their's duration
-                if self.gameStats[2][0] == 0:
+                if self.gameStats[1][0] == 0:
                     self.gameHandler.remove_debuffs(self.player)
                 # Applying debuffs in case of rough request
                 if mVector == [-1, -1]:
@@ -158,18 +158,18 @@ class Game():
 
                     self.player.move(mVector)
 
-                    self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
+                    self.screen.update_screen(self.maze, self.player, self.gameStats[1][1])
                     time.sleep(0.3)
                     
                 if self.movementStopped:
                     self.movementStopped = False
                     # Stock player position (in non-rotated maze)
-                    position = self.player.get_rotated_position(4 - self.gameStats[2][2])
+                    position = self.player.get_rotated_position(4 - self.gameStats[1][2])
                     print(f"[Movement stopped]\nPlayer position: {position}")
 
                 self.update_game_stats()
                 
-            self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
+            self.screen.update_screen(self.maze, self.player, self.gameStats[1][1])
         # Programm finish
         self.screen.quit_screen()
         self.gameOver_event.set()
@@ -204,7 +204,7 @@ class Game():
         
         self.update_game_stats()
 
-        self.screen.update_screen(self.maze, self.player, self.gameStats[2][1])
+        self.screen.update_screen(self.maze, self.player, self.gameStats[1][1])
         
         self.clear_queues()
         self.restart_chatGPT_thread()       
@@ -308,8 +308,8 @@ class Game():
     as well as debuff's infos
     """
     def update_game_stats(self):
-        self.gameStats = self.gameHandler.get_game_stats()      #[[difficulty], [(active)maze], [debuffDuration, renderDistance, rotationCounter]]
-        self.maze = self.gameStats[1]
+        self.gameStats = self.gameHandler.get_game_stats()      #[[(active)maze], [debuffDuration, renderDistance, rotationCounter]]
+        self.maze = self.gameStats[0]
 
     def clear_queues(self):
         self.chatgpt_queue.queue.clear()

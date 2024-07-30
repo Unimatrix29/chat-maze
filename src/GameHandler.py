@@ -197,7 +197,7 @@ class GameHandler():
         player.set_position(self.maze[1])
 
         self.debuffDuration = 0
-        self.renderDistance = 16
+        self.renderDistance = 17
         self.rotationCounter = 0
     """
     Resets all properties to initial values
@@ -228,7 +228,7 @@ class GameHandler():
     Access function for use in GameLoop class
     """
     def get_game_stats(self):
-        return [self.difficulty, self.maze, [self.debuffDuration, self.renderDistance, self.rotationCounter]]
+        return [self.maze, [self.debuffDuration, self.renderDistance, self.rotationCounter]]
     """
     Returns session's status (finish arrived)
     """
