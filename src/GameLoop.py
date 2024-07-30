@@ -28,9 +28,8 @@ class Game():
         
         self.gameHandler = GameHandler()
         # Setting start idle frame (maze)
+        # and a timer for switching idle frames
         self.maze = self.gameHandler.get_game_stats()[1]
-        self.player = Player(self.maze)
-        # A timer for switching idle frames
         self.idleTimer = threading.Timer(self.maze[3], self.switch_idle_frame)
         
         self.apiClient = ApiClientCreator.get_client(file_name=config_file_name)
@@ -45,7 +44,9 @@ class Game():
         
         self.prompt = self.gameHandler.get_prompt()        # [name, promptLine]
         self.gameStats = self.gameHandler.get_game_stats() # [difficulty, (active)maze, [debuffDuration, renderDistance, rotationCounter]]
+        
         self.maze = self.gameStats[1]
+        self.player = Player(self.maze)
         self.player.change_name(self.prompt[0])
         self.player.set_position(self.maze[1])
         
