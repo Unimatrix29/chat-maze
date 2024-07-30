@@ -3,7 +3,7 @@ import pygame, sys
 import textwrap
 import sounddevice as sd
 import soundfile as sf
-from Color import Colors
+from Colors import Colors
 from pathlib import Path
 from scipy.io.wavfile import write as wavWrite
 import time
