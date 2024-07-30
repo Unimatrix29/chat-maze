@@ -18,8 +18,6 @@ class Game():
         config_file_name = "config.json"
         
         # Game session set up
-        #self.bot = AutoPlayer()
-        #self.autoPlay = False
         # Debug variable to track player position
         self.movementStopped = False
         # Main while loop variable
@@ -101,8 +99,6 @@ class Game():
 
             # Getting a movement vector from chatGPT
             mVector = [0, 0]
-            # if self.autoPlay:
-            #     mVector = self.bot.make_random_move()
             try: 
                 data = self.chatgpt_queue.get(False)
                 mVector = data.get("mVector")
