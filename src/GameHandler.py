@@ -257,11 +257,6 @@ class GameHandler():
     def get_prompt(self):
         return self.PROMPT
     """
-    Returns the name of active maze section
-    """
-    def get_active_maze_preset(self):
-        return self.activeMazePreset
-    """
     Returns the [nextFrame]th idle screen's frame
     !Only used with FINISH and IDLE presets!
     """
