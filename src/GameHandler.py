@@ -25,25 +25,29 @@ class GameHandler():
             5: ["TELEPORT",     self.teleport]
             }
         self.DEBUFF_INFOS = {}
+        
         # Loading debuffs' descriptions
         file_debuffsTexts = Path(__file__).parent / "debuffs_texts.json"
         file_debuffsTexts.resolve()       
         with open(file_debuffsTexts) as json_file:
             data = json.load(json_file)
+            
             self.DEBUFF_INFOS = data
 
         self.PROMPT_LIBRARY = {}
         self.PROMPT = [] # [name, promptLine]
+        
         # Loading prompt library and choosing a start ChatGPT prompt
         file_prompts = Path(__file__).parent / "prompts.json"
         file_prompts.resolve()
         with open(file_prompts) as json_file:
             data = json.load(json_file)
+            
             self.PROMPT_LIBRARY = data
+            
             # {"Name" : "Prompt"} pair
             item = data["TEST"][0]
             key = "TEST 1"
-            
             self.PROMPT = [key, item[key]]
         
         # Debuffing variables
@@ -90,47 +94,60 @@ class GameHandler():
 
         self.PROMPT = [key, promptLine]
         print(f"In this round ChatGPT is {key}")
-
     """
-    Returns True if player stucks against a wall
+    Returns True if the player stucks against a wall
     """
     def check_wall(self, playerPosition):
         return self.maze[0][playerPosition[1]][playerPosition[0]] == 1
     """
-    Returns True if player arrived the end point of a maze
+    Returns True if the player arrived the end point of a maze
     """
     def check_finish(self, playerPosition):
         return self.maze[2] == playerPosition
     """
-    Rerurns True if player went out of maze (16x16 area)
+    Rerurns True if the player went out of maze (16x16 area)
     """
     def check_border(self, playerPosition):
         return not (playerPosition[0] in range(0, 16) and playerPosition[1] in range(0, 16))
-    
+    """
+    Rotates active maze 1 time using MazeGenerator.rotate_maze()
+    including setting new player position
+    """
     def maze_rotation(self, player, maze = 0):
+        # Increment rotationCounter if debuff were applied
         self.rotationCounter = (self.rotationCounter + 1) % 4 if maze != 0 else self.rotationCounter
         self.maze = self.mazeGenerator.rotate_maze(self.maze)
         
         newPosition = player.get_rotated_position()
         player.set_position(newPosition)
-    
+    """
+    Reduces render distance
+    """
     def blind(self, player = 0, maze = 0):
         self.renderDistance = 4
         self.debuffDuration = self.difficulty[2]
-    
+    """
+    Moves the player in a random direction
+    onto a next field that's not a wall
+    """
     def random_move(self, player, maze):
-        randOption = random.randint(0, 3)
-        mVector = self.moves[randOption]
-        player.move(mVector)
-        while self.check_wall(player.currentPosition):
-            player.move([-mVector[0], -mVector[1]])
+        while True:    
             randOption = random.randint(0, 3)
             mVector = self.moves[randOption]
-            player.move(mVector)
-    
+            nextStep = [player.currentPosition[0] + mVector[0], player.currentPosition[1] + mVector[1]]
+            
+            if not self.check_wall(nextStep):
+                break
+                
+        player.move(mVector)
+    """
+    Moves the player to a random point of the maze
+    """
     def teleport(self, player, maze):
         player.set_position(self.mazeGenerator.get_random_point(maze))
-    
+    """
+    Hides the player so it won't be rendered
+    """
     def set_invisible(self, player, maze = 0):
         player.hide(True)
         self.debuffDuration = self.difficulty[2]
@@ -140,13 +157,16 @@ class GameHandler():
     def apply_debuffs(self, player, maze):
         # Avoiding teleporting and random moving in maze_3.3 (start in void)
         cases = 3 if self.startMazePreset[5:-2] == "3.3" else 5
+        
         while not len(self.debuffList) == self.difficulty[1]:
             choice = random.randint(1, cases)
-            if not choice in self.debuffList:
-                self.debuffList.append(choice)
-                self.DEBUFFS[choice][1](player, maze)
+            if choice in self.debuffList:
+                continue
             
-                print(f"{self.DEBUFFS[choice][0]} were applied")
+            self.debuffList.append(choice)
+            self.DEBUFFS[choice][1](player, maze)
+            
+            print(f"{self.DEBUFFS[choice][0]} were applied")
     """
     Reducing debuff duration by 1 (every step)
     """
@@ -171,16 +191,19 @@ class GameHandler():
         
         # bridge = [target_section, start_point (active section), end_point]
         for bridge in graph[startSection]:
-            if bridge[1] == playerPosition:
-                print(f"[Section switch]\nfrom: {self.activeMazePreset} : {playerPosition}")
-                self.activeMazePreset = f"{self.activeMazePreset[:-1]}{bridge[0]}"
-                self.maze = self.mazeGenerator.get_preset(self.activeMazePreset)
+            if bridge[1] != playerPosition:
+                continue
+            
+            print(f"[Section switch]\nfrom: {self.activeMazePreset} : {playerPosition}")
+            self.activeMazePreset = f"{self.activeMazePreset[:-1]}{bridge[0]}"
+            self.maze = self.mazeGenerator.get_preset(self.activeMazePreset)
                 
-                player.set_position(bridge[2])
-                print(f"to {self.activeMazePreset} : {bridge[2]}")
-                break
+            player.set_position(bridge[2])
+            print(f"to {self.activeMazePreset} : {bridge[2]}")
+            break
 
         for i in range(self.rotationCounter):
+            # Rotating targetSection by same angle as startSection
             self.maze_rotation(player)
     """
     Restarts current session without changing difficulty and GPT prompt
