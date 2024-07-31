@@ -114,7 +114,7 @@ class GameHandler():
     including setting new player position
     """
     def maze_rotation(self, player, maze = 0):
-        # Increment rotationCounter if debuff were applied
+        # Increment rotationCounter if debuff was applied
         self.rotationCounter = (self.rotationCounter + 1) % 4 if maze != 0 else self.rotationCounter
         self.maze = self.mazeGenerator.rotate_maze(self.maze)
         
