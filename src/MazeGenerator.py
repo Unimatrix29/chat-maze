@@ -1,36 +1,29 @@
-import json, math, random
 from pathlib import Path
+import json, math, random
 
 class MazeGenerator():
 
     def __init__(self):
         self.PRESET_LIBRARY = []
-        
+        # Loading maze presets' library
         file_maze_preset = Path(__file__).parent / "maze_presets.json"
         file_maze_preset.resolve()
-        
         with open(file_maze_preset) as preset_file:
             data = json.load(preset_file)
-            
             self.PRESET_LIBRARY = data
-
-    def random_maze(self):
-        maze = [[[random.choice([0, 1]) for _ in range(16)] for _ in range(16)], [0,0], [15, 15]]
-        return maze
-
+    """
+    Returns a maze preset according to given (str) key
+    """
     def get_preset(self, preset_id: str = "maze_0.1.0"):
         section = preset_id[-1]
         preset = preset_id[:-2]
 
         return self.PRESET_LIBRARY[preset][section]
-    
-    def get_random_preset(self, difficulty: int = 1):
-        randomPreset = f"maze_{difficulty}.{random.randint(0, 0)}"
-        
-        return self.PRESET_LIBRARY[randomPreset]["0"]
-    
+    """
+    Returns a dictionary {"start section": [connections]}
+    of a given preset
+    """
     def get_preset_connections(self, preset_id: str = "maze_0.0.0"):
-        section = preset_id[-1]
         preset = preset_id[:-2]
         
         graph = self.PRESET_LIBRARY[preset]["connections"]
@@ -40,7 +33,8 @@ class MazeGenerator():
     Rotates maze by 90° counterclockwise
     """
     def rotate_maze(self, maze):
-        rotatedMaze = self.random_maze()
+        # Generating an empty maze
+        rotatedMaze = [[[0 for _ in range(16)] for _ in range(16)], [0, 0], [0, 0]]
 
         for i in range(0, 16):
             for j in range(0, 16):
@@ -64,7 +58,8 @@ class MazeGenerator():
             point[1] = random.randrange(0, 16)
             
             distance = self.__get_distance(finish, point)
-            searching = distance < 7 or maze[0][point[1]][point[0]] == 1    # (reverse)End of searching
+            # (reversed)End of searching
+            searching = distance < 7 or maze[0][point[1]][point[0]] == 1
             
         return point
     """
