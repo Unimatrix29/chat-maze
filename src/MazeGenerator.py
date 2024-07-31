@@ -23,7 +23,7 @@ class MazeGenerator():
     Returns a dictionary {"start section": [connections]}
     of a given preset
     """
-    def get_preset_connections(self, preset_id: str = "maze_0.0.0"):
+    def get_preset_connections(self, preset_id: str = "maze_0.1.0"):
         preset = preset_id[:-2]
         
         graph = self.PRESET_LIBRARY[preset]["connections"]
