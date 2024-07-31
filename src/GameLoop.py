@@ -1,4 +1,3 @@
-#from AutoPlayer import AutoPlayer
 from ChatGPT_Client import ApiClientCreator
 from ChatGPT_Controller import ChatGPT
 from CommandHandler import Command
@@ -9,7 +8,9 @@ import queue, threading, time, traceback, openai
 
 
 class Game():
-    
+    """
+    Game class' constructor (session setup)
+    """
     def __init__(self):
         ###################################################################################################
         #The ChatGPT_Controller expects the json file to be in the same directory as ChatGPT_Controller.py
@@ -17,7 +18,6 @@ class Game():
         ###################################################################################################
         config_file_name = "config.json"
         
-        # Game session set up
         # Debug variable to track player position
         self.movementStopped = False
         # Main while loop variable
@@ -34,8 +34,8 @@ class Game():
         self.player = Player(self.maze)
         
         self.apiClient = ApiClientCreator.get_client(file_name=config_file_name)
-
         self.chatgpt = ChatGPT(self.apiClient)
+        
         # Print welcome message by initializing CommandHandler
         self.commandHandler = Command(self)
         
@@ -210,22 +210,27 @@ class Game():
         self.restart_chatGPT_thread()       
        
     def choose_difficulty(self):
-        level = ""
-        
         self.screen.add_chat_text("Please chose a difficulty: EASY, NORMAL, HARD", "System")
+        options = ["TEST", "EASY", "NORMAL", "HARD"]
+        level = ""
         
         while level == "":    
             level = self.screen.get_user_input()
             level = level.strip().upper()
+            
             # Drawing idle frame (maze)
             self.run_idle()
             self.screen.update_screen(self.maze, self.player)
-            if level != "":
-                if not self.gameHandler.set_level(level):
-                    self.screen.add_chat_text("A vaild one, please.", "System")
-                    level = ""
-                    print(f"<{level}>")
-                
+            
+            if level == "":
+                continue
+            if not level in options:
+                self.screen.add_chat_text("A vaild one, please.", "System")
+                level = ""
+                print(f"<{level}>")
+        
+        self.gameHandler.set_level(level)
+
         self.stop_idle()
         self.screen.clear_chat_text()
         
