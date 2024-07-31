@@ -16,29 +16,27 @@ class GameHandler():
             "NORMAL":   [2, 1, 5],
             "HARD"  :   [3, 3, 10]
             }
+        
         self.DEBUFFS = {
-            1: ["ROTATION", self.maze_rotation],
-            2: ["BLINDNESS", self.blind],
+            1: ["ROTATION",     self.maze_rotation],
+            2: ["BLINDNESS",    self.blind],
             3: ["INVISIBILITY", self.set_invisible],
-            4: ["RANDOM MOVE", self.random_move],
-            5: ["TELEPORT", self.teleport]
+            4: ["RANDOM MOVE",  self.random_move],
+            5: ["TELEPORT",     self.teleport]
             }
         self.DEBUFF_INFOS = {}
+        # Loading debuffs' descriptions
         file_debuffsTexts = Path(__file__).parent / "debuffs_texts.json"
-        file_debuffsTexts.resolve()
-        
-        # Loading prompt library and choosing a start ChatGPT prompt
+        file_debuffsTexts.resolve()       
         with open(file_debuffsTexts) as json_file:
             data = json.load(json_file)
             self.DEBUFF_INFOS = data
 
         self.PROMPT_LIBRARY = {}
         self.PROMPT = [] # [name, promptLine]
-        
+        # Loading prompt library and choosing a start ChatGPT prompt
         file_prompts = Path(__file__).parent / "prompts.json"
         file_prompts.resolve()
-        
-        # Loading prompt library and choosing a start ChatGPT prompt
         with open(file_prompts) as json_file:
             data = json.load(json_file)
             self.PROMPT_LIBRARY = data
@@ -48,41 +46,40 @@ class GameHandler():
             
             self.PROMPT = [key, item[key]]
         
+        # Debuffing variables
         self.moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
         self.debuffList = []
         self.debuffDuration = 0
         self.renderDistance = 16
         self.rotationCounter = 0
         
+        # Maze generation's variables
         self.mazeGenerator = MazeGenerator()
         self.startMazePreset = "FINISH_2.0"
         self.activeMazePreset = "FINISH_2.0"
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         self.difficulty = self.DIFFICULTY["TEST"]
         
+        # Finish flag
         self.gameOver = False        
         
     def set_level(self, level):
-        self.difficulty = self.DIFFICULTY.get(level, False)
-        if self.difficulty == False:
-            return False
+        self.difficulty = self.DIFFICULTY[level]
     
         print(f"Selected difficulty: {level}")
         
-        self.__get_random_maze()
-        self.__get_random_prompt()
-        
-        return True
+        self.__set_random_maze()
+        self.__set_random_prompt()
     
-    def __get_random_maze(self):
+    def __set_random_maze(self):
         preset = f"maze_{self.difficulty[0]}.{random.randint(1, 3)}.0"
         self.startMazePreset = preset
         self.activeMazePreset = preset
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         
-        print(f"Getting maze preset: {self.startMazePreset}")
+        print(f"Setting maze preset: {self.startMazePreset}")
     
-    def __get_random_prompt(self):
+    def __set_random_prompt(self):
         options = ["TEST", "EASY", "NORMAL", "HARD"]
         
         promptPreset = options[self.difficulty[0]]
@@ -138,10 +135,10 @@ class GameHandler():
         player.hide(True)
         self.debuffDuration = self.difficulty[2]
     """
-    Applying debuffs whether because of running against a wall (case = 1)
-    or rough request (case = 3)
+    Applying debuffs in case of rough request
     """
     def apply_debuffs(self, player, maze):
+        # Avoiding teleporting and random moving in maze_3.3 (start in void)
         cases = 3 if self.startMazePreset[5:-2] == "3.3" else 5
         while not len(self.debuffList) == self.difficulty[1]:
             choice = random.randint(1, cases)
@@ -212,18 +209,15 @@ class GameHandler():
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
         player.set_position(self.maze[1])
     """
-    Finishes the session depending on end event
+    Finishes the session
     """
-    def end_game(self, player, case = "FINISH"):
-        if case == "DEATH":
-            pass
-        if case == "FINISH":
-            self.remove_debuffs(player)
-            player.hide(True)
+    def end_game(self, player):
+        self.remove_debuffs(player)
+        player.hide(True)
             
-            self.activeMazePreset = f"FINISH_{random.randint(0, 2)}.0"
-            self.maze = self.mazeGenerator.get_preset(self.activeMazePreset)
-            self.gameOver = True
+        self.activeMazePreset = f"FINISH_{random.randint(0, 2)}.0"
+        self.maze = self.mazeGenerator.get_preset(self.activeMazePreset)
+        self.gameOver = True
     """
     Access function for use in GameLoop class
     """
