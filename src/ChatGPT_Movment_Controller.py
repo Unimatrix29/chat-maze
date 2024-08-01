@@ -48,7 +48,7 @@ class chatgpt_movment():
             raise e 
         
         #extract the content of the response
-        #for reference, see the OPenAI API documentation: https://platform.openai.com/docs/api-reference/making-requests
+        #for reference, see the OPenAI API documentation: https://platform.openai.com/docs/guides/chat-completions/response-format
         content = chat_response.choices[0].message.content
         
         self.chatgpt.set_history( "assistant", content)
