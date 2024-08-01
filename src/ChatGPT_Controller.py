@@ -106,6 +106,8 @@ class ChatGPT():
     def text_to_audio(self, text, name="Prinz Reginald", model="tts-1", _retrie=False):
         """
         Converts text to audio using the specified voice model and saves the audio file.
+        
+        For file locations, see the `_file_tts_out` attribute.
 
         :param text: The text to be converted to audio.
         :type text: str
@@ -149,7 +151,7 @@ class ChatGPT():
         """
         Converts audio input to text using the specified model.
         
-        The audio is saved to a file specified by the `_file_tts_out` attribute.
+        For file locations, see the `_file_user_input` attribute.
 
         :param prompt: An optional prompt to guide the transcription, defaults to an empty string.
         :type prompt: str, optional
@@ -193,6 +195,8 @@ class ChatGPT():
     def get_user_audio(self, duration=10):
         """
         Records user audio for a specified duration and saves it to a file.
+        
+        For file locations, see the `_file_user_input` attribute.
         
         This method is blocking and will wait for the duration of the recording.
         This method is not used in the final implementation but can be used for testing.
@@ -252,6 +256,21 @@ class ChatGPT():
         
         
     def construct_message(self, userInput, system_prompt):
+        """
+        Constructs a message for the API call by formatting the user and system prompts.
+
+        This method formats the user and system prompts as well as the conversation history into a message structure suitable for the API call.
+        For reference, see the OpenAI API documentation: https://platform.openai.com/docs/guides/chat-completions/getting-started
+        It also updates the conversation history with the user input.
+
+        :param userInput: The input provided by the user.
+        :type userInput: str
+        :param system_prompt: The system prompt to guide the conversation.
+        :type system_prompt: str
+        :return: A list of messages formatted for the API call.
+        :rtype: list
+        """
+        
         #format user and system prompt for api 
         system_prompt = {"content": system_prompt, "role": "system"}
             
@@ -266,6 +285,18 @@ class ChatGPT():
 
     
     def set_history(self, role, value):
+        """
+        Adds a message to the conversation history.
+
+        This method appends a new message to the conversation history with the specified role and content.
+        If the history exceeds the maximum length, the oldest messages are removed to maintain the limit.
+
+        :param role: The role of the message, either "user" or "assistant".
+        :type role: str
+        :param value: The content of the message.
+        :type value: str
+        """
+        
         self._history.append({"content": value, "role": role})
         
         if len(self._history) >= self._max_length * 2:
@@ -275,6 +306,21 @@ class ChatGPT():
    
     @staticmethod
     def __error_handling(method):
+        """
+        Handles errors for API calls with retry logic.
+
+        This method attempts to execute the provided method up to three times in case of an `openai.APIError`.
+        If the method fails due to an `OSError`, it raises the exception immediately.
+        Between retries, it waits for 3 seconds.
+
+        :param method: The method to be executed with retry logic.
+        :type method: function
+        :raises openai.APIError: If the method fails after three attempts.
+        :raises OSError: If the method fails due to an `OSError`.
+        :return: The result of the method if successful.
+        :rtype: object
+        """
+        
         count = 0
        
         while count < 3:
