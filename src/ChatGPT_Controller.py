@@ -7,7 +7,9 @@ from functools import partial
 
 class ChatGPT():
     """
-    The ChatGPT class provides methods to interact with OpenAI's GPT and audio models. It includes functionalities for text-to-text, text-to-audio, and audio-to-text conversions, as well as methods for handling user audio input and managing conversation history.
+    The ChatGPT class provides methods to interact with OpenAI's GPT and audio models. 
+    It includes functionalities for text-to-text, text-to-audio, and audio-to-text conversions, 
+    as well as methods for handling user audio input and managing conversation history.
 
     Attributes:
         _client (object): The OpenAI client used for API calls.
@@ -339,6 +341,15 @@ class ChatGPT():
     
                   
     def __TTS_test(self, text=None):
+        """
+        Test the text-to-speech functionality.
+        
+        This test uses the get_user_audio method to record audio input.
+
+        :param text: The text to be converted to audio. If not provided, a default test text will be used.
+        :type text: str, optional
+        """
+        
         import pygame
         
         TTS = ChatGPT(self.client)
@@ -354,4 +365,4 @@ class ChatGPT():
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
         
-        pygame.mixer.music.unload()    
+        pygame.mixer.music.unload()
