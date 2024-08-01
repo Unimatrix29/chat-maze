@@ -23,6 +23,9 @@ class Screen():
         self.restart_request = False
         self.reset_request = False
         self.record = False
+        
+        # makes background black
+        self.screen.fill(Colors.BLACK.value)
 
         self.__trigger_game_events()
         self.__delete_input_listener()
@@ -31,8 +34,7 @@ class Screen():
         self.__draw_chat_text()
         self.__draw_input_text()
 
-        # makes background black
-        self.screen.fill(Colors.BLACK.value)
+
 
         # updates pygame
         pygame.display.flip()
