@@ -28,14 +28,14 @@ class chatgpt_movment():
         """
         Generates a movement vector based on user input.
 
-        Args:
-            userInput (str): The user's input.
-            temperature (float): The temperature parameter for generating responses.
-            sysPrompt (str): The system prompt to be used for generating responses.
-
-        Returns:
-            tuple: A tuple containing the movement vector and the generated response text.
-
+        :param userInput: The user's input.
+        :type userInput: str
+        :param temperature: The temperature parameter for generating responses.
+        :type temperature: float
+        :param sysPrompt: The system prompt to be used for generating responses.
+        :type sysPrompt: str
+        :returns: A tuple containing the movement vector and the generated response text.
+        :rtype: tuple
         """
         
         #the API reqiures a specific format for the message
