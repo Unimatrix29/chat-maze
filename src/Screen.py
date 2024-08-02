@@ -331,12 +331,12 @@ class Screen():
         self.return_text = False
         return return_message
 
-    def __ppt(self):
+    def ppt(self):
         if not self.record:
             return True
 
     # true in the moment in which input is returned / enter pressed
-    def __on_return(self):
+    def on_return(self):
         if self.return_text:
             self.return_text = False
             return True
