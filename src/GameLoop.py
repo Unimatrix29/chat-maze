@@ -121,9 +121,6 @@ class Game():
             if self.gameHandler.is_game_over():
                 self.run_idle()
             else:
-                # # Removing debuffs by expiring their's duration
-                if self.gameStats[1][0] == 0:
-                    self.gameHandler.remove_debuffs(self.player)
                 # Applying debuffs in case of rough request
                 if mVector == [-1, -1]:
                     self.gameHandler.apply_debuffs(self.player, self.maze)
@@ -152,7 +149,7 @@ class Game():
 
                     # Stop moving in front of a wall
                     if self.gameHandler.check_wall(nextStep):
-                        self.gameHandler.reduce_debuffs()
+                        self.gameHandler.reduce_debuffs(self.player)
                         self.movementStopped = True
                         break
 

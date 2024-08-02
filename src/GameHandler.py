@@ -53,6 +53,7 @@ class GameHandler():
         # Debuffing variables
         self._moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
         self._debuffList = []
+        self._isDebuffExpired = True
         self.debuffDuration = 0
         self.renderDistance = 16
         self.rotationCounter = 0
@@ -65,7 +66,7 @@ class GameHandler():
         self.maze = self._mazeGenerator.get_preset(self._startMazePreset)
         
         # Finish flag
-        self.gameOver = False        
+        self.isGameOver = False        
         
     def set_level(self, level):
         self._difficulty = self.DIFFICULTY[level]
@@ -168,16 +169,19 @@ class GameHandler():
             
             print(f"{self.DEBUFFS[choice][0]} were applied")
     """
-    Reducing debuff duration by 1 (every step)
+    Reducing debuffs' duration by 1 and clearing them if expired
     """
-    def reduce_debuffs(self):
+    def reduce_debuffs(self, player):
+        # A flag to avoid unnecessary debuff clearance
+        self._isDebuffExpired = self.debuffDuration == 1
+        
         self.debuffDuration = max(0, self.debuffDuration - 1)
-    """
-    Removing all temporary debuffs
-    """
-    def remove_debuffs(self, player):
-        self.renderDistance = 16
-        player.hide(False)
+        # Removing all temporary debuffs by expiring their duration
+        if self._isDebuffExpired:
+            self._isDebuffExpired = False
+            
+            self.renderDistance = 17
+            player.hide(False)
     """
     Switches maze preset's section according to preset connection setting (graph)
     """
@@ -209,22 +213,25 @@ class GameHandler():
     Restarts current session without changing difficulty and GPT prompt
     """
     def restart_game(self, player):
-        self.remove_debuffs(player)
-        self.gameOver = False
+        # Removing debuffs
+        self.debuffDuration = 1
+        self.reduce_debuffs(player)
+        self.rotationCounter = 0
         
+        # Restarting active maze preset
         self._activeMazePreset = self._startMazePreset
         self.maze = self._mazeGenerator.get_preset(self._startMazePreset)
         player.set_position(self.maze[1])
-
-        self.debuffDuration = 0
-        self.renderDistance = 17
-        self.rotationCounter = 0
+        
+        self.isGameOver = False
     """
     Resets all properties to initial values
     """
     def reset_game(self, player):
+        # Removing debuffs
         self.restart_game(player)
         
+        # Choosing a start(end)screen
         choice = random.randint(1, 2)
         self._startMazePreset = f"FINISH_{choice}.0"
         self._activeMazePreset = f"FINISH_{choice}.0"
@@ -235,12 +242,15 @@ class GameHandler():
     Finishes the session
     """
     def end_game(self, player):
-        self.remove_debuffs(player)
+        # Removing blindness and keep the player hidden
+        self.renderDistance = 17
         player.hide(True)
-            
+        
+        # Choosing an endscreen
         self._activeMazePreset = f"FINISH_{random.randint(0, 2)}.0"
         self.maze = self._mazeGenerator.get_preset(self._activeMazePreset)
-        self.gameOver = True
+        
+        self.isGameOver = True
     """
     Access function for use in GameLoop class
     """
@@ -250,7 +260,7 @@ class GameHandler():
     Returns session's status (finish arrived)
     """
     def is_game_over(self):
-        return self.gameOver
+        return self.isGameOver
     """
     Returns selected prompt
     """
