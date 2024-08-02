@@ -35,7 +35,7 @@ class GameHandler():
             self.DEBUFF_INFOS = data
 
         self.PROMPT_LIBRARY = {}
-        self.PROMPT = [] # [name, promptLine]
+        self.prompt = [] # [name, promptLine]
         
         # Loading prompt library and choosing a start ChatGPT prompt
         file_prompts = Path(__file__).parent / "prompts.json"
@@ -45,24 +45,24 @@ class GameHandler():
             
             self.PROMPT_LIBRARY = data
             
-            # {"Name" : "Prompt"} pair
+            # {"Name" : "Prompt line"} pair
             item = data["TEST"][0]
             key = "TEST 1"
-            self.PROMPT = [key, item[key]]
+            self.prompt = [key, item[key]]
         
         # Debuffing variables
-        self.moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
-        self.debuffList = []
+        self._moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
+        self._debuffList = []
         self.debuffDuration = 0
         self.renderDistance = 16
         self.rotationCounter = 0
         
         # Maze generation's variables
-        self.mazeGenerator = MazeGenerator()
-        self.startMazePreset = "FINISH_2.0"
-        self.activeMazePreset = "FINISH_2.0"
+        self._difficulty = self.DIFFICULTY["TEST"]
+        self._mazeGenerator = MazeGenerator()
+        self._startMazePreset = "FINISH_2.0"
+        self._activeMazePreset = "FINISH_2.0"
         self.maze = self.mazeGenerator.get_preset(self.startMazePreset)
-        self.difficulty = self.DIFFICULTY["TEST"]
         
         # Finish flag
         self.gameOver = False        
@@ -92,7 +92,7 @@ class GameHandler():
         key = list(self.PROMPT_LIBRARY[promptPreset][promptNumber].keys())[0]
         promptLine = self.PROMPT_LIBRARY[promptPreset][promptNumber][key]
 
-        self.PROMPT = [key, promptLine]
+        self.prompt = [key, promptLine]
         print(f"In this round ChatGPT is {key}")
     """
     Returns True if the player stucks against a wall
@@ -255,7 +255,7 @@ class GameHandler():
     Returns selected prompt
     """
     def get_prompt(self):
-        return self.PROMPT
+        return self.prompt
     """
     Returns the [nextFrame]th idle screen's frame
     !Only used with FINISH and IDLE presets!
