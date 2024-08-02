@@ -132,6 +132,8 @@ class Game():
                 while not mVector in [[0, 0], [-1, -1]]:
                     # Showing end screen if finish arrived
                     if self.gameHandler.check_finish(self.player.currentPosition):
+                        print(f"[Session ended]\nPlayer successfully arrived the finish at {self.maze[2]} (~ UwU)~")
+                        
                         self.gameHandler.end_game(self.player)
                         self.gameOver_event.set()
                         # Print end message
