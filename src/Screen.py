@@ -31,6 +31,7 @@ class Screen():
         self.__delete_input_listener()
         self.__chatgpt_response_listener()
         self.__draw_maze(maze, player, render)  
+        self.__draw_maze_border()
         self.__draw_chat_text()
         self.__draw_input_text()
 
