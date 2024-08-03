@@ -123,8 +123,7 @@ class Game():
             else:
                 # Applying debuffs in case of rough request
                 if mVector == [-1, -1]:
-                    self.gameHandler.apply_debuffs(self.player, self.maze)
-                    debuffInfos = self.gameHandler.get_applied_debuffs()
+                    debuffInfos = self.gameHandler.apply_debuffs(self.player)
                     for debuff in debuffInfos:
                         self.screen.add_chat_text(debuff, "System")
                     
