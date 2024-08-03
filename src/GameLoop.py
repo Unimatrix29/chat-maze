@@ -31,7 +31,7 @@ class Game():
         # and a timer for switching idle frames
         self.maze = self.gameHandler.get_game_stats()[0]
         self.idleTimer = threading.Timer(self.maze[3], self.switch_idle_frame)
-        self.player = Player(self.maze)
+        self.player = Player(self.maze[1])
         
         self.apiClient = ApiClientCreator.get_client(file_name=config_file_name)
         self.chatgpt = ChatGPT(self.apiClient)
