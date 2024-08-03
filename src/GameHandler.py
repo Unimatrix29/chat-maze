@@ -2,29 +2,33 @@ from MazeGenerator import MazeGenerator
 from pathlib import Path
 import json, random
 
-"""
-GameHandler class implies debuffing functionality,
-difficulty selection based on user input and
-presets' transition including start and end presets
-"""
 class GameHandler():
+    """
+    GameHandler class implies debuffing functionality,
+    difficulty selection based on user input and
+    presets' transition including start and end presets
+
+    Attributes
+    -----------
+        
+    """
     
     def __init__(self):
-        self.DIFFICULTY = {
+        self._DIFFICULTY = {
             "TEST"  :   [0, 1, 1],
             "EASY"  :   [1, 0, 2], #[maze_preset_level, wall_penalties, debuff_duration]
             "NORMAL":   [2, 1, 5],
             "HARD"  :   [3, 3, 10]
             }
         
-        self.DEBUFFS = {
+        self._DEBUFFS = {
             1: ["ROTATION",     self.__maze_rotation],
             2: ["BLINDNESS",    self.__blind],
             3: ["INVISIBILITY", self.__set_invisible],
             4: ["RANDOM MOVE",  self.__random_move],
             5: ["TELEPORT",     self.__teleport]
             }
-        self.DEBUFF_INFOS = {}
+        self._DEBUFF_INFOS = {}
         
         # Loading debuffs' descriptions
         _file_debuffsTexts = Path(__file__).parent / "debuffs_texts.json"
@@ -32,9 +36,9 @@ class GameHandler():
         with open(_file_debuffsTexts) as json_file:
             data = json.load(json_file)
             
-            self.DEBUFF_INFOS = data
+            self._DEBUFF_INFOS = data
 
-        self.PROMPT_LIBRARY = {}
+        self._PROMPT_LIBRARY = {}
         self.prompt = [] # [name, promptLine]
         
         # Loading prompt library and choosing a start ChatGPT prompt
@@ -43,7 +47,7 @@ class GameHandler():
         with open(_file_prompts) as json_file:
             data = json.load(json_file)
             
-            self.PROMPT_LIBRARY = data
+            self._PROMPT_LIBRARY = data
             
             # {"Name" : "Prompt line"} pair
             item = data["TEST"][0]
@@ -59,7 +63,7 @@ class GameHandler():
         self.rotationCounter = 0
         
         # Maze generation's variables
-        self._difficulty = self.DIFFICULTY["TEST"]
+        self._difficulty = self._DIFFICULTY["TEST"]
         self._mazeGenerator = MazeGenerator()
         self._startMazePreset = "FINISH_2.0"
         self._activeMazePreset = "FINISH_2.0"
@@ -69,7 +73,7 @@ class GameHandler():
         self.isGameOver = False        
         
     def set_level(self, level):
-        self._difficulty = self.DIFFICULTY[level]
+        self._difficulty = self._DIFFICULTY[level]
     
         print(f"Selected difficulty: {level}")
         
@@ -90,8 +94,8 @@ class GameHandler():
         promptPreset = options[self._difficulty[0]]
         promptNumber = random.choice([0, 1])
         
-        key = list(self.PROMPT_LIBRARY[promptPreset][promptNumber].keys())[0]
-        promptLine = self.PROMPT_LIBRARY[promptPreset][promptNumber][key]
+        key = list(self._PROMPT_LIBRARY[promptPreset][promptNumber].keys())[0]
+        promptLine = self._PROMPT_LIBRARY[promptPreset][promptNumber][key]
 
         self.prompt = [key, promptLine]
         print(f"In this round ChatGPT is {key}")
@@ -165,9 +169,9 @@ class GameHandler():
                 continue
             
             self._debuffList.append(choice)
-            self.DEBUFFS[choice][1](player, maze)
+            self._DEBUFFS[choice][1](player, maze)
             
-            print(f"{self.DEBUFFS[choice][0]} were applied")
+            print(f"{self._DEBUFFS[choice][0]} were applied")
     """
     Reducing debuffs' duration by 1 and clearing them if expired
     """
@@ -282,10 +286,10 @@ class GameHandler():
     Returns an array with applied debuff's descriptions
     """
     def get_applied_debuffs(self):
-        debuffInfos = []
+        debuffInfosList = []
         for debuff in self._debuffList:
-            debuffName = self.DEBUFFS[debuff][0]
-            debuffInfos.append(self.DEBUFF_INFOS[debuffName])
+            debuffName = self._DEBUFFS[debuff][0]
+            debuffInfosList.append(self._DEBUFF_INFOS[debuffName])
             
         self._debuffList.clear()
-        return debuffInfos
+        return debuffInfosList
