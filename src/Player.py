@@ -1,24 +1,24 @@
 class Player:
     """
-    Player class represents a chatGPT
+    Player class represents a ChatGPT
     character on a playfield.
     
     Attributes
     -----------
-        currentPosition : [int, int]
+        currentPosition : [int, int] = [0, 0]
             The point of a maze the player's standing on.
-        name : str
+        name : str = ""
             The name of the chosen ChatGPT role to be displayed in chat.
-        isHidden : bool
+        isHidden : bool = False
             A flag to switch visibility while rendering.
             
     Methods
     -----------
-        move (vector : list[int, int])
+        move (vector : [int, int])
             Adds a vector to player's currentPosition.
-        set_position (point : list[int, int])
+        set_position (point : [int, int])
             Sets player's currentPosition to a point.
-        get_rotated_position (count = 1)
+        get_rotated_position (count : int = 1)
             Returns player's currentPosition after rotating it <count> times.
         hide (request : bool)
             Changes player's render visibility.
@@ -43,12 +43,12 @@ class Player:
         self.name = name
         self.isHidden = False
         
-    def move(self, mVector: list[int] = [0, 0]):
+    def move(self, mVector: list[int]):
         """
         Moves the player towards given vector.
         
         Parameters:
-            mVector : [int, int] = [0, 0]
+            mVector : [int, int]
                 The moving vector to be added to player's currentPosition.
                 
         Returns:
@@ -92,7 +92,7 @@ class Player:
     
     def hide(self, request: bool):
         """
-        Hides the player on the screen by changing it's visibility flag.
+        Changes player's visibility flag to <request>.
         
         Parameters:
             request : bool
@@ -106,7 +106,7 @@ class Player:
         
     def change_name(self, newName: str):
         """
-        Changes player's name
+        Changes player's name.
         
         Parameters:
             newName : str
