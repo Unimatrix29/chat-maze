@@ -33,7 +33,7 @@ class GameHandler():
 
     Methods
     -----------
-        set_level (level : str = "TEST")
+        set_level (player : Player, level : str = "TEST")
             Sets a maze preset and prompt according to given level (difficulty).
         check_wall (position : [int, int])
             Checks if there's a wall on the given position.
@@ -43,19 +43,22 @@ class GameHandler():
             Checks if the given position lays outside the maze.
         apply_debuffs (player : Player)
             Applies single or multiple debuffs to the given player instance
-            depending on selected difficulty. Returns a list of applied debuffs'
-            descriptions.
+            depending on selected difficulty.
         reduce_debuffs (player : Player)
             Reduces current debuffDuration by 1 and cleares all temporary debuffs
             applied by their expiration.
         switch_section (player : Player)
             Switches active maze to another one according to pre-defined
-            preset connections. Works only by entering key points.
+            preset connections.
         restart_game (player : Player)
             Restarts current game session without changing selected
             difficulty, maze or ChatGPT prompt.
-        reset_game ()
-            
+        reset_game (player : Player, isFinished : bool = False)
+            Restarts/finishes the game an sets the current maze to an idle frame.
+        get_idle_maze (nextFrame : int)
+            Returns the next idle screen's frame.
+        get_game_stats ()
+            Returns all game related variables such as active maze and debuffs. 
     """
     
     def __init__(self):
@@ -115,12 +118,14 @@ class GameHandler():
         # Finish flag
         self.isGameOver = False        
         
-    def set_level(self, level: str = "TEST"):
+    def set_level(self, player: Player, level: str = "TEST"):
         """
         Sets difficulty to a given level, sets maze preset
         and ChatGPT prompt to use in current session.
         
         Parameters:
+            player : Player
+                An instance of a player to play with.
             level : str = "TEST"
                 The chosen difficulty to set GameHandler class to.
         
@@ -133,6 +138,11 @@ class GameHandler():
         
         self.__set_random_maze()
         self.__set_random_prompt()
+
+        player.change_name(self.prompt[0])
+        player.set_position(self.maze[1])
+        
+        self.isGameOver = False
     
     def __set_random_maze(self):
         preset = f"maze_{self._difficulty[0]}.{random.randint(1, 3)}.0"
@@ -339,6 +349,60 @@ class GameHandler():
             
             self.renderDistance = 17
             player.hide(False)
+            
+    def restart_game(self, player: Player):
+        """
+        Restarts current session without changing difficulty, maze
+        or ChatGPT prompt. Removes all debuffs including maze rotations
+        and returns the player to the beginning of the maze.
+        
+        Parameters:
+            player : Player
+                An instance of a player in current session to reset.
+        
+        Returns:
+            None : Doesn't return any value.
+        """
+        # Removing debuffs
+        self.debuffDuration = 1
+        self.reduce_debuffs(player)
+        self.rotationCounter = 0
+        
+        # Restarting active maze preset
+        self._activeMazePreset = self._startMazePreset
+        self.maze = self._mazeGenerator.get_preset(self._activeMazePreset)
+        player.set_position(self.maze[1])
+        
+        self.isGameOver = False
+    
+    def reset_game(self, player: Player, isFinished: bool = False):
+        """
+        Restarts the game an sets the current maze to an idle frame.
+        Removes all debuffs including maze rotations
+        and returns the player to the beginning of the maze.
+        Doesn't clear chosen difficulty or ChatGPT prompt.
+        
+        Parameters:
+            player : Player
+                An instance of a player in current session to reset.
+            isFinished : bool = False
+                An end game flag. If set True, the game will be considered
+                as finished.
+        
+        Returns:
+            None : Doesn't return any value.
+        """
+        # Removing debuffs
+        self.restart_game(player)
+        
+        # Choosing a start(end)screen
+        presetList = [0, 1, 2] if isFinished else [1, 2]
+        self._activeMazePreset = f"FINISH_{random.choice(presetList)}.0"
+                
+        self.maze = self._mazeGenerator.get_preset(self._activeMazePreset)
+        player.set_position(self.maze[1])
+
+        self.isGameOver = isFinished
     
     def switch_section(self, player: Player):
         """
@@ -381,93 +445,7 @@ class GameHandler():
         for i in range(self.rotationCounter):
             # Rotating target_section by same angle as start_section
             self.__maze_rotation(player = player, debuffApplied = False)
-            
-    def restart_game(self, player: Player):
-        """
-        Restarts current session without changing difficulty, maze
-        or ChatGPT prompt. Removes all debuffs including maze rotations
-        and returns the player to the beginning of the maze.
-        
-        Parameters:
-            player : Player
-                An instance of a player in current session to reset.
-        
-        Returns:
-            None : Doesn't return any value.
-        """
-        # Removing debuffs
-        self.debuffDuration = 1
-        self.reduce_debuffs(player)
-        self.rotationCounter = 0
-        
-        # Restarting active maze preset
-        self._activeMazePreset = self._startMazePreset
-        self.maze = self._mazeGenerator.get_preset(self._startMazePreset)
-        player.set_position(self.maze[1])
-        
-        self.isGameOver = False
     
-    def reset_game(self, player: Player):
-        """
-        Restarts the game an sets the current maze to an idle frame.
-        Doesn't clear chosen difficulty or ChatGPT prompt.
-        
-        Parameters:
-            player : Player
-                An instance of a player in current session to reset.
-        
-        Returns:
-            None : Doesn't return any value.
-        """
-        # Removing debuffs
-        self.restart_game(player)
-        
-        # Choosing a start(end)screen
-        choice = random.randint(1, 2)
-        self._startMazePreset = f"FINISH_{choice}.0"
-        self._activeMazePreset = f"FINISH_{choice}.0"
-                
-        self.maze = self._mazeGenerator.get_preset(self._startMazePreset)
-        player.set_position(self.maze[1])
-
-    def end_game(self, player: Player):
-        """
-        Finishes the current session. Doesn't remove debuffs
-        except blindness. Sets active maze to an idle frame.
-
-        Parameters:
-            player : Player
-                An instance of a player in current session to remove
-                from the screen.
-        
-        Returns:
-            None : Doesn't return any value.
-        """
-        # Removing blindness to render whole endscreen
-        self.renderDistance = 17
-        
-        # Setting an endscreen
-        self._activeMazePreset = f"FINISH_{random.randint(0, 2)}.0"
-        self.maze = self._mazeGenerator.get_preset(self._activeMazePreset)
-        player.set_position(self.maze[1])
-        
-        self.isGameOver = True
-    
-    def get_game_stats(self):
-        """
-        Access function for use in GameLoop class
-        """
-        return [self.maze, [self.debuffDuration, self.renderDistance, self.rotationCounter]]
-    def is_game_over(self):
-        """
-        Returns session's status (finish arrived)
-        """
-        return self.isGameOver
-    def get_prompt(self):
-        """
-        Returns selected prompt
-        """
-        return self.prompt
     def get_idle_maze(self, nextFrame: int):
         """
         Returns the <nextFrame>th idle screen's frame
@@ -487,3 +465,14 @@ class GameHandler():
         frame = self._mazeGenerator.get_preset(self._activeMazePreset)
         
         return frame
+           
+    def get_game_stats(self):
+        """
+        Access function for getting all game related variables such as
+        active maze and debuffs.
+        
+        Returns:
+            list[maze, [debuffDuration : int, renderDistance : int, rotationCounter : int]]
+                List of all by debuffs affected variables.
+        """
+        return [self.maze, [self.debuffDuration, self.renderDistance, self.rotationCounter]]

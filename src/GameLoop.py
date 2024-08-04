@@ -43,12 +43,9 @@ class Game():
         # Print start message
         self.commandHandler.execute("__/start")
         
-        self.prompt = self.gameHandler.get_prompt()        # [name, promptLine]
+        self.prompt = self.gameHandler.prompt              # [name, promptLine]
         self.gameStats = self.gameHandler.get_game_stats() # [[(active)maze], [debuffDuration, renderDistance, rotationCounter]]
-        
         self.maze = self.gameStats[0]
-        self.player.change_name(self.prompt[0])
-        self.player.set_position(self.maze[1])
         
         self.audio_event = threading.Event()
         self.audio_is_ready_event = threading.Event()
@@ -97,7 +94,7 @@ class Game():
                             self.screen_queue.put(audio_input)
                     elif user_input.strip() != "":
                         self.screen_queue.put(user_input)
-
+                        
             # Getting a movement vector from chatGPT
             mVector = [0, 0]
             try: 
@@ -118,7 +115,7 @@ class Game():
             except queue.Empty:
                 pass
 
-            if self.gameHandler.is_game_over():
+            if self.gameHandler.isGameOver:
                 self.run_idle()
             else:
                 # Applying debuffs in case of rough request
@@ -133,7 +130,7 @@ class Game():
                     if self.gameHandler.check_finish(self.player.currentPosition):
                         print(f"[Session ended]\nPlayer successfully arrived the finish at {self.maze[2]} (~ UwU)~")
                         
-                        self.gameHandler.end_game(self.player)
+                        self.gameHandler.reset_game(player = self.player, isFinished = True)
                         self.gameOver_event.set()
                         # Print end message
                         self.commandHandler.execute("__/finish")
@@ -178,15 +175,9 @@ class Game():
     def reset(self):
         self.stop_idle()
         self.gameHandler.reset_game(self.player)
-        # Updating active maze to a FINISH preset
         self.update_game_stats()
-
-        self.choose_difficulty()
-        # Getting new maze
-        self.update_game_stats()
-        self.prompt = self.gameHandler.get_prompt()
-        self.player.change_name(self.prompt[0])
-        self.player.set_position(self.maze[1])
+        
+        self.choose_difficulty()    # gameStats will be updated here
         
         self.audio_event.clear()
 
@@ -227,7 +218,9 @@ class Game():
                 level = ""
                 print(f"<{level}>")
         
-        self.gameHandler.set_level(level)
+        self.gameHandler.set_level(self.player, level)
+        self.update_game_stats()
+        self.prompt = self.gameHandler.pro
 
         self.stop_idle()
         self.screen.clear_chat_text()
@@ -295,8 +288,6 @@ class Game():
     def stop_idle(self):
         self.idleTimer.cancel()
         self.idleTimer.join()
-        # Avoiding saving idle frame
-        self.update_game_stats()
     """
     Switches active maze (idle frame) to the next one
     every frameTicks' amount of game ticks

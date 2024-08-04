@@ -39,7 +39,7 @@ class Player:
         Returns:
             Player : An instance of the Player class.
         """
-        self.currentPosition = startPosition
+        self.currentPosition = list(startPosition)
         self.name = name
         self.isHidden = False
         
@@ -68,8 +68,8 @@ class Player:
         Returns:
             None : Doesn't return any value.
         """
-        self.currentPosition[0] = point[0]
-        self.currentPosition[1] = point[1]
+        self.currentPosition[0] = int(point[0])
+        self.currentPosition[1] = int(point[1])
         
     def get_rotated_position(self, count: int = 1) -> list[int]:
         """
@@ -84,9 +84,9 @@ class Player:
             rotatedPosition : [int, int]
                 The position in <count> rotated maze.
         """
-        rotatedPosition = [self.currentPosition[0], self.currentPosition[1]]
+        rotatedPosition = [int(self.currentPosition[0]), int(self.currentPosition[1])]
         for i in range(count):
-            rotatedPosition = [rotatedPosition[1], 15 - rotatedPosition[0]]
+            rotatedPosition = [int(rotatedPosition[1]), 15 - int(rotatedPosition[0])]
             
         return rotatedPosition
     
