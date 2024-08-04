@@ -7,7 +7,7 @@ class GameHandler():
     """
     GameHandler class implies debuffing functionality,
     difficulty selection based on user input and
-    presets' transition including start and end presets
+    maze presets' transition including start and end presets screens.
 
     Attributes
     -----------
@@ -54,9 +54,9 @@ class GameHandler():
             Restarts current game session without changing selected
             difficulty, maze or ChatGPT prompt.
         reset_game (player : Player, isFinished : bool = False)
-            Restarts/finishes the game an sets the current maze to an idle frame.
+            Sets the current session to initial/end state.
         get_idle_maze (nextFrame : int)
-            Returns the next idle screen's frame.
+            Returns (the next) idle screen's frame.
         get_game_stats ()
             Returns all game related variables such as active maze and debuffs. 
     """
@@ -120,12 +120,13 @@ class GameHandler():
         
     def set_level(self, player: Player, level: str = "TEST"):
         """
-        Sets difficulty to a given level, sets maze preset
-        and ChatGPT prompt to use in current session.
+        Sets difficulty to a given level, maze preset
+        and ChatGPT prompt as well as configures the player
+        according to selections.
         
         Parameters:
             player : Player
-                An instance of a player to play with.
+                An instance of a player to configure.
             level : str = "TEST"
                 The chosen difficulty to set GameHandler class to.
         
@@ -200,7 +201,7 @@ class GameHandler():
         
         Returns:
             bool : True if both coordinates of the given position,
-                       are less than 16, False otherwise.
+                       are in range of 0 to 15, False otherwise.
         """
         return not (position[0] in range(0, 16) and position[1] in range(0, 16))
     
@@ -227,7 +228,7 @@ class GameHandler():
     
     def __blind(self, player: Player = None):
         """
-        Reduces render distance.
+        Reduces render distance and updates current debuffDuration.
         
         Parameters:
             player : Player = None
@@ -241,8 +242,8 @@ class GameHandler():
     
     def __random_move(self, player: Player):
         """
-        Moves the player in a random direction
-        onto the next field that's not a wall.
+        Moves the player in a random direction onto the next field
+        that's not a wall.
         
         Parameters:
             player : Player
@@ -276,7 +277,8 @@ class GameHandler():
     
     def __set_invisible(self, player: Player):
         """
-        Hides the player so it won't be rendered.
+        Hides the player so it won't be rendered and updates
+        the current debuffDuration.
         
         Parameters:
             player : Player
@@ -293,8 +295,6 @@ class GameHandler():
         Applies debuffs to a player. The amount of applied debuffs 
         is defined by selected difficulty. Every debuff can be applied
         maximum 1 time pro this function's call.
-        Every applied debuff is stored in a list to provide further
-        information about them later via get_applied_debuffs().
         
         Parameters:
             player : Player
@@ -335,7 +335,7 @@ class GameHandler():
         
         Parameters:
             player : Player
-                An instance of a player to clear of debuffs.
+                An instance of a player to clear from debuffs.
         
         Returns:
             None : Doesn't return any value.
@@ -378,8 +378,7 @@ class GameHandler():
     def reset_game(self, player: Player, isFinished: bool = False):
         """
         Restarts the game an sets the current maze to an idle frame.
-        Removes all debuffs including maze rotations
-        and returns the player to the beginning of the maze.
+        Removes all debuffs including maze rotations.
         Doesn't clear chosen difficulty or ChatGPT prompt.
         
         Parameters:

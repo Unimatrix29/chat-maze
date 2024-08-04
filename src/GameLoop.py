@@ -220,7 +220,7 @@ class Game():
         
         self.gameHandler.set_level(self.player, level)
         self.update_game_stats()
-        self.prompt = self.gameHandler.pro
+        self.prompt = self.gameHandler.prompt
 
         self.stop_idle()
         self.screen.clear_chat_text()
