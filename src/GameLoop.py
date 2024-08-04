@@ -294,9 +294,8 @@ class Game():
     !Only used with FINISH and IDLE presets!
     """
     def switch_idle_frame(self):
-        nextFrame = self.maze[4]
-        
-        self.maze = self.gameHandler.get_idle_maze(nextFrame)
+        self.gameHandler.switch_idle_maze()
+        self.update_game_stats()
     """
     Gets new gameStats[] with active(switched/rotated) maze
     as well as debuff's infos

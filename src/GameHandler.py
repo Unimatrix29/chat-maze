@@ -445,25 +445,19 @@ class GameHandler():
             # Rotating target_section by same angle as start_section
             self.__maze_rotation(player = player, debuffApplied = False)
     
-    def get_idle_maze(self, nextFrame: int):
+    def switch_idle_maze(self):
         """
-        Returns the <nextFrame>th idle screen's frame
-        !Only used with FINISH and IDLE presets!
-        
-        Parameters:
-            nextFrame : int
-                The next idle frame to switch to.
+        Switches the current idle maze to the next one connected to it.
+        !Used with FINISH and IDLE presets only!
         
         Returns:
-            TODO
+            None : Doesn't return any value.
         """
         preset = self._activeMazePreset[-3]
-        animationPreset = f"IDLE_{preset}"
-        # TODO: Rethink frame switching
-        self._activeMazePreset = f"{animationPreset}.{nextFrame}"
-        frame = self._mazeGenerator.get_preset(self._activeMazePreset)
+        nextFrame = self.maze[4]
         
-        return frame
+        self._activeMazePreset = f"IDLE_{preset}.{nextFrame}"
+        self.maze = self._mazeGenerator.get_preset(self._activeMazePreset)
            
     def get_game_stats(self):
         """
