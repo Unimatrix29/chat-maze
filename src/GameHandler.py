@@ -35,13 +35,13 @@ class GameHandler():
     -----------
         set_level (player : Player, level : str = "TEST")
             Sets a maze preset and prompt according to given level (difficulty).
-        check_wall (position : [int, int])
+        check_wall (position : [int, int]) -> bool
             Checks if there's a wall on the given position.
-        check_finish (position : [int, int])
+        check_finish (position : [int, int]) -> bool
             Checks if the given position is the finish of the maze.
-        check_border (position : [int, int])
+        check_border (position : [int, int]) -> bool
             Checks if the given position lays outside the maze.
-        apply_debuffs (player : Player)
+        apply_debuffs (player : Player) -> list[str]
             Applies single or multiple debuffs to the given player instance
             depending on selected difficulty.
         reduce_debuffs (player : Player)
@@ -55,9 +55,9 @@ class GameHandler():
             difficulty, maze or ChatGPT prompt.
         reset_game (player : Player, isFinished : bool = False)
             Sets the current session to initial/end state.
-        get_idle_maze (nextFrame : int)
+        switch_idle_maze (nextFrame : int)
             Returns (the next) idle screen's frame.
-        get_game_stats ()
+        get_game_stats () -> list[list[int]]
             Returns all game related variables such as active maze and debuffs. 
     """
     
