@@ -102,18 +102,17 @@ class GameHandler():
             item = data["TEST"][key]
             self.prompt = [key, item]
         
-        # Debuffing variables
-        self._MOVES = [[0, -1], [0, 1], [-1, 0], [1, 0]]
-        self.debuffDuration = 0
-        self.renderDistance = 17
-        self.rotationCounter = 0
-        
         # Maze generation's variables
         self._difficulty = self._DIFFICULTY["TEST"]
         self._mazeGenerator = MazeGenerator()
         self._startMazePreset = "FINISH_2.0"
         self._activeMazePreset = "FINISH_2.0"
         self.maze = self._mazeGenerator.get_preset(self._startMazePreset)
+        
+        # Debuffing variables
+        self.debuffDuration = 0
+        self.renderDistance = 17
+        self.rotationCounter = 0
         
         # Finish flag
         self.isGameOver = False        
@@ -137,16 +136,16 @@ class GameHandler():
     
         print(f"Selected difficulty: {level}")
         
-        self.__set_random_maze()
-        self.__set_random_prompt()
+        self.__set_random_maze(level)
+        self.__set_random_prompt(level)
 
         player.change_name(self.prompt[0])
         player.set_position(self.maze[1])
         
         self.isGameOver = False
     
-    def __set_random_maze(self):
-        presetList = [1, 2, 3] if self._difficulty[0] != 0 else [1]
+    def __set_random_maze(self, level : str = "TEST"):
+        presetList = [1, 2, 3] if level != "TEST" else [1]
         preset = f"maze_{self._difficulty[0]}.{random.choice(presetList)}.0"
         
         self._startMazePreset = preset
@@ -155,15 +154,11 @@ class GameHandler():
         
         print(f"Setting maze preset: {self._startMazePreset}")
     
-    def __set_random_prompt(self):
-        options = ["TEST", "EASY", "NORMAL", "HARD"]
-        
-        promptPreset = options[self._difficulty[0]]
-        
-        keyList = list(self._PROMPT_LIBRARY[promptPreset].keys())
+    def __set_random_prompt(self, level : str = "TEST"):        
+        keyList = list(self._PROMPT_LIBRARY[level].keys())
         key = random.choice(keyList)
         
-        promptLine = self._PROMPT_LIBRARY[promptPreset][key]
+        promptLine = self._PROMPT_LIBRARY[level][key]
 
         self.prompt = [key, promptLine]
         print(f"In this round ChatGPT is {key}")
@@ -255,9 +250,10 @@ class GameHandler():
         Returns:
             None : Doesn't return any value.
         """
+        moves = [[0, -1], [0, 1], [-1, 0], [1, 0]]
         while True:    
             randOption = random.randint(0, 3)
-            mVector = self._MOVES[randOption]
+            mVector = moves[randOption]
             nextStep = [player.currentPosition[0] + mVector[0], player.currentPosition[1] + mVector[1]]
             
             if not self.check_wall(nextStep):
