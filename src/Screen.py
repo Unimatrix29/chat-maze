@@ -170,6 +170,7 @@ class Screen():
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
         # sets up state systems for event-methods and overlap prevention
+        self.audio_return = False
         self.return_text = False
         self.active = True
         self.restart_request = False
@@ -210,8 +211,8 @@ class Screen():
         self.screen.blit(self.text_title,(self.input_rect.x, self.input_rect.y - 15))
     
     def __record_audio(self):
-
-        # writes recorded audio in push-to-talk file
+        
+        #records audio in push-to-talk file
         print("ptt")
         self.record = True
         with sf.SoundFile(self.file_user_input, mode='wb', samplerate=44100,channels=2) as file:
@@ -222,7 +223,7 @@ class Screen():
                         if event.type == pygame.KEYUP:
                             print("end ptt")
                             self.record = False    
-        self.return_text = True                     
+        self.audio_return = True                     
                     
     def __draw_maze(self, maze, player, render=17):
         
@@ -331,7 +332,7 @@ class Screen():
         self.return_text = False
         return return_message
 
-    def ppt(self):
+    def ptt(self):
         if not self.record:
             return True
 
@@ -342,6 +343,13 @@ class Screen():
             return True
         return False 
     
+    # true in the moment the pus to talk key is released
+    def on_audio_return(self):
+        if self.audio_return:
+            self.audio_return = False
+            return True
+        return False
+    
     # true in the moment in which chatgpts response is changed
     def __on_response_change(self):
         if self.response_text != self.last_response:
@@ -350,7 +358,7 @@ class Screen():
         return False
 
     # triggers text_to_speech on the current response 
-    def __play(self):
+    def play(self):
         file_tts_out = Path(__file__).parent / "tts_out.wav"
         file_tts_out.resolve()
         
