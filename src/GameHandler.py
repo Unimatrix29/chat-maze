@@ -98,9 +98,9 @@ class GameHandler():
             self._PROMPT_LIBRARY = data
             
             # {"Name" : "Prompt line"} pair
-            item = data["TEST"][0]
             key = "TEST 1"
-            self.prompt = [key, item[key]]
+            item = data["TEST"][key]
+            self.prompt = [key, item]
         
         # Debuffing variables
         self._MOVES = [[0, -1], [0, 1], [-1, 0], [1, 0]]
@@ -146,7 +146,9 @@ class GameHandler():
         self.isGameOver = False
     
     def __set_random_maze(self):
-        preset = f"maze_{self._difficulty[0]}.{random.randint(1, 3)}.0"
+        presetList = [1, 2, 3] if self._difficulty[0] != 0 else [1]
+        preset = f"maze_{self._difficulty[0]}.{random.choice(presetList)}.0"
+        
         self._startMazePreset = preset
         self._activeMazePreset = preset
         self.maze = self._mazeGenerator.get_preset(self._startMazePreset)
@@ -157,10 +159,11 @@ class GameHandler():
         options = ["TEST", "EASY", "NORMAL", "HARD"]
         
         promptPreset = options[self._difficulty[0]]
-        promptNumber = random.choice([0, 1])
         
-        key = list(self._PROMPT_LIBRARY[promptPreset][promptNumber].keys())[0]
-        promptLine = self._PROMPT_LIBRARY[promptPreset][promptNumber][key]
+        keyList = list(self._PROMPT_LIBRARY[promptPreset].keys())
+        key = random.choice(keyList)
+        
+        promptLine = self._PROMPT_LIBRARY[promptPreset][key]
 
         self.prompt = [key, promptLine]
         print(f"In this round ChatGPT is {key}")
