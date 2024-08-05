@@ -118,12 +118,12 @@ class Screen():
             self.last_response = self.response_text
 
             # displays returned input in chat
-            self.add_chat_text(self.user_text, "You")
+            # self.add_chat_text(self.user_text, "You")
 
             # resets input field
             self.user_text = ""
 
-    def __callback(self,indata, frames, time, status):
+    def callback(self,indata, frames, time, status):
 
         # This is called (from a separate thread) for each audio block
         if status:
