@@ -415,24 +415,20 @@ class ChatGPT():
     
                   
     def __TTS_test(self, text=None):
-        def __TTS_test(self, text=None):
-            def __TTS_test(self, text=None):
-                """
-                Test the text-to-speech functionality.
-
-                Parameters
-                ----------
-                text : str, optional
-                    The text to be converted to audio. If not provided, a default test text will be used.
-
-                Returns
-                -------
-                None
-                
-                Notes 
-                -------
-                This test uses the get_user_audio method to record audio input.
-                """
+        """
+        Test the text-to-speech functionality.
+        Parameters
+        ----------
+        text : str, optional
+            The text to be converted to audio. If not provided, a default test text will be used.
+        Returns
+        -------
+        None
+        
+        Notes 
+        -------
+        This test uses the get_user_audio method to record audio input.
+        """
         
         import pygame
         
