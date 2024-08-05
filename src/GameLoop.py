@@ -58,62 +58,40 @@ class Game():
         })
         
         self.chatGPT_thread.start()
+    
     """
     Game loop
     """
     def run(self):
-        while self.running:
-            # Processing user input
-            if self.audio_event.is_set():
-                self.screen.audio_mode=True
-            else:
-                self.screen.audio_mode=False
-                
+        while self.running:    
+            
+            user_input = ""
+            
+            user_input = self.get_audio_user_input()
+            
             if self.screen.on_return():
-                
-                if self.screen.ppt() and self.audio_event.is_set():
-                    try:
-                        audio_input = self.chatgpt.audio_to_text()
-                    except openai.BadRequestError as e:
-                        print("Audio to text Api call failed!")
-                        print(e)
-                        self.screen.add_chat_text("Ups, es scheint als könnte ich dich nicht verstehen. Versuch es doch einfach nochmal :)", "Error")
-                        audio_input = ""
-                        pass
                 user_input = self.screen.get_user_input()
-                
+            
+            user_input = user_input.strip()
+            
+            if user_input != "":
                 print(f"[Interaction]\nUser: {user_input}")
+                self.screen.add_chat_text(user_input, "You")
+            
+                if not self.is_command(user_input):
+                    self.screen_queue.put(user_input)
+            
+            mVector = self.get_movement()
+            
+            # if self.gameHandler.isGameOver:
+            #     self.run_idle()
+            #     continue 
+            
 
-                if not self.commandHandler.execute(user_input):
-                    
-                    if self.audio_event.is_set():
-                        print(audio_input)
-                        
-                        if audio_input.strip() != "":
-                            self.screen.add_chat_text(audio_input, "You")
-                            self.screen_queue.put(audio_input)
-                    elif user_input.strip() != "":
-                        self.screen_queue.put(user_input)
-                        
-            # Getting a movement vector from chatGPT
-            mVector = [0, 0]
-            try: 
-                data = self.chatgpt_queue.get(False)
-                mVector = data.get("mVector")
-                
-                clear_text = data.get("content")
-                
-                if data.get("role") == "Error":
-                    self.screen.add_chat_text(clear_text, "Error")
-                else:
-                    self.screen.add_chat_text(clear_text, self.prompt[0])
-                
-                if self.audio_event.is_set():
-                    self.audio_is_ready_event.wait()
-                    self.screen.play()
-                    self.audio_is_ready_event.clear()
-            except queue.Empty:
-                pass
+
+
+
+
 
             if self.gameHandler.isGameOver:
                 self.run_idle()
@@ -165,10 +143,64 @@ class Game():
                 self.update_game_stats()
                 
             self.screen.update_screen(self.maze, self.player, self.gameStats[1][1])
+            
         # Programm finish
         self.screen.quit_screen()
         self.gameOver_event.set()
         self.chatGPT_thread.join()
+
+
+    def get_movement(self):
+        mVector = [0, 0]
+        try: 
+            data = self.chatgpt_queue.get(False)
+            mVector = data.get("mVector")
+            
+            chatGPt_content = data.get("content")
+            
+            if data.get("role") == "Error":
+                self.screen.add_chat_text(chatGPt_content, "Error")
+            else:
+                self.screen.add_chat_text(chatGPt_content, self.prompt[0])
+                
+            if self.audio_event.is_set():
+                self.audio_is_ready_event.wait()
+                self.screen.play()
+                self.audio_is_ready_event.clear()
+        except queue.Empty:
+            pass
+        
+        return mVector
+    
+    
+    def get_audio_user_input(self):
+        audio_input_as_text = ""
+
+        if self.audio_event.is_set():
+            
+            self.screen.audio_mode=True
+            
+            if self.screen.ptt() and self.screen.on_audio_return():
+                print("Audio input is ready")
+                try:
+                    audio_input_as_text = self.chatgpt.audio_to_text()
+                except openai.APIError as e:
+                    print("Audio to text Api call failed!")
+                    print(e)
+                    self.screen.add_chat_text("Ups, es scheint als könnte ich dich nicht verstehen. Versuch es doch einfach nochmal :)", "Error")
+                    audio_input_as_text = ""
+                    pass
+        else:
+            self.screen.audio_mode=False  
+        
+        return audio_input_as_text
+        
+    
+    def is_command(self, user_input):
+            
+        return self.commandHandler.execute(user_input)
+
+    
     """
     Resets the game to the start instance
     """
