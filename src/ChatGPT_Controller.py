@@ -11,14 +11,16 @@ class ChatGPT():
     It includes functionalities for text-to-text, text-to-audio, and audio-to-text conversions, 
     as well as methods for handling user audio input and managing conversation history.
 
-    Attributes:
+    Attributes
+    -----------
         _client (object): The OpenAI client used for API calls.
         _history (list): A list to store the conversation history.
         _max_length (int): The maximum length of the conversation history.
         _file_tts_out (Path): The file path for the text-to-speech output.
         _file_user_input (Path): The file path for the user audio input.
 
-    Methods:
+    Methods
+    -----------
         __init__(self, client, max_history_length=5):
             Initializes the ChatGPT instance with a client and optional maximum history length.
 
@@ -54,9 +56,12 @@ class ChatGPT():
         """
         Initializes the ChatGPT instance with a client and optional maximum history length.
 
-        Args:
-            client (object): The OpenAI client used for API calls.
-            max_history_length (int, optional): The maximum length of the conversation history. Defaults to 5.
+        Parameters
+        ----------
+        client : object
+            The OpenAI client used for API calls.
+        max_history_length : int, optional
+            The maximum length of the conversation history. Defaults to 5.
         """
         
         self.client = client
@@ -76,17 +81,26 @@ class ChatGPT():
         """
         Sends a text message to the GPT model and returns the response.
 
-        Args:
-            message (list): The message to be sent to the GPT model.
-            temperature (float, optional): The sampling temperature to use. Defaults to 1.
-            model (str, optional): The model to use for the API call. Defaults to "gpt-3.5-turbo".
-            _retrie (bool, optional): Internal parameter for retry logic. Defaults to False.
+        Parameters
+        ----------
+        message : list
+            The message to be sent to the GPT model.
+        temperature : float, optional
+            The sampling temperature to use. Defaults to 1.
+        model : str, optional
+            The model to use for the API call. Defaults to "gpt-3.5-turbo".
+        _retrie : bool, optional
+            Internal parameter for retry logic. Defaults to False.
 
-        Returns:
-            object: The response from the GPT model.
+        Returns
+        -------
+        object
+            The response from the GPT model.
 
-        Raises:
-            openai.APIError: If the API call fails.
+        Raises
+        ------
+        openai.APIError
+            If the API call fails.
         """
         
         #try api call, return response object 
@@ -116,18 +130,27 @@ class ChatGPT():
     def text_to_audio(self, text, name="Prinz Reginald", model="tts-1", _retrie=False):
         """
         Converts text to audio using the specified voice model and saves the audio file.
-        
-        Args:
-            text (str): The text to be converted to audio.
-            name (str, optional): The name of the character to use. Defaults to "Prinz Reginald".
-            model (str, optional): The model to use for the API call. Defaults to "tts-1".
-            _retrie (bool, optional): Internal parameter for retry logic. Defaults to False.
-        
-        Raises:
-            openai.APIError: If the API call fails.
-        
-        Returns:
-            bool: True if the API call was successful.
+
+        Parameters
+        ----------
+        text : str
+            The text to be converted to audio.
+        name : str, optional
+            The name of the character to use. Defaults to "Prinz Reginald".
+        model : str, optional
+            The model to use for the API call. Defaults to "tts-1".
+        _retrie : bool, optional
+            Internal parameter for retry logic. Defaults to False.
+
+        Raises
+        ------
+        openai.APIError
+            If the API call fails.
+
+        Returns
+        -------
+        bool
+            True if the API call was successful.
         """
         
         #map character names to voices
@@ -159,20 +182,27 @@ class ChatGPT():
     def audio_to_text(self, prompt="", model ="whisper-1", _retrie=False):   
         """
         Converts audio input to text using the specified model.
-        
-        For file locations, see the `_file_user_input` attribute.
-        
-        Args:
-            prompt (str, optional): An optional prompt to guide the transcription. Defaults to an empty string.
-            model (str, optional): The model to use for the API call. Defaults to "whisper-1" (currently there is only "whisper-1").
-            _retrie (bool, optional): Internal parameter for retry logic. Defaults to False.
-        
-        Raises:
-            openai.APIError: If the API call fails.
-            OSError: If there is an issue with file operations.
-        
-        Returns:
-            str: The transcribed text from the audio input.
+
+        Parameters
+        ----------
+        prompt : str, optional
+            An optional prompt to guide the transcription. Defaults to an empty string.
+        model : str, optional
+            The model to use for the API call. Defaults to "whisper-1" (currently there is only "whisper-1").
+        _retrie : bool, optional
+            Internal parameter for retry logic. Defaults to False.
+
+        Raises
+        ------
+        openai.APIError
+            If the API call fails.
+        OSError
+            If there is an issue with file operations.
+
+        Returns
+        -------
+        str
+            The transcribed text from the audio input.
         """
         
         try:
@@ -205,12 +235,21 @@ class ChatGPT():
     def get_user_audio(self, duration=10):
         """
         Records user audio for a specified duration and saves it to a file.
+
+        Parameters
+        ----------
+        duration : int, optional
+            The duration for which to record audio, in seconds. Defaults to 10 seconds.
+
+        Raises
+        ------
+        OSError
+            If there is an issue with recording or saving the audio.
+            
+        Notes
+        -----
         
-        Args:
-            duration (int, optional): The duration for which to record audio, in seconds. Defaults to 10 seconds.
-        
-        Raises:
-            OSError: If there is an issue with recording or saving the audio.
+        This method ist not used in the final implementation. It is provided for testing purposes.
         """
         
         samplerate = 44100 
@@ -241,14 +280,16 @@ class ChatGPT():
     def write_audio_to_file(self, audio_data):
         """
         Writes audio data to a file.
-        This method takes audio data and writes it to a file specified by the `_file_tts_out` attribute.
-        The audio data is written in chunks to handle large files efficiently.
-        
-        Args:
-            audio_data (object): The audio data to be written to the file.
-            
-        Raises:
-            OSError: If there is an issue with writing to the file.
+
+        Parameters
+        ----------
+        audio_data : object
+            The audio data to be written to the file.
+
+        Raises
+        ------
+        OSError
+            If there is an issue with writing to the file.
         """
         
         try:
@@ -267,16 +308,23 @@ class ChatGPT():
         """
         Constructs a message for the API call by formatting the user and system prompts.
 
+        Parameters
+        ----------
+        userInput : str
+            The input provided by the user.
+        system_prompt : str
+            The system prompt to guide the conversation.
+
+        Returns
+        -------
+        list
+            A list of messages formatted for the API call.
+
+        Notes
+        -----
         This method formats the user and system prompts as well as the conversation history into a message structure suitable for the API call.
         For reference, see the OpenAI API documentation: https://platform.openai.com/docs/guides/chat-completions/getting-started
         It also updates the conversation history with the user input.
-
-        Args:
-            userInput (str): The input provided by the user.
-            system_prompt (str): The system prompt to guide the conversation.
-
-        Returns:
-            list: A list of messages formatted for the API call.
         """
         
         #format user and system prompt for api 
@@ -295,15 +343,22 @@ class ChatGPT():
     def set_history(self, role, value):
         """
         Adds a message to the conversation history.
+
+        Parameters
+        ----------
+        role : str
+            The role of the message, either "user" or "assistant".
+        value : str
+            The content of the message.
+
+        Returns
+        -------
+        None
+        
+        Notes
+        -----
         This method appends a new message to the conversation history with the specified role and content.
         If the history exceeds the maximum length, the oldest messages are removed to maintain the limit.
-        
-        Args:
-            role (str): The role of the message, either "user" or "assistant".
-            value (str): The content of the message.
-            
-        Returns:
-            None
         """
     
         self._history.append({"content": value, "role": role})
@@ -318,19 +373,28 @@ class ChatGPT():
         """
         Handles errors for API calls with retry logic.
 
+        Parameters
+        ----------
+        method : function
+            The method to be executed with retry logic.
+
+        Raises
+        ------
+        openai.APIError
+            If the method fails after three attempts.
+        OSError
+            If the method fails due to an `OSError`.
+
+        Returns
+        -------
+        object
+            The result of the method if successful.
+            
+        Notes
+        -------
         This method attempts to execute the provided method up to three times in case of an `openai.APIError`.
         If the method fails due to an `OSError`, it raises the exception immediately.
         Between retries, it waits for 3 seconds.
-
-        Args:
-            method (function): The method to be executed with retry logic.
-
-        Raises:
-            openai.APIError: If the method fails after three attempts.
-            OSError: If the method fails due to an `OSError`.
-
-        Returns:
-            object: The result of the method if successful.
         """
         
         count = 0
@@ -352,17 +416,23 @@ class ChatGPT():
                   
     def __TTS_test(self, text=None):
         def __TTS_test(self, text=None):
-            """
-            Test the text-to-speech functionality.
+            def __TTS_test(self, text=None):
+                """
+                Test the text-to-speech functionality.
 
-            This test uses the get_user_audio method to record audio input.
+                Parameters
+                ----------
+                text : str, optional
+                    The text to be converted to audio. If not provided, a default test text will be used.
 
-            Args:
-            text (str, optional): The text to be converted to audio. If not provided, a default test text will be used.
-
-            Returns:
-            None
-            """
+                Returns
+                -------
+                None
+                
+                Notes 
+                -------
+                This test uses the get_user_audio method to record audio input.
+                """
         
         import pygame
         

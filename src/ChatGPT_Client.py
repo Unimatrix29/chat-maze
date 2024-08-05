@@ -13,12 +13,17 @@ class ApiClientCreator():
         """
         Creates and returns an API client for ChatGPT.
 
-        Args:
-            file_name (str): The name of the JSON config file (default: "config.json").
-            timeout (int): The timeout value for API requests in seconds (default: 60).
+        Parameters
+        ----------
+        file_name : str, optional
+            The name of the JSON config file (default is "config.json").
+        timeout : int, optional
+            The timeout value for API requests in seconds (default is 60).
 
-        Returns:
-            OpenAI: An instance of the API client.
+        Returns
+        -------
+        OpenAI
+            An instance of the API client.
         """
         
         # Try to open the JSON config file to read the API key.

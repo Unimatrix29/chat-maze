@@ -8,22 +8,43 @@ class chatgpt_movment():
 
     This class is responsible for controlling the movement via a ChatGPT model based on user input.
 
-    Attributes:
-        chatgpt (object): The API client used for accessing ChatGPT services.
-        model (str): The name of the ChatGPT model.
-        move_options (dict): A dictionary mapping movement directions to their corresponding move vectors.
+    Parameters
+    ----------
+    chatgpt : object
+        The API client used for accessing ChatGPT services.
+    model : str
+        The name of the ChatGPT model.
 
-    Methods:
-        get_vector(userInput, temperature, sysPrompt): Generates a movement vector based on user input.
+    Attributes
+    ----------
+    chatgpt : object
+        The API client used for accessing ChatGPT services.
+    model : str
+        The name of the ChatGPT model.
+    move_options : dict
+        A dictionary mapping movement directions to their corresponding move vectors.
+
+    Methods
+    -------
+    get_vector(userInput, temperature, sysPrompt)
+        Generates a movement vector based on user input.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the movement vector and the generated response text.
     """
 
     def __init__(self, chatgpt, model):
         """
         Initializes the chatgpt_movment class with the given API client and model.
 
-        Args:
-            chatgpt (object): The API client used for accessing ChatGPT services.
-            model (str): The name of the ChatGPT model.
+        Parameters
+        ----------
+        chatgpt : object
+            The API client used for accessing ChatGPT services.
+        model : str
+            The name of the ChatGPT model.
         """
         self.chatgpt = chatgpt
         self.model = model
@@ -33,13 +54,19 @@ class chatgpt_movment():
         """
         Generates a movement vector based on user input.
 
-        Args:
-            userInput (str): The user's input.
-            temperature (float): The temperature parameter for generating responses.
-            sysPrompt (str): The system prompt to be used for generating responses.
+        Parameters
+        ----------
+        userInput : str
+            The user's input.
+        temperature : float
+            The temperature parameter for generating responses.
+        sysPrompt : str
+            The system prompt to be used for generating responses.
 
-        Returns:
-            tuple: A tuple containing the movement vector and the generated response text.
+        Returns
+        -------
+        tuple
+            A tuple containing the movement vector and the generated response text.
         """
         
         # The API requires a specific format for the message
