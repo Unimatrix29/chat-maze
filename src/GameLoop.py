@@ -64,6 +64,7 @@ class Game():
     """
     def run(self):
         while self.running:    
+            self.screen.update_screen(maze= self.maze, player= self.player, render= self.gameStats[1][1])
             
             user_input = ""
             
@@ -84,31 +85,37 @@ class Game():
             mVector = self.get_movement()
            
             if self.gameHandler.isGameOver:
-                self.run_idle()
-            else:
-                self.rough_request_debuff(mVector)
-                
-                self.move_until_wall(mVector)
-                
-                # Console output of player position for debugging
-                if self.movementStopped:
-                    self.movementStopped = False
-                    # Stock player position (in non-rotated maze)
-                    position = self.player.get_rotated_position(4 - self.gameStats[1][2])
-                    print(f"[Movement stopped]\nPlayer position: {position}")
-
-                self.update_game_stats()
-
-            self.screen.update_screen(self.maze, self.player, self.gameStats[1][1])
+                self.run_idle()                
+                continue
             
-        # Programm finish
+            if mVector == [-1, -1]:
+                self.rough_request_debuff(mVector)
+            
+            if not mVector in [[0, 0], [-1, -1]]:
+                self.move_until_wall(mVector)
+
+            self.update_game_stats()
+            
+        # Programm finish. TODO: Care about correct finishing
         self.screen.quit_screen()
         self.gameOver_event.set()
         self.chatGPT_thread.join()
 
 
-    def move_until_wall(self, mVector):
-        while not mVector in [[0, 0], [-1, -1]]:
+    def move_until_wall(self, mVector: list[int]):
+        """
+        Moves the player towards the given move vector till the next wall
+        or finish point. If the player runs out of maze, it'll be switched to
+        the next one according to maze preset's connection.
+        
+        Parameters:
+            mVector : list[int]
+                The movement vector to add to player's position.
+        
+        Returns:
+            None : Doesn't return any value.
+        """
+        while True:
             # Showing end screen if finish arrived
             if self.gameHandler.check_finish(self.player.currentPosition):
                 print(f"[Session ended]\nPlayer successfully arrived the finish at {self.maze[2]} (~ UwU)~")
@@ -118,33 +125,40 @@ class Game():
                 # Print end message
                 self.commandHandler.execute("__/finish")
                 break
-            nextStep = [self.player.currentPosition[0] + mVector[0], self.player.currentPosition[1] + mVector[1]]
             
+            nextStep = [self.player.currentPosition[0] + mVector[0], self.player.currentPosition[1] + mVector[1]]
+
             # Going to the next section
             # of the maze preset if reached the border
             if self.gameHandler.check_border(nextStep):
                 self.gameHandler.switch_section(self.player)
+                self.update_game_stats()
                 nextStep = [self.player.currentPosition[0] + mVector[0], self.player.currentPosition[1] + mVector[1]]
-            self.update_game_stats()
             
             # Stop moving in front of a wall
             if self.gameHandler.check_wall(nextStep):
                 self.gameHandler.reduce_debuffs(self.player)
                 self.movementStopped = True
                 break
+            
             self.player.move(mVector)
             self.screen.update_screen(self.maze, self.player, self.gameStats[1][1])
             time.sleep(0.3)
+        
+        # Console output of player position for debugging
+        if self.movementStopped:
+            self.movementStopped = False
+            # Stock player position (in non-rotated maze)
+            position = self.player.get_rotated_position(4 - self.gameStats[1][2])
+            print(f"[Movement stopped]\nPlayer position: {position}")
 
-
-    def rough_request_debuff(self, mVector):
+    def rough_request_debuff(self, mVector: list[int]):
         # Applying debuffs in case of rough request
-        if mVector == [-1, -1]:
-            debuffInfos = self.gameHandler.apply_debuffs(self.player)
-            for debuff in debuffInfos:
-                self.screen.add_chat_text(debuff, "System")
+        debuffInfos = self.gameHandler.apply_debuffs(self.player)
+        for debuff in debuffInfos:
+            self.screen.add_chat_text(debuff, "System")
 
-
+    
     def get_movement(self):
         mVector = [0, 0]
         try: 

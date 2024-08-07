@@ -144,7 +144,7 @@ class GameHandler():
         
         self.isGameOver = False
     
-    def __set_random_maze(self, level : str = "TEST"):
+    def __set_random_maze(self, level: str = "TEST"):
         presetList = [1, 2, 3] if level != "TEST" else [1]
         preset = f"maze_{self._difficulty[0]}.{random.choice(presetList)}.0"
         
@@ -154,7 +154,7 @@ class GameHandler():
         
         print(f"Setting maze preset: {self._startMazePreset}")
     
-    def __set_random_prompt(self, level : str = "TEST"):        
+    def __set_random_prompt(self, level: str = "TEST"):        
         keyList = list(self._PROMPT_LIBRARY[level].keys())
         key = random.choice(keyList)
         
@@ -442,7 +442,7 @@ class GameHandler():
         
         for i in range(self.rotationCounter):
             # Rotating target_section by same angle as start_section
-            self.__maze_rotation(player = player, debuffApplied = False)
+            self.__maze_rotation(player= player, debuffApplied= False)
     
     def switch_idle_maze(self):
         """
