@@ -18,8 +18,6 @@ class Game():
         ###################################################################################################
         config_file_name = "config.json"
         
-        # Debug variable to track player position
-        self.movementStopped = False
         # Main while loop variable
         self.running = True
         
@@ -138,7 +136,6 @@ class Game():
             # Stop moving in front of a wall
             if self.gameHandler.check_wall(nextStep):
                 self.gameHandler.reduce_debuffs(self.player)
-                self.movementStopped = True
                 break
             
             self.player.move(mVector)
@@ -146,11 +143,8 @@ class Game():
             time.sleep(0.3)
         
         # Console output of player position for debugging
-        if self.movementStopped:
-            self.movementStopped = False
-            # Stock player position (in non-rotated maze)
-            position = self.player.get_rotated_position(4 - self.gameStats[1][2])
-            print(f"[Movement stopped]\nPlayer position: {position}")
+        position = self.player.get_rotated_position(4 - self.gameStats[1][2])   # Stock player position (in non-rotated maze)
+        print(f"[Movement stopped]\nPlayer position: {position}")
 
     def rough_request_debuff(self, mVector: list[int]):
         # Applying debuffs in case of rough request
