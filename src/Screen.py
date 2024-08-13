@@ -19,9 +19,7 @@ class Screen():
         self.q = queue.Queue()
 
     def update_screen(self, maze=None, player=None, render = 17):
-        
-        self.restart_request = False
-        self.reset_request = False
+        self.isQuit = False
         self.record = False
         
         # makes background black
@@ -63,7 +61,7 @@ class Screen():
         # pygame event loop that detects the ingame-inputs from the user, than triggers associated methods
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.__quit_game()
+                self.isQuit = True
                 
             if event.type == pygame.KEYDOWN:
                 if self.audio_mode:
@@ -84,7 +82,7 @@ class Screen():
     def __quit_game(self):
 
         # quits pygame app and game logic
-        self.__quit_screen()
+        pygame.quit()
         sys.exit()
 
     def add_char_to_input(self, char):
@@ -173,8 +171,6 @@ class Screen():
         self.audio_return = False
         self.return_text = False
         self.active = True
-        self.restart_request = False
-        self.reset_request = False
         self.backspace_hold = False
 
         # text above Input Box
@@ -320,10 +316,6 @@ class Screen():
 
     def clear_chat_text(self):
         self.chat = ["  " for x in range(self.chat_max_len)]
-
-
-    def __quit_screen(self): 
-        pygame.quit()
 
     # transfers stored message after return to chatgpt and resets it 
     def get_user_input(self):
