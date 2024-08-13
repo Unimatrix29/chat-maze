@@ -79,7 +79,7 @@ class Screen():
                 if event.key == pygame.K_BACKSPACE: 
                     self.__on_backspace(False)
     
-    def __quit_game(self):
+    def quit_game(self):
 
         # quits pygame app and game logic
         pygame.quit()
