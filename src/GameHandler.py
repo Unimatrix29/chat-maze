@@ -20,7 +20,6 @@ class GameHandler():
                     frame_duration : int (optional)]
             A maze object represented as list of lists of int.
             Optional indexes are used in idle frames.
-        ===========
         debuffDuration : int = 0
             Applied debuffs last this amount of moves.
             Updates every time a new debuff is applied (doesn't stack).
@@ -29,7 +28,6 @@ class GameHandler():
         rotationCounter : int = 0
             Amount of rotations by 90 degrees counterclockwise
             applied to the current maze.
-        ===========
         isGameOver : bool = False
             A flag to be set when finish is arrived.
 
@@ -37,7 +35,6 @@ class GameHandler():
     -----------
         set_level (player : Player, level : str = "TEST")
             Sets a maze preset and prompt according to given level (difficulty).
-        ===========
         check_wall (position : [int, int]) -> bool
             Checks if there's a wall on the given position.
         check_finish (position : [int, int]) -> bool
@@ -47,16 +44,14 @@ class GameHandler():
         switch_section (player : Player)
             Switches active maze to another one according to pre-defined
             preset connections.
-        ===========
         apply_debuffs (player : Player) -> list[str]
             Applies single or multiple debuffs to the given player instance
             depending on selected difficulty.
         reduce_debuffs (player : Player)
-            Reduces current debuffDuration by 1 and cleares all temporary debuffs
+            Reduces current debuffDuration by 1 and clears all temporary debuffs
             applied by their expiration.
         get_game_stats () -> list[list[int]]
             Returns all game related variables such as active maze and debuffs. 
-        ===========
         restart_game (player : Player)
             Restarts current game session without changing selected
             difficulty, maze or ChatGPT prompt.
@@ -123,7 +118,7 @@ class GameHandler():
         # Finish flag
         self.isGameOver = False        
     
-    # [Setup section]
+    # region [Setup section]
     # Here are set _difficulty, prompt and maze upon given level selection
     # as well as player's name and position.    
     
@@ -172,8 +167,9 @@ class GameHandler():
 
         self.prompt = [key, promptLine]
         print(f"In this round ChatGPT is {key}")
-    
-    # [Maze-look-ups and switching]
+
+    # endregion
+    # region [Maze-look-ups and switching]
     # These are methods to interact with maze maps
     # and to switch between them while playing.
     
@@ -259,7 +255,8 @@ class GameHandler():
             # Rotating target_section by same angle as start_section
             self.__maze_rotation(player= player, debuffApplied= False)
     
-    #[Debuffs' management]
+    # endregion
+    # region [Debuffs' management]
     # Here are all the debuffs' implementation,
     # their application and reduction.
      
@@ -420,7 +417,8 @@ class GameHandler():
         player.hide(True)
         self.debuffDuration = self._difficulty[2]
     
-    # [End-, restart and idle states]
+    # endregion
+    # region [End-, restart and idle states]
     # These methods restart and reset the current game session
     # as well as switch IDLE frames.
         
@@ -490,3 +488,5 @@ class GameHandler():
         
         self._activeMazePreset = f"IDLE_{preset}.{nextFrame}"
         self.maze = self._mazeGenerator.get_preset(self._activeMazePreset)
+    
+    # endregion
