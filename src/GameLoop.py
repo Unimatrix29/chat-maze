@@ -1,3 +1,4 @@
+from math import isqrt
 from ChatGPT_Client import ApiClientCreator
 from ChatGPT_Controller import ChatGPT
 from CommandHandler import Command
@@ -45,10 +46,7 @@ class Game():
         #and it musst contain a key-value-pair where the key is called: "api_key"
         ###################################################################################################
         _CONFIG_FILE_NAME = "config.json"
-        
-        # Main while loop variable
-        self._running = True
-        
+                
         self.screen = Screen()
         self.screen.setup_screen(1)
         
@@ -92,8 +90,10 @@ class Game():
         Returns:
             None : Doesn't return any value.
         """
-        while self._running:    
+        running = not self.screen.isQuit
+        while running:    
             self.screen.update_screen(maze= self.maze, player= self.player, render= self._gameStats[1][1])
+            running = not self.screen.isQuit
             
             user_input = ""
             
@@ -124,11 +124,19 @@ class Game():
                 self.__move_until_wall(mVector)
 
             self.__update_game_stats()
-            
-        # Programm finish. TODO: Care about correct finishing
-        self.screen.quit_screen()
+    
+    def close(self):
+        """
+        Closes the game with finishing pygame and used threads.
+        
+        Returns:
+            None : Doesn't return any value.
+        """
+        if self._idleTimer.is_alive():
+            self.__stop_idle()
         self._gameOver_event.set()
         self._chatGPT_thread.join()
+        self.screen.quit_game()
 
 
     def __move_until_wall(self, mVector: list[int]):
