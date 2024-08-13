@@ -278,6 +278,14 @@ class Game():
         self.__restart_chatGPT_thread()       
        
     def __choose_difficulty(self):
+        """
+        Lets the user choose the next difficulty and start a new game.
+        The choice is given to GameHandler instance to recieve
+        a ChatGPT prompt and selected maze.
+
+        Returns:
+            None : Doesn't return any value.
+        """
         self.screen.add_chat_text("Please chose a difficulty: EASY, NORMAL, HARD", "System")
         options = ["TEST", "EASY", "NORMAL", "HARD"]
         level = ""
