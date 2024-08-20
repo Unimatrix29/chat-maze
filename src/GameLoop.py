@@ -13,33 +13,84 @@ class Game():
     Game class is a general class that combines all other classes
     together in one single restart- and resetable session.
 
-    Attributes:
-    -----------
-        screen : Screen
-            An instance of the Screen class that is responsible for
-            drawing the GUI and recieve user inputs (voice and text).
-        chatGPT : ChatGPT
-            An instance of the ChatGPT_Controller class that is responsible
-            for processing the conversation between user and OpenAI's GPT models.
-        prompt : list[str]
-            The current prompt to set a ChatGPT model onto.
-            Contains the name at [0] and the prompt line at [1].
-        maze : list[list[int]]
-            The current maze preset's section the player is on.
-        audio_event : threading.Event
-            A flag to switch between text and audio input/ouput.
-    
-    Methods:
-    -----------
-        run()
-            The main loop of the game. Starts the current session after setup.
-        reset()
-            Resets the current session to initial state. Lets the user select
-            new difficulty.
-        restart()
-            Resets the current session to the start state. Lets the user retry
-            current maze from the beginning.
+    Attributes
+    ----------
+    screen : Screen
+        An instance of the Screen class that is responsible for
+        drawing the GUI and receiving user inputs (voice and text).
+    chatGPT : ChatGPT
+        An instance of the ChatGPT_Controller class that is responsible
+        for processing the conversation between user and OpenAI's GPT models.
+    prompt : list[str]
+        The current prompt to set a ChatGPT model onto.
+        Contains the name of the associated character at [0] and the prompt line at [1].
+    maze : list[list[int]]
+        The current maze preset's section the player is on.
+    audio_event : threading.Event
+        A flag to switch between text and audio input/output.
+    _gameHandler : GameHandler
+        An instance of the GameHandler class that manages game logic and state.
+    player : Player
+        An instance of the Player class representing the player in the game.
+    _apiClient : ApiClientCreator
+        An instance of the ApiClientCreator class to create a access point to OpenAI's API.
+    _commandHandler : Command
+        An instance of the Command class to handle user commands.
+    _idleTimer : threading.Timer
+        A timer for switching idle frames.
+    _audio_is_ready_event : threading.Event
+        An event to signal when audio is ready.
+    _gameOver_event : threading.Event
+        An event to signal when the game is over.
+    _screen_queue : queue.Queue
+        A queue to handle screen inputs.
+    _chatgpt_queue : queue.Queue
+        A queue to handle ChatGPT responses.
+    _chatGPT_thread : threading.Thread
+        A thread to handle ChatGPT responses.
+
+    Methods
+    -------
+    run()
+        The main loop of the game. Starts the current session after setup.
+    reset()
+        Resets the current session to initial state. Lets the user select
+        new difficulty.
+    restart()
+        Resets the current session to the start state. Lets the user retry
+        current maze from the beginning.
+    close()
+        Closes the game with finishing pygame and used threads.
+    __move_until_wall(mVector)
+        Moves the player towards the given move vector till the next wall
+        or finish point.
+    __rough_request_debuff()
+        Lets GameHandler apply debuffs and print them in chat afterwards.
+    __get_movement()
+        Retrieves the movement vector from the ChatGPT response.
+    __get_audio_user_input()
+        Retrieves the user's audio input as text.
+    __is_command(user_input)
+        Checks if the user input is a command and executes it.
+    __choose_difficulty()
+        Lets the user choose the next difficulty and start a new game.
+    __get_chatgpt_response(chatgpt, prompt)
+        Retrieves and processes responses from the ChatGPT model.
+    __run_idle()
+        Updates idleTimer if expired according to time stamp of current idle frame.
+    __stop_idle()
+        Stops idle animations by cancelling and finishing active idleTimers.
+    __switch_idle_frame()
+        Switches active maze (idle frame) to the next one.
+    __update_game_stats()
+        Gets new gameStats[] with active(switched/rotated) maze as well as debuff's infos.
+    __clear_queues()
+        Clears the ChatGPT and screen input queues.
+    __restart_chatGPT_thread()
+        Restarts the ChatGPT response handling thread.
     """
+    
+    
     def __init__(self):
         ###################################################################################################
         #The ChatGPT_Controller expects the json file to be in the same directory as ChatGPT_Controller.py
@@ -83,6 +134,7 @@ class Game():
         
         self._chatGPT_thread.start()
     
+    
     def run(self):
         """
         The main game loop related to the current Game instance.
@@ -123,7 +175,8 @@ class Game():
             if not mVector in [[0, 0], [-1, -1]]:
                 self.__move_until_wall(mVector)
 
-            self.__update_game_stats()
+            self.__update_game_stats()    
+        
     
     def close(self):
         """
@@ -185,6 +238,7 @@ class Game():
         position = self.player.get_rotated_position(4 - self._gameStats[1][2])   # Stock player position (in non-rotated maze)
         print(f"[Movement stopped]\nPlayer position: {position}")
 
+
     def __rough_request_debuff(self):
         """
         Lets GameHandler apply debuffs and print them in chat afterwards.
@@ -199,6 +253,21 @@ class Game():
 
     
     def __get_movement(self):
+        """
+        Retrieves the movement vector from the ChatGPT response.
+
+        This method fetches the movement vector from the ChatGPT response queue.
+        It also calls the display/audio methods of the screen class in order to display/playback the ChatGPT response.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        list[int]
+            The movement vector indicating the direction of movement.
+        """
         mVector = [0, 0]
         try: 
             data = self._chatgpt_queue.get(False)
@@ -222,6 +291,22 @@ class Game():
     
     
     def __get_audio_user_input(self):
+        """
+        Retrieves the user's audio input as text.
+
+        This method checks if the audio mode is enabled and processes the
+        push-to-talk (PTT) and audio return events to capture the user's
+        audio input and convert it to text.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        str
+            The user's audio input converted to text.
+        """
         audio_input_as_text = ""
 
         if self.audio_event.is_set():
@@ -245,7 +330,20 @@ class Game():
         
     
     def __is_command(self, user_input):
-            
+        """
+        This method checks if the user input is a command and executes it
+        using the CommandHandler instance.
+
+        Parameters
+        ----------
+        user_input : str
+            The input provided by the user.
+
+        Returns
+        -------
+        bool
+            True if the input was a command and was executed, False otherwise.
+        """    
         return self._commandHandler.execute(user_input)
 
     
@@ -266,6 +364,7 @@ class Game():
 
         self.__clear_queues()
         self.__restart_chatGPT_thread()
+
     
     def restart(self):
         """
@@ -284,6 +383,7 @@ class Game():
         
         self.__clear_queues()
         self.__restart_chatGPT_thread()       
+
        
     def __choose_difficulty(self):
         """
@@ -322,6 +422,25 @@ class Game():
         
        
     def __get_chatgpt_response(self, chatgpt, prompt):
+        """
+        Retrieves and processes responses from the ChatGPT model.
+
+        This method runs in a separate thread and continuously fetches user inputs
+        from the screen queue and sends them to the ChatGPT model. 
+
+        Parameters
+        ----------
+        chatgpt : ChatGPT
+            An instance of the ChatGPT class used to interact with the ChatGPT model.
+        prompt : str
+            The initial prompt to set the context for the ChatGPT model.
+
+        Returns
+        -------
+        data : dict
+            A dictionary containing the movement vector and the ChatGPT response.
+            In order to be processed by the main game loop the data is put into the chatGPT queue.
+        """
         from ChatGPT_Movment_Controller import chatgpt_movment
         
         gpt_model = "gpt-4o"
@@ -363,6 +482,7 @@ class Game():
                 self._chatgpt_queue.put(data)
                 print("API CALL ERROR")
                 pass
+
             
     def __run_idle(self):
         """
@@ -379,6 +499,7 @@ class Game():
         
         self._idleTimer = threading.Timer(runTime, self.__switch_idle_frame)
         self._idleTimer.start()
+
     
     def __stop_idle(self):
         """
@@ -389,6 +510,7 @@ class Game():
         """
         self._idleTimer.cancel()
         self._idleTimer.join()
+
     
     def __switch_idle_frame(self):
         """
@@ -401,6 +523,7 @@ class Game():
         """
         self._gameHandler.switch_idle_maze()
         self.__update_game_stats()
+
     
     def __update_game_stats(self):
         """
@@ -413,11 +536,39 @@ class Game():
         self._gameStats = self._gameHandler.get_game_stats()      #[[(active)maze], [debuffDuration, renderDistance, rotationCounter]]
         self.maze = self._gameStats[0]
 
+
     def __clear_queues(self):
+        """
+        Clears the ChatGPT and screen input queues.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         self._chatgpt_queue.queue.clear()
         self._screen_queue.queue.clear()
+
         
     def __restart_chatGPT_thread(self):
+        """
+        Restarts the ChatGPT response handling thread.
+
+        This method stops the current ChatGPT thread, waits for it to finish,
+        and then starts a new thread to handle ChatGPT responses. It also
+        reinitializes the ChatGPT instance.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         self._gameOver_event.set()
         self._chatGPT_thread.join()
         self._gameOver_event.clear()
