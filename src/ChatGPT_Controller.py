@@ -381,7 +381,7 @@ class ChatGPT():
         Raises
         ------
         openai.APIError
-            If the method fails after three attempts.
+            If the method still fails after three attempts due to a openai.APIError.
         OSError
             If the method fails due to an `OSError`.
 
