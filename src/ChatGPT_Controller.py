@@ -24,13 +24,13 @@ class ChatGPT():
         __init__(self, client, max_history_length=5):
             Initializes the ChatGPT instance with a client and optional maximum history length.
 
-        text_to_text(self, message, temperature=1, model="gpt-3.5-turbo", _retrie=False):
+        text_to_text(self, message, temperature=1, model="gpt-3.5-turbo", _retry=False):
             Sends a text message to the GPT model and returns the response.
 
-        text_to_audio(self, text, name="onyx", model="tts-1", _retrie=False):
+        text_to_audio(self, text, name="onyx", model="tts-1", _retry=False):
             Converts text to audio using the specified voice model and saves the audio file.
 
-        audio_to_text(self, prompt="", model="whisper-1", _retrie=False):
+        audio_to_text(self, prompt="", model="whisper-1", _retry=False):
             Converts audio input to text using the specified model.
 
         get_user_audio(self, duration=10):
@@ -77,7 +77,7 @@ class ChatGPT():
             self._file_tts_out.touch()
             
 
-    def text_to_text(self, message, temperature=1, model="gpt-3.5-turbo", _retrie=False):
+    def text_to_text(self, message, temperature=1, model="gpt-3.5-turbo", _retry=False):
         """
         Sends a text message to the GPT model and returns the response.
 
@@ -89,7 +89,7 @@ class ChatGPT():
             The sampling temperature to use. Defaults to 1.
         model : str, optional
             The model to use for the API call. Defaults to "gpt-3.5-turbo".
-        _retrie : bool, optional
+        _retry : bool, optional
             Internal parameter for retry logic. Defaults to False.
 
         Returns
@@ -116,7 +116,7 @@ class ChatGPT():
             
             return textResponse
         except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
-            if _retrie:
+            if _retry:
                 raise e
             ttt_partial = partial(self.text_to_text, message, temperature, model)
             return ChatGPT.__error_handling(ttt_partial)
@@ -127,7 +127,7 @@ class ChatGPT():
                     
         
     
-    def text_to_audio(self, text, voice="onyx", model="tts-1", _retrie=False):
+    def text_to_audio(self, text, voice="onyx", model="tts-1", _retry=False):
         """
         Converts text to audio using the specified voice and model and saves the audio file.
 
@@ -139,7 +139,7 @@ class ChatGPT():
             The name of the character to use. Defaults to "Prinz Reginald".
         model : str, optional
             The model to use for the API call. Defaults to "tts-1".
-        _retrie : bool, optional
+        _retry : bool, optional
             Internal parameter for retry logic. Defaults to False.
 
         Raises
@@ -161,7 +161,7 @@ class ChatGPT():
                 response_format="wav",
             )
         except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
-            if _retrie:
+            if _retry:
                 raise e
             tts_partial = partial(self.text_to_audio, text, voice, model)
             ChatGPT.__error_handling(tts_partial)
@@ -175,7 +175,7 @@ class ChatGPT():
         return True
         
     
-    def audio_to_text(self, prompt="", model ="whisper-1", _retrie=False):   
+    def audio_to_text(self, prompt="", model ="whisper-1", _retry=False):   
         """
         Converts audio input to text using the specified model.
 
@@ -185,7 +185,7 @@ class ChatGPT():
             An optional prompt to guide the transcription. Defaults to an empty string.
         model : str, optional
             The model to use for the API call. Defaults to "whisper-1" (currently there is only "whisper-1").
-        _retrie : bool, optional
+        _retry : bool, optional
             Internal parameter for retry logic. Defaults to False.
 
         Raises
@@ -218,7 +218,7 @@ class ChatGPT():
             traceback.print_exception(type(e), e, e.__traceback__)
             raise e.with_traceback(e.__traceback__)
         except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
-            if _retrie:
+            if _retry:
                 raise e
             stt_partial = partial(self.audio_to_text, prompt, model)
             return ChatGPT.__error_handling(stt_partial)  
