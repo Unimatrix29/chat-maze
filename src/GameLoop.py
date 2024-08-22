@@ -465,7 +465,7 @@ class Game():
                 
                 if self.audio_event.is_set():
                     name = self.prompt[0]
-                    current_voice = voices[name]
+                    current_voice = voices.get(name, "onyx")
                     chatgpt.text_to_audio(data["content"],voice=current_voice)
                     self._audio_is_ready_event.set()
                 

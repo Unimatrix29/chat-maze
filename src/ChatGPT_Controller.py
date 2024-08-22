@@ -127,7 +127,7 @@ class ChatGPT():
                     
         
     
-    def text_to_audio(self, text, voice="Prinz Reginald", model="tts-1", _retrie=False):
+    def text_to_audio(self, text, voice="onyx", model="tts-1", _retrie=False):
         """
         Converts text to audio using the specified voice and model and saves the audio file.
 
@@ -152,11 +152,7 @@ class ChatGPT():
         bool
             True if the API call was successful.
         """
-        
-        # #map character names to voices
-        # #for reference, see the OpenAI API documentation: https://platform.openai.com/docs/guides/text-to-speech/overview
-        # voices={ "Prinz Reginald":"onyx", "Larry":"echo","Clyde":"shimmer","Lawrie":"fable", "Imane":"alloy","Sophia":"nova"}
-        # voice = voices[name]
+
         try:
             audioResponse = self.client.audio.speech.create(
                 model=model,
