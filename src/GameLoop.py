@@ -443,6 +443,10 @@ class Game():
         """
         from ChatGPT_Movment_Controller import chatgpt_movment
         
+        #map character names to voices
+        #for reference, see the OpenAI API documentation: https://platform.openai.com/docs/guides/text-to-speech/overview        
+        voices={ "Prinz Reginald":"onyx", "Larry":"echo","Clyde":"shimmer","Lawrie":"fable", "Imane":"alloy","Sophia":"nova"}
+        
         gpt_model = "gpt-4o"
         temperatur = 0.25
         data = {
@@ -461,7 +465,8 @@ class Game():
                 
                 if self.audio_event.is_set():
                     name = self.prompt[0]
-                    chatgpt.text_to_audio(data["content"],name=name)
+                    current_voice = voices[name]
+                    chatgpt.text_to_audio(data["content"],voice=current_voice)
                     self._audio_is_ready_event.set()
                 
                 data["role"] = "GPT-4o" 
