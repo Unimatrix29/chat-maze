@@ -3,6 +3,7 @@
 Dear Player,
 
 Are you ready for an exciting adventure? In Chat Maze, you are challenged to guide various characters with unique personalities out of a complex labyrinth. Your mission: to show them the right path and lead them safety.
+
 Each character in this labyrinth has their own quirks – be it a snobbish prince, a rhyming poet, or a madman. Your instructions are their only way out of the tangled paths. But be warned, the characters can be as challenging and unpredictable as the labyrinth itself.
 
 Have fun!
