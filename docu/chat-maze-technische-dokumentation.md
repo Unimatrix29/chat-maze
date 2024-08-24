@@ -99,12 +99,48 @@ Die eigentliche Verschiebung der Figuren erfolgt innerhalb der move_untill_wall(
 Der Bewegungsvektor wird von der Klasse ChatGPT_Movement_Controller anhand der vom ChatGPT gewonnenen Antwort ermittelt. Die Überprüfung eines Feldes auf eine Wand erfolgt durch die Methode check_wall() Klasse GameHandler (mehr zu der Klasse im folgenden Abschnitt “Anwendung von Strafen”). Diese Klasse verfügt außerdem über Methoden check_finish() und check_border(), die ähnlich wie check_wall() funktionieren und zum Erfüllen von 2. und 3. der o.g. Kriterien verwendet werden.
 Im folgenden Beispiel wird eine einfache Implementierung der Bewegungsfunktion bis zur nächsten Wand nach unten vorgestellt:
 
-# TODO
+    # Running till a wall
+    mVector = [0, 1]
+    while True:
+        if gameHandler.check_finish(player.currentPosition):
+            # Setting game variables such as maze and debuffs
+            # to their end values
+            gameHandler.end_game(player)
+            break
+        nextStep = [player.currentPosition[0] + mVector[0],
+                    player.currentPosition[1] + mVector[1]]
+         # Stop moving in front of a wall
+        if gameHandler.check_wall(nextStep):
+            break
+            
+        player.move(mVector)
 
 Falls das Labyrinth gedreht wurde und das Spiel plötzlich abstürzt (z.B. wegen einer fehlenden Verbindung zwischen Labyrinthen), wäre es hilfreich, die Position der Figur in demselben nicht gedrehten Labyrinth zu kennen, damit man schnell die Fehlstelle beseitigen kann. Genau dafür gibt es die Methode get_rotated_position(), die die “normale” Position einer Figur zurückliefert, indem man die Rotation mit fehlenden Drehungen um 90° im Gegenuhrzeigersinn vervollständigt, bis das Labyrinth zur initiale Ausrichtung kommt (mehr dazu im folgenden Abschnitt “Anwendung von Strafen”).
 Wird das vorherige Beispiel um Logging von Position nach jeder Bewegung erweitert, so bekommt man folgenden Code:
 
-# TODO
+    # Running till a wall with position logging
+    mVector = [0, 1]
+    rotationCounter = 2
+    # Applying maze rotation 2 x 90° counterclockwise
+    # before starting any movement
+    gameHandler.maze_rotation(rotationCounter)
+    while True:
+        if gameHandler.check_finish(player.currentPosition):
+            # Setting game variables such as maze and debuffs
+            # to their end values
+            gameHandler.end_game(player)
+            break
+        nextStep = [player.currentPosition[0] + mVector[0],
+                    player.currentPosition[1] + mVector[1]]
+        # Stop moving in front of a wall
+        if gameHandler.check_wall(nextStep):
+            break
+    
+        player.move(mVector)
+
+# Logging end position into console                    
+position = player.get_rotated_position(4 - rotationCounter)
+print(f"[Movement stopped]\nPlayer position: {position}")
 
 Bis dahin kann man seine Figur nur bewegen und zuschauen. Um das Spiel ein wenig interessanter zu machen, wurden verschiedene Rollen von ChatGPT hinzugefügt, von denen jede auf eigene Weise angesprochen werden will. Sind die Figuren  mit der Ansprache zufrieden, so folgen sie gegebenen Anweisungen. Sei das nicht der Fall, werden eine oder mehrere Strafen angewendet.
 
@@ -158,11 +194,24 @@ Die meisten Felder, Eigenschaften und Methoden sind bereits im Code genauer erkl
 Nachdem ein Bewegungsvektor ermittelt wurde, wird geprüft. ob dieser Vektor ein Schlüsselvektor ist. Die Schlüsselvektoren sind [0, 0] - Standardwert und [-1, -1] - Antwort auf nicht passende Ansprache, bspw. auf freche Weganweisung, bei der die apply_debuffs() Methode aufgerufen werden und so die Bestrafung passieren muss.
 Es sind fünf Strafen vorgegeben:
 
-# TODO
+    _DEBUFFS = {
+             # id, [   name,          debuffing method  ]
+                1: ["ROTATION",     self.__maze_rotation],
+                2: ["BLINDNESS",    self.__blind],
+                3: ["INVISIBILITY", self.__set_invisible],
+                4: ["RANDOM MOVE",  self.__random_move],
+                5: ["TELEPORT",     self.__teleport]
+            }
 
 Jede von ihnen hat einen Key-ID, damit man jede Strafe leicht auswählen und ausschließen kann, einen Namen, damit man einen Log oder eine Nachricht im Chat über Anwendung bekommt, und das Wichtigste - die Bestrafungsmethode als eine Art Delegates. Um alle Delegate aufrufen zu können, muss jede ihnen zugewiesene Funktion die gleiche Signatur besitzen. In diesem Projekt greifen alle o.g.  Funktionen auf innere Debuff Eigenschaften (debuffDuration, renderDistance, rotationCounter), aktuellen Labyrinth (maze) und eine Instanz der Player Klasse zu. Unter allen zuzugreifenden Variablen wird nur der Player nicht im GameHandler gespeichert, also der einzige Parameter für die Bestrafungsfunktionen ist der von GameLoop Klasse überzugebender Player. Im folgenden Beispiel eine einfache Implementierung der Anwendung und Logging von drei zufälligen Strafen ohne Wiederholungen auszuschließen:
 
-# TODO
+    def apply_debuffs(self, player: Player):     
+        for i in range(3):
+           choice = random.randint(5)
+    
+           _DEBUFFS[choice][1](player)
+           
+           print(f"{self._DEBUFFS[choice][0]} were applied")
 
 Nachdem der Spieler bestraft wurde, müssen alle Debuff Variablen in GameLoop Klasse durch get_game_stats() aktualisiert werden. Für temporäre Strafen wie Blindness und Invisibility spielt die Methode reduce_debuffs() eine wichtige Rolle. Die Methode dient aber nur als ein Dekrement von debuffDuration und setzt diese temporäre Strafen zurück, wenn ihr Dauer zu Ende ist.
 Es ist wichtig, in jeder Iteration vom Bestrafen die Debuff Variablen in der GameLoop Klasse zu aktualisieren (vor allem vor der Bewegung, falls das Labyrinth gedreht wurde).
@@ -308,9 +357,15 @@ self.__draw_input_cursor(current_line, max_line) der current_line (gerendert) al
 
 ### Schwierigkeitsgrade
 
-Alle Schwierigkeitsgrade werden in der Klasse GameHandler gespeichert und verwendet. Mit der Methode set_level() kann man einen vom Benutzer ausgewählten Grad aus anderen Klassen in diese übergeben. Alle Schwierigkeitsgrade werden im Konstruktor von GameHandler wie folgt definiert:
+Alle Schwierigkeitsgrade werden in der Klasse GameHandler gespeichert und verwendet. Mit der Methode set_level() kann man einen vom Benutzer ausgewählten Grad aus anderen Klassen in diese übergeben. Alle Schwierigkeitsgrade werden im Konstruktor von GameHandler wie folgt 
 
-# TODO
+    _DIFFICULTY = {
+    # name : [maze_preset_number, debuffs amount, debuffs’ duration]
+        "TEST"  :   [0, 1, 1],
+        "EASY"  :   [1, 0, 0],
+        "NORMAL":   [2, 1, 5],
+        "HARD"  :   [3, 3, 10]
+    }
 
 Jeder Grad hat also einen Namen und folgende Eigenschaften:
 
@@ -324,7 +379,18 @@ Die Namen werden lediglich zur Lesbar- und Verständlichkeit implementiert, insb
 
 Alle Prompts werden (manuell) serialisiert und in prompts.json Datei folgendermaßen gespeichert:
 
-# TODO 
+    {
+      "DIFFICULTY 1": {
+          "Name1" : "Prompt line 1"
+          ,
+          "Name2" : "Prompt line 2"
+      },
+      "DIFFICULTY 2": {
+          "Name1" : "Prompt line 1"
+          ,
+          "Name2" : "Prompt line 2"
+      }
+    }
 
 Hierbei ist zu erwähnen, dass den Namen von Prompts in der Screen Klasse (Feld personaliy_to_color) eine Farbe zugewiesen werden kann, mit der sie im Chat angezeigt werden. Nachdem ein Schwierigkeitsgrad ausgewählt wurde, wird vom GameHandler durch __set_random_prompt() ein zufälliger Prompt aus ausgewählter Gruppe genommen und als Liste [name, prompt_line] gespeichert, weil sie in dieser Form einfacher zuzugreifen sind. Auf ähnliche Art werden alle Labyrinthe gespeichert.
 
@@ -341,9 +407,35 @@ Genauso wie alle Prompts, werden alle Labyrinthe serialisiert und in maze_preset
 - Finish ist mit implementierter Bewegungsmethode (Lauf bis zur nächsten Wand) erreichbar.
 - Jeder Name folgt dem Muster: “maze_<difficulty>.<preset>”
 
-Ein einfaches Labyrinth muss somit folgendermaßen aussehen:
+Ein einfaches Labyrinth muss somit folgendermaßen 
 
-# TODO
+    "maze_1.1": {
+        "0": [
+          [
+            # Maze map
+            [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 ],
+            [ 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
+            [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+          ],
+            # Start point
+            [ 1, 1 ],
+            # Finish point
+            [ 15, 14 ]
+          ]
+        },
 
 wobei Felder mit dem Wert “1” als ein Wandblock und mit dem Wert “0” als ein freies Feld betrachtet werden sollen. Labyrinthe dieser Größe eignen sich sehr gut für “EASY” und “NORMAL” Schwierigkeitsgrade. Damit das Spiel ein bisschen interessanter (und gleichzeitig schwerer) wird, wurden komplexe Labyrinthe und deren Verbindungen implementiert.
 
@@ -358,11 +450,46 @@ Um den Horizont zu erweitern, werden einfachere Labyrinthe zusammengebunden. Gr�
 
 Alle Verbindungen (bridges) werden unter Schlüsselwort “connections” in jedem Preset gespeichert. Jede dieser Verbindungen ist wie folgt aufgebaut:
 
-# TODO 
+    "connections": {
+        "<start_section_1>": [
+            [
+              <target_section_1>,
+              <start_point_in_start_section>,
+              <target_point_in_target_section>
+            ],
+            [
+              <target_section_2>,
+              <start_point_in_start_section>,
+              <target_point_in_target_section>
+            ]
+        ]
 
 Mit dieser Struktur sind tatsächlich Übergänge aus jedem Punkt zu jeweils einem anderen implementierbar. Der Übergang zwischen einzelnen Sektionen erfolgt in move_until_wall() der Klasse GameLoop beim Aufruf von switch_section() vom GameHandler:
 
-# TODO 
+    def switch_section(self, player: Player):
+        """
+        Switches active maze according to preset's connection
+        setting (graph) to the next one. Works only if the player
+        is on a key point of a connection.
+        """
+        graph = mazeGenerator.get_preset_connections(activeMazePreset)
+        
+        startSection = _activeMazePreset[-1]
+        
+        # bridge = [target_section, start_point (active section), end_point]
+        # Searching through all connections from the startSection
+        for bridge in graph[startSection]:
+            # and looking for the one with matching startPoint
+            if bridge[1] != playerPosition:
+                continue
+    
+            activeMazePreset = f"{self._activeMazePreset[:-1]}{bridge[0]}"
+            maze = _mazeGenerator.get_preset(_activeMazePreset)
+            player.set_position(bridge[2])
+            
+            for i in range(rotationCounter):
+                # Rotating target_section by same angle as start_section
+                __maze_rotation(player= player, debuffApplied= False)
 
 switch_section() sucht also unter einer Liste von Bridges, die aus aktueller Sektion (Key im graph Dictionary) anfangen, einen Startpunkt (Index 1), der mit aktueller Position von Figur übereinstimmt und wechselt aktuelles Labyrinth zu in Bridge gegebener Sektion (Index 0).
 
@@ -370,11 +497,51 @@ switch_section() sucht also unter einer Liste von Bridges, die aus aktueller Sek
 
 Auf eine ähnliche einfachere Weise werden die Animationen gebaut. Jede Animation besteht aus einzelnen Frames, die nichts anderes als weitere Labyrinthe für eine bestimmte Zeit angezeigt werden. Jeder dieser Frames hat einen Link auf den nächsten, wobei der letzte Frame auf den ersten (0-en) Frame verweist. Da hier kein Spieler bewegt wird, kann man die Verweise (sowie Anzeigedauer) direkt in Sektionen speichern, was das Erstellen und Verwalten von Animationen sehr erleichtert. Somit müssen diese spezielle Labyrinthe wie im Folgenden Code aussehen:
 
-# TODO 
+    "IDLE_0": {
+      "0": [
+          # Frame
+          [
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0 ],
+            [ 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0 ],
+            [ 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0 ],
+            [ 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0 ],
+            [ 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+          ],
+          # Start point (irrelevant but necessary)
+          [ -1, -1 ],
+          # End point (irrelevant but necessary)
+          [ -1, -1 ],
+          # Duration
+          10,
+          # Next frame
+          1
+      ],
+    }
 
 Jede Animation beginnt mit einem Startframe mit dem Namen “FINISH_<preset_number>”, der einmalig nach Bestehen vom Labyrinth gezeigt wird. So muss man zum o.g. Beispiel einen Startframe mit dem Namen “FINISH_0” hinzufügen, damit GameHandler seine Methode switch_idle_maze() ausführen kann:
 
-# TODO
+    def switch_idle_maze(self):
+        """
+        Switches the current idle maze to the next one connected to it.
+        !Used with FINISH and IDLE presets only!
+        """
+        # e.g. _activeMazePreset = "FINISH_0.0"
+        preset = _activeMazePreset[-3]
+        nextFrame = maze[4]
+        
+        _activeMazePreset = f"IDLE_{preset}.{nextFrame}"
+        maze = _mazeGenerator.get_preset(_activeMazePreset)
 
 Alle Frames werden durch die Methode run_idle() im GameLoop gewechselt, indem ein Timer-Thread mit der Methode switch_idle_frame() gestartet wird. Dieser Thread führt seine Funktion erst nach einer vorgegebenen Zeit aus, die bereits im aktuellen Labyrinth (unter Index 3) vorhanden ist.
 
