@@ -89,6 +89,27 @@ Die chatgpt_movment Klasse Implementiert nun die Oben erklärten Konzepte. Wie i
     else:
         move_vector = self.move_options["deny"]
 
+Anschließend werden all die Funktionalitäten in der __get_chatgpt_response() Methode in GameLoop.py zusammengefasst und ausgeführt. Um ein einfrieren und stocken der UI zu verhindern läuft diese Methode auf einem separaten Thread.  
+
+    movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, model=gpt_model)
+
+    while not self._gameOver_event.is_set():
+        try:        
+            msg = self._screen_queue.get(False)
+            #chatGPT call
+            data["mVector"], data["content"] = movmentChatGPT.get_vector(msg, temperatur, prompt)
+            
+            if self.audio_event.is_set():
+                name = self.prompt[0]
+                current_voice = voices.get(name, "onyx")
+                chatgpt.text_to_audio(data["content"],voice=current_voice)
+                self._audio_is_ready_event.set()
+            
+            data["role"] = "GPT-4o" 
+            self._chatgpt_queue.put(data)
+
+Hier werden Instanzen der einzelnen Klassen erstellt und die Aufrufe getätigt, sowie das Finale Error-Handling und Informieren des Users. Des weiteren werden hier die Antworten von ChatGPT in Queues gelegt um eine Thread Sichere Kommunikation zu gewährleisten. Dies wird unterstützt durch Events wie „self.audio_event“, um auf bestimmte Stadien korrekt reagieren zu können.
+
 #### Prompting (TODO)
 
 ### Verarbeitung von Antworten
