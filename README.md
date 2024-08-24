@@ -23,7 +23,7 @@ Have fun!
 #### Game Setup
 
 1. Clone [Repository]()
-2. Go to the chat-leap/src directory and create a JSON file called **config.json**. This file will contain the necessary API key for connecting with OpenAI's API.
+2. Go to the chat-maze/src directory and create a JSON file called **config.json**. This file will contain the necessary API key for connecting with OpenAI's API.
 3. Enter the following line of code and replace **YOUR API KEY** with your actual API key.
 4.
 
@@ -31,7 +31,7 @@ Have fun!
             "api_key" : "YOUR API KEY"
         }
         
-5. Open the Anaconda console and navigate to the chat-leap directory.
+5. Open the Anaconda console and navigate to the chat-maze directory.
 6. Run the following command to create a new conda environment with all necessary dependencies.
 7.      
 
@@ -39,7 +39,7 @@ Have fun!
 
 #### How to play
 
-To run the game, go to the chat-leap/src directory and in the console enter the following 
+To run the game, go to the chat-maze/src directory and in the console enter the following 
 
     python main.py
 
