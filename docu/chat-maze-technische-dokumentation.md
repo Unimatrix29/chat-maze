@@ -69,7 +69,25 @@ Der [Text-zu-Audio](https://platform.openai.com/docs/guides/text-to-speech) ist 
 
 Der [Audio-zu-Text](https://platform.openai.com/docs/guides/speech-to-text)-Aufruf in der „audiototext()“-Methode verwendet den „[transcription“-Endpoint](https://platform.openai.com/docs/api-reference/audio/createTranscription) der API. Auch hier kann wieder ein Modell angegeben werden, auch wenn nur eines zur Verfügung steht, „[whisper-1](https://platform.openai.com/docs/models/whisper)“. Des Weiteren kann ein optionaler Prompt mitübergeben werden, um dem [Modell](https://platform.openai.com/docs/models) einen Kontext der Transkription zu geben und diese potenziell zu verbessern. Auch diese Methode hat das Error-Handling-Argument „retry“. Die Audiodaten werden aus der im /src-Ordner liegenden „userinput.wav“-Datei gelesen. Diese Datei wird, wenn nicht vorhanden, auch beim Initialisieren der Klasse erstellt. Die Methode gibt den transkribierten Text als String zurück.
 
-#### API-Antworten (TODO)
+#### API-Antworten 
+
+Die chatgpt_movment Klasse Implementiert nun die Oben erklärten Konzepte. Wie in der Doku schon erkläret, gibt ChatGPT neben einem passenden Antworttext auch eine Richtung für die Bewegung der Spielfigur zurück. Entsprechend wird die Antwort in zwei Teile geteilt und die Richtung mithilfe eines Dictionary in einen Vektor umgewandelt: 
+
+    self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "weird": [0, 0], "deny": [-1, -1]}
+
+    content = chat_response.choices[0].message.content
+    
+    self.chatgpt.set_history("assistant", content)
+    
+    # Parse the response
+    # For reference, see the prompt documentation
+    text = content.split("|")
+
+    direction = text[0].lower().strip()
+    if direction in self.move_options:
+        move_vector = self.move_options[direction]
+    else:
+        move_vector = self.move_options["deny"]
 
 #### Prompting (TODO)
 
