@@ -1,80 +1,46 @@
-# Chat-Leap: Technische Dokumentation
+# Welcome to Chat Maze 
 
-- Einführung
-- Spezifikation
-- Aufbau des Projekts
-    - Verbindung mit ChatGPT
-    - Verarbeitung von Antworten
-    - Graphische Darstellung
+## User Doukumentation
 
-- Spiel-Einstellungen
-    - Steuerung
-    - Schwirigkeitsgrade
-    - Prompts
-    - Maze-Aufbau
+- Specification 
+- Game Setup
+- How to play
 
-## Introduction
+#### Specification
 
-Dieses Dokument dient dafür, funktionnsweise und Merkmale vom Projekt _Chat-Leap: The LLM Challenge_ neugirigen Entwicklern zu erklären. Es wird vorausgesetzt, dass man bereits Grundlagen der objekt-orientierten Programmierung kennengelernt hat, sowie Syntax und Verwendung von externen Bibliotheken in Pythonanwendungen.
+- [Python 3.12.3](https://www.python.org/downloads/) 
+- [Anaconda 24.5.0](https://www.anaconda.com/) or higher
+- [OpenAI API key](https://platform.openai.com/api-keys) (they are **not** free )
 
-## Spezifikation
+#### Game Setup
 
-Für das Projekt sind folgende Anwendungen erforderlich:
+1. Clone [Repository]()
+2. Go to the chat-leap/src directory and create a JSON file called **config.json**. This file will contain the necessary API key for connecting with OpenAI's API.
+3. Enter the following line of code and replace **YOUR API KEY** with your actual API key.
+4.
 
-1. Python 3
-2. Anaconda Environment (installation guide in User-Doku)
-3. ChatGPT API-Key
-
-## Aufbau des Projekts
-
-### Verbindung mit ChatGPT
-
-- #### API-Anfragen
+        {
+            "api_key" : "YOUR API KEY"
+        }
         
-    #TODO
+5. Open the Anaconda console and navigate to the chat-leap directory.
+6. Run the following command to create a new conda environment with all necessary dependencies.
+7.      
 
-- #### API-Antworten
+        conda env create -f environment.yml
 
-    #TODO
+#### How to play
 
-- #### Prompting
+To run the game, go to the chat-leap/src directory and in the console enter the following 
 
-    #TODO
+    python main.py
 
-### Verarbeitung von Antworten
+After choosing a dificulty you can run
+    
+    /commands
 
-- #### Bewegung der Figur
+to see a list of all commands. Or run 
 
-    #TODO
-
-- #### Anwendung von Strafen
-
-    #TODO
-
-### Graphische Darstellung
-
-- #### Maze Rendering
-
-    #TODO
-
-- #### Chat Rendering
-
-    #TODO
-
-## Spiel-Einstellungen
-
-- ### Steuerung
-
-    #TODO
-
-- ### Schwirigkeitsgrade
-
-    #TODO
-
-- ### Prompts
-
-    #TODO
-
-- ### Maze-Aufbau
-
-    #TODO
+    /help
+    
+to get help with your current level. 
