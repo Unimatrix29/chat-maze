@@ -111,14 +111,12 @@ class ChatGPT():
                 temperature=temperature
             ) 
             
-            #dummy Error
-            #raise openai.APIError("Test Error", message, body={"error": {"message": "Dies ist ein simulierter Fehler."}})
             
             return textResponse
         except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
             if _retry:
                 raise e
-            ttt_partial = partial(self.text_to_text, message, temperature, model)
+            ttt_partial = partial(self.text_to_text, message, temperature, model, _retry=True)
             return ChatGPT.__error_handling(ttt_partial)
         except openai.APIError as e:
             print("Text to text Api call failed!")
@@ -163,7 +161,7 @@ class ChatGPT():
         except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
             if _retry:
                 raise e
-            tts_partial = partial(self.text_to_audio, text, voice, model)
+            tts_partial = partial(self.text_to_audio, text, voice, model, _retry=True)
             ChatGPT.__error_handling(tts_partial)
         except openai.APIError as e:
             print("Text to Audio Api call failed!")
@@ -220,7 +218,7 @@ class ChatGPT():
         except (openai.APIConnectionError or openai.InternalServerError or openai.UnprocessableEntityError) as e:
             if _retry:
                 raise e
-            stt_partial = partial(self.audio_to_text, prompt, model)
+            stt_partial = partial(self.audio_to_text, prompt, model, _retry=True)
             return ChatGPT.__error_handling(stt_partial)  
         except openai.APIError as e:
             print("Audio to text Api call failed!")
