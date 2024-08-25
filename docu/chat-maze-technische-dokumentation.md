@@ -586,6 +586,6 @@ Alle Frames werden durch die Methode run_idle() im GameLoop gewechselt, indem ei
 
 ## Links 
 
-[OpenAI](https://platform.openai.com/docs/overview)
-[pyGame](https://www.pygame.org/docs/)
-[KI_Wekstatt](https://kiwerkstatt.f2.htw-berlin.de/)
+[OpenAI](https://platform.openai.com/docs/overview)  
+[pyGame](https://www.pygame.org/docs/)  
+[KI_Wekstatt](https://kiwerkstatt.f2.htw-berlin.de/)  
