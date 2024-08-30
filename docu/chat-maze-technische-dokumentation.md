@@ -1,18 +1,23 @@
 # Chat Maze: Technische Dokumentation
 
-- Einführung
-- Spezifikation
-- Spielablauf
+- [Einführung](./chat-maze-technische-dokumentation.md#einführung)
+- [Spezifikation](./chat-maze-technische-dokumentation.md#spezifikation-todo)
+- [Spielablauf](./chat-maze-technische-dokumentation.md#spielablauf)
 - Aufbau des Projekts
-    - Verbindung mit Chat GPT
-    - Verarbeitung von Antworten
-    - GUI
+    - [Verbindung mit Chat GPT](./chat-maze-technische-dokumentation.md#verbindung-mit-chatgpt)
+    - [Verarbeitung von Antworten](./chat-maze-technische-dokumentation.md#verarbeitung-von-antworten)
+    - [GUI](./chat-maze-technische-dokumentation.md#gui)
+      - [setup_screen()](./chat-maze-technische-dokumentation.md#setup_screen)
+      - [update_screen()](./chat-maze-technische-dokumentation.md#update_screen)
 - Spieleinstellungen
-    - Steuerung
-    - Schwierigkeitsgrade
-    - Prompts
-    - Maze-Aufbau
-- Links
+    - [Steuerung](./chat-maze-technische-dokumentation.md#steuerung-todo)
+    - [Schwierigkeitsgrade](./chat-maze-technische-dokumentation.md#schwierigkeitsgrade)
+    - [Prompts](./chat-maze-technische-dokumentation.md#prompts)
+    - [Maze-Aufbau](./chat-maze-technische-dokumentation.md#maze-aufbau)
+      - [Kleine Mazes](./chat-maze-technische-dokumentation.md#kleine-labyrinthe)
+      - [Größere Mazes](./chat-maze-technische-dokumentation.md#größere-labyrinthe)
+      - [Animationen](./chat-maze-technische-dokumentation.md#animationen)
+- [Links](./chat-maze-technische-dokumentation.md#links)
 
 ## Einführung 
 
@@ -31,23 +36,23 @@ In diesem Projekt wurden mehrere externe Bibliotheken wie _OpenAI_ und _pygame_ 
 Für das Projekt sind folgende Anwendungen erforderlich:
 - Python 3
 - Anaconda Environment (_installation guide in User-Doku_)
-- Chat GPT API-Key (_als config.json in /src zu speichern_)
+- Chat GPT API-Key (_als **config.json** in /src zu speichern_)
 
 ## Spielablauf
 
 Da für jedes Feature oft mehrere Klassen zuständig sind, wäre es zunächst total sinnvoll, sich den gesamten Spielablauf anzuschauen. Man kann alle Aktivitäten in folgenden Kategorien unterteilen:
 
-- Erfassung von Benutzereingaben (Text oder Sprache)
+- Erfassung von Benutzereingaben (_Text oder Sprache_)
 - Verbindung mit ChatGPT
 - Erarbeitung von Antworten
-- Spielverwaltung (Anwendung von Strafen, Bewegung von Figuren und Labyrinthwechsel)
+- Spielverwaltung (_Anwendung von Strafen, Bewegung von Figuren und Labyrinthwechsel_)
 - Graphische Darstellung von Labyrinthen und Chatabläufen
 
-Folgendes Diagramm stellt den in diesem Projekt implementierten Kernprozess dar:
+Folgendes Diagramm stellt den in diesem Projekt implementierten **_Kernprozess_** dar:
 
-![alt-text](docu/prozess-diagramm.png "Kernprozes")
+![alt-text](./prozess-diagramm.png "Kernprozess")
 
-Wie es schon wahrscheinlich aufgefallen ist, ist das ganze Spiel eine dauerhafte Schleife. Diese Schleife kann sowohl beim Erreichen vom Ende des gespielten Labyrinths, als auch manuell durch ein Restart-Kommando (_/restart oder /newgame_) unterbrochen werden.Damit man sehen kann, was überhaupt im Spiel passiert, gibt es eine Methode _update_screen()_ der Klasse _Screen_, die für eigentliches Zeichnen des GUIs zuständig ist. Diese wird dauerhaft nebenläufig dem o.b. Kernprozess ausgeführt. Wenn das Spiel zu Ende ist, wird ein der vorhandenen Endscreens (_auch animierte_) gezeigt, wo man einen Schwierigkeitsgrad auswählen und somit ein neues Spiel starten kann.
+Wie es schon wahrscheinlich aufgefallen ist, ist das ganze Spiel eine dauerhafte Schleife. Diese Schleife kann sowohl beim Erreichen vom Ende des gespielten Labyrinths, als auch manuell durch ein Restart-Kommando (_/restart oder /newgame_) unterbrochen werden.Damit man sehen kann, was überhaupt im Spiel passiert, gibt es eine Methode *update_screen()* der Klasse _Screen_, die für eigentliches Zeichnen des GUIs zuständig ist. Diese wird dauerhaft nebenläufig dem o.b. Kernprozess ausgeführt. Wenn das Spiel zu Ende ist, wird ein der vorhandenen Endscreens (_auch animierte_) gezeigt, wo man einen Schwierigkeitsgrad auswählen und somit ein neues Spiel starten kann.
 Die Hauptklasse, die alle Bausteine des Projekts zusammenführt, ist _GameLoop_. Der o.g. Kernprozess läuft innerhalb der _run()_ Methode dieser Klasse ab. Sobald das Spielfenster geschlossen wird, wird die Schleife in _run()_ nach laufender Iteration unterbrochen und alle verwendete Threads mit _close()_ geschlossen.
 
 ## Aufbau des Projekts 
@@ -71,7 +76,7 @@ Der [Audio-zu-Text](https://platform.openai.com/docs/guides/speech-to-text)-Aufr
 
 #### API-Antworten 
 
-Die _chatgpt_movment_ Klasse Implementiert nun die Oben erklärten Konzepte. Wie in der Doku schon erkläret, gibt ChatGPT neben einem passenden Antworttext auch eine Richtung für die Bewegung der Spielfigur zurück. Entsprechend wird die Antwort in zwei Teile geteilt und die Richtung mithilfe eines Dictionary in einen Vektor umgewandelt: 
+Die *chatgpt_movment* Klasse Implementiert nun die Oben erklärten Konzepte. Wie in der Doku schon erklärt, gibt ChatGPT neben einem passenden Antworttext auch eine Richtung für die Bewegung der Spielfigur zurück. Entsprechend wird die Antwort in zwei Teile geteilt und die Richtung mithilfe eines Dictionary in einen Vektor umgewandelt: 
 ```python
 self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "weird": [0, 0], "deny": [-1, -1]}
 
@@ -89,7 +94,7 @@ self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1
     else:
         move_vector = self.move_options["deny"]
 ```
-Anschließend werden all die Funktionalitäten in der ___get_chatgpt_response()_ Methode in _GameLoop.py_ zusammengefasst und ausgeführt. Um ein einfrieren und stocken der UI zu verhindern läuft diese Methode auf einem separaten Thread:
+Anschließend werden all die Funktionalitäten in der *__get_chatgpt_response()* Methode in _GameLoop.py_ zusammengefasst und ausgeführt. Um ein einfrieren und stocken der UI zu verhindern läuft diese Methode auf einem separaten Thread:
 ```python
     movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, model=gpt_model)
 
@@ -108,7 +113,7 @@ Anschließend werden all die Funktionalitäten in der ___get_chatgpt_response()_
             data["role"] = "GPT-4o" 
             self._chatgpt_queue.put(data)
 ```
-Hier werden Instanzen der einzelnen Klassen erstellt und die Aufrufe getätigt, sowie das Finale Error-Handling und Informieren des Users. Des weiteren werden hier die Antworten von ChatGPT in Queues gelegt um eine Thread Sichere Kommunikation zu gewährleisten. Dies wird unterstützt durch Events wie „_self.audio_event_“, um auf bestimmte Stadien korrekt reagieren zu können.
+Hier werden Instanzen der einzelnen Klassen erstellt und die Aufrufe getätigt, sowie das Finale Error-Handling und Informieren des Users. Des weiteren werden hier die Antworten von ChatGPT in Queues gelegt um eine Thread Sichere Kommunikation zu gewährleisten. Dies wird unterstützt durch Events wie „*self.audio_event*“, um auf bestimmte Stadien korrekt reagieren zu können.
 
 #### Prompting (TODO)
 
@@ -130,13 +135,13 @@ class Player():
      + change_name (newName: string): None
 ```
 Hier werden zunächst das Feld _currentPosition_ und die Methode _move()_ betrachtet. _CurrentPosition_ repräsentiert aktuelle Position einer Figur im Labyrinth, während die _move()_ Methode einen Bewegungsvektor dazu addiert.
-Die eigentliche Verschiebung der Figuren erfolgt innerhalb der _move_untill_wall()_ Methode der _GameLoop_ Klasse. Bei jeder Bewegung werden folgende Punkte eingehalten:
+Die eigentliche Verschiebung der Figuren erfolgt innerhalb der *move_until_wall()* Methode der _GameLoop_ Klasse. Bei jeder Bewegung werden folgende Punkte eingehalten:
 
-1. Jede Figur kann in **4 Richtungen** (_nach oben/unten/links/rechts_) laufen.
-2. Bewegung wird **unterbrochen**, sobald die Figur vor einer Wand steht oder das Finish erreicht wird.
-3. Bewegung wird **nicht unterbrochen**, wenn die Figur aus einem Labyrinth in ein anderes läuft (_mehr dazu im Maze-Aufbau_).
+1. Jede Figur kann in **_4 Richtungen_** (_nach oben/unten/links/rechts_) laufen.
+2. Bewegung wird **_unterbrochen_**, sobald die Figur vor einer Wand steht oder das Finish erreicht wird.
+3. Bewegung wird **_nicht unterbrochen_**, wenn die Figur aus einem Labyrinth in ein anderes läuft (_mehr dazu im Maze-Aufbau_).
 
-Der Bewegungsvektor wird von der Klasse _ChatGPT_Movement_Controller_anhand der vom ChatGPT gewonnenen Antwort ermittelt. Die Überprüfung eines Feldes auf eine Wand erfolgt durch die Methode _check_wall()_ Klasse _GameHandler_ (_mehr zu der Klasse im folgenden Abschnitt “Anwendung von Strafen”_). Diese Klasse verfügt außerdem über Methoden _check_finish()_ und _check_border()_, die ähnlich wie _check_wall()_ funktionieren und zum Erfüllen von 2. und 3. der o.g. Kriterien verwendet werden.
+Der Bewegungsvektor wird von der Klasse *ChatGPT_Movement_Controller* anhand der vom ChatGPT gewonnenen Antwort ermittelt. Die Überprüfung eines Feldes auf eine Wand erfolgt durch die Methode *check_wall()* Klasse _GameHandler_ (_mehr zu der Klasse im folgenden Abschnitt “Anwendung von Strafen”_). Diese Klasse verfügt außerdem über Methoden *check_finish()* und *check_border()*, die ähnlich wie *check_wall()* funktionieren und zum Erfüllen von 2. und 3. der o.g. Kriterien verwendet werden.
 Im folgenden Beispiel wird eine einfache Implementierung der Bewegungsfunktion bis zur nächsten Wand nach unten vorgestellt:
 ```python
     # Running till a wall
@@ -155,7 +160,7 @@ Im folgenden Beispiel wird eine einfache Implementierung der Bewegungsfunktion b
             
         player.move(mVector)
 ```
-Falls das Labyrinth gedreht wurde und das Spiel plötzlich abstürzt (_z.B. wegen einer fehlenden Verbindung zwischen Labyrinthen_), wäre es hilfreich, die Position der Figur in demselben nicht gedrehten Labyrinth zu kennen, damit man schnell die Fehlstelle beseitigen kann. Genau dafür gibt es die Methode _get_rotated_position()_, die die “normale” Position einer Figur zurückliefert, indem man die Rotation mit fehlenden Drehungen um 90° im Gegenuhrzeigersinn vervollständigt, bis das Labyrinth zur initiale Ausrichtung kommt (_mehr dazu im folgenden Abschnitt “Anwendung von Strafen”_).
+Falls das Labyrinth gedreht wurde und das Spiel plötzlich abstürzt (_z.B. wegen einer fehlenden Verbindung zwischen Labyrinthen_), wäre es hilfreich, die Position der Figur in demselben nicht gedrehten Labyrinth zu kennen, damit man schnell die Fehlstelle beseitigen kann. Genau dafür gibt es die Methode *get_rotated_position()*, die die “normale” Position einer Figur zurückliefert, indem man die Rotation mit fehlenden Drehungen um 90° im Gegenuhrzeigersinn vervollständigt, bis das Labyrinth zur initiale Ausrichtung kommt (_mehr dazu im folgenden Abschnitt “Anwendung von Strafen”_).
 Wird das vorherige Beispiel um Logging von Position nach jeder Bewegung erweitert, so bekommt man folgenden Code:
 ```python
     # Running till a wall with position logging
@@ -186,9 +191,9 @@ Bis dahin kann man seine Figur nur bewegen und zuschauen. Um das Spiel ein wenig
 
 ### Anwendung von Strafen
 
-Zunächst ein Überblick über das gesamte Strafsystem. Für Bestrafung ist die Klasse GameHandler zuständig:
-
-##### GameHandler
+Zunächst ein Überblick über das gesamte Strafsystem. Für Bestrafung ist die Klasse _GameHandler_ zuständig:
+```python
+class GameHandler():
 
     – _DIFFICULTY: dict(str : list[int])
     – _DEBUFFS: dict(int : list[str, func])
@@ -229,22 +234,22 @@ Zunächst ein Überblick über das gesamte Strafsystem. Für Bestrafung ist die 
     + restart_game (player: Player): None
     + reset_game (player: Player, isFinished: bool): None
     + switch_idle_maze (): None
-
-Die meisten Felder, Eigenschaften und Methoden sind bereits im Code genauer erklärt. Hier sind Methoden apply_debuffs(), reduce_debuffs() und alle dahinterstehende private Methoden im Vordergrund, sowie Felder _DIFFICULTY (Liste von Schwierigkeitsgraden und deren Einstellungen), _DEBUFFS (Liste von möglichen Strafen), _DEBUFF_INFOS (Beschreibungen von Strafen) und difficulty (vom Spieler ausgewählter Schwierigkeitsgrad). Die Anwendung von Strafen erfolgt genauso wie Bewegungen von Figuren in der Klasse GameLoop, Methoden run() und rough_request_debuff().
-Nachdem ein Bewegungsvektor ermittelt wurde, wird geprüft. ob dieser Vektor ein Schlüsselvektor ist. Die Schlüsselvektoren sind [0, 0] - Standardwert und [-1, -1] - Antwort auf nicht passende Ansprache, bspw. auf freche Weganweisung, bei der die apply_debuffs() Methode aufgerufen werden und so die Bestrafung passieren muss.
+```
+**Die meisten Felder, Eigenschaften und Methoden sind bereits im Code genauer erklärt.** Hier sind Methoden *apply_debuffs()*, *reduce_debuffs()* und alle dahinterstehende private Methoden im Vordergrund, sowie Felder *_DIFFICULTY* (_Liste von Schwierigkeitsgraden und deren Einstellungen_), *_DEBUFFS* (_Liste von möglichen Strafen_), *_DEBUFF_INFOS* (_Beschreibungen von Strafen_) und difficulty (_vom Spieler ausgewählter Schwierigkeitsgrad_). Die Anwendung von Strafen erfolgt genauso wie Bewegungen von Figuren in der Klasse _GameLoop_, Methoden _run()_ und *rough_request_debuff()*.
+Nachdem ein Bewegungsvektor ermittelt wurde, wird geprüft. ob dieser Vektor ein Schlüsselvektor ist. Die Schlüsselvektoren sind [0, 0] - Standardwert und [-1, -1] - Antwort auf nicht passende Ansprache, bspw. auf freche Weganweisung, bei der die *apply_debuffs()* Methode aufgerufen werden und so die Bestrafung passieren muss.
 Es sind fünf Strafen vorgegeben:
-
-    _DEBUFFS = {
-             # id, [   name,          debuffing method  ]
-                1: ["ROTATION",     self.__maze_rotation],
-                2: ["BLINDNESS",    self.__blind],
-                3: ["INVISIBILITY", self.__set_invisible],
-                4: ["RANDOM MOVE",  self.__random_move],
-                5: ["TELEPORT",     self.__teleport]
-            }
-
-Jede von ihnen hat einen Key-ID, damit man jede Strafe leicht auswählen und ausschließen kann, einen Namen, damit man einen Log oder eine Nachricht im Chat über Anwendung bekommt, und das Wichtigste - die Bestrafungsmethode als eine Art Delegates. Um alle Delegate aufrufen zu können, muss jede ihnen zugewiesene Funktion die gleiche Signatur besitzen. In diesem Projekt greifen alle o.g.  Funktionen auf innere Debuff Eigenschaften (debuffDuration, renderDistance, rotationCounter), aktuellen Labyrinth (maze) und eine Instanz der Player Klasse zu. Unter allen zuzugreifenden Variablen wird nur der Player nicht im GameHandler gespeichert, also der einzige Parameter für die Bestrafungsfunktionen ist der von GameLoop Klasse überzugebender Player. Im folgenden Beispiel eine einfache Implementierung der Anwendung und Logging von drei zufälligen Strafen ohne Wiederholungen auszuschließen:
-
+```python
+_DEBUFFS = {
+        #  id, [   name,          debuffing method  ]
+            1: ["ROTATION",     self.__maze_rotation],
+            2: ["BLINDNESS",    self.__blind],
+            3: ["INVISIBILITY", self.__set_invisible],
+            4: ["RANDOM MOVE",  self.__random_move],
+            5: ["TELEPORT",     self.__teleport]
+        }
+```
+Jede von ihnen hat _einen Key-ID_, damit man jede Strafe leicht auswählen und ausschließen kann, _einen Namen_, damit man einen Log oder eine Nachricht im Chat über Anwendung bekommt, und das Wichtigste - _die Bestrafungsmethode_ als eine Art Delegates. Um alle Delegate aufrufen zu können, muss jede ihnen zugewiesene Funktion die gleiche Signatur besitzen. In diesem Projekt greifen alle o.g.  Funktionen auf innere Debuff Eigenschaften (_debuffDuration, renderDistance, rotationCounter_), aktuellen Labyrinth (_maze_) und eine _Instanz_ der _Player_ Klasse zu. Unter allen zuzugreifenden Variablen wird nur der Player nicht im _GameHandler_ gespeichert, also der einzige Parameter für die Bestrafungsfunktionen ist der von _GameLoop_ Klasse überzugebender _Player_. Im folgenden Beispiel eine einfache Implementierung der Anwendung und Logging von drei zufälligen Strafen ohne Wiederholungen auszuschließen:
+```python
     def apply_debuffs(self, player: Player):     
         for i in range(3):
            choice = random.randint(5)
@@ -252,24 +257,24 @@ Jede von ihnen hat einen Key-ID, damit man jede Strafe leicht auswählen und aus
            _DEBUFFS[choice][1](player)
            
            print(f"{self._DEBUFFS[choice][0]} were applied")
-
-Nachdem der Spieler bestraft wurde, müssen alle Debuff Variablen in GameLoop Klasse durch get_game_stats() aktualisiert werden. Für temporäre Strafen wie Blindness und Invisibility spielt die Methode reduce_debuffs() eine wichtige Rolle. Die Methode dient aber nur als ein Dekrement von debuffDuration und setzt diese temporäre Strafen zurück, wenn ihr Dauer zu Ende ist.
-Es ist wichtig, in jeder Iteration vom Bestrafen die Debuff Variablen in der GameLoop Klasse zu aktualisieren (vor allem vor der Bewegung, falls das Labyrinth gedreht wurde).
+```
+Nachdem der Spieler bestraft wurde, müssen alle Debuff Variablen in _GameLoop_ Klasse durch *get_game_stats()* aktualisiert werden. Für temporäre Strafen wie _Blindness_ und _Invisibility_ spielt die Methode *reduce_debuffs()* eine wichtige Rolle. Die Methode dient aber nur als ein Dekrement von _debuffDuration_ und setzt diese temporäre Strafen zurück, wenn ihr Dauer zu Ende ist.
+Es ist wichtig, **in jeder Iteration** vom Bestrafen die Debuff Variablen in der _GameLoop_ Klasse zu aktualisieren (_vor allem vor der Bewegung, falls das Labyrinth gedreht wurde_).
 
 ### GUI
 
-Die Klasse Screen implementiert die grafische Oberfläche von Chat-Maze mithilfe von einfachen Elementen der Pygame Library. Genau genommen besteht das Anwendungsfenster nur aus Rechtecken und Text mit passenden Farben. Die Klasse funktioniert wie folgt: 
-Ein Objekt von Screen wird erstellt, dieses enthält aber noch keine Daten oder Funktionalität. Mit dem Aufruf “setup_screen” werden alle benötigten Eigenschaften definiert bzw. errechnet, wie z.B. die Abmaße berstimmter UI Elemente relativ zur Auflösung des aktuellen Bildschirms. Screen hat keinen eigenen thread, dass heißt die Methodenaufrufe zum Verarbeiten von Benutzereingabe, sowie Aktualisierung der dargestellten UI Elemente erfolgen über den Aufruf “update_screen”, über den zusätzlich das aktuelle Maze, die Spielerkoordinaten, und die render-Distanz (dazu später mehr) übergeben werden. Die Methoden, die somit jeden Frame aufgerufen werden, sind zum einen “draw”- Funktionen, die bestimme dynamische Darstellungen wie das Dialogfenster rechts neu “zeichnen”, und zum anderen listener - Funktionen, die auf Eingaben des Benutzers oder auf Antworten von ChatGPT reagieren.
+Die Klasse _Screen_ implementiert die grafische Oberfläche von Chat-Maze mithilfe von einfachen Elementen der _Pygame_ Library. Genau genommen besteht das Anwendungsfenster nur aus Rechtecken und Text mit passenden Farben. Die Klasse funktioniert wie folgt: 
+Ein Objekt von _Screen_ wird erstellt, dieses enthält aber noch keine Daten oder Funktionalität. Mit dem Aufruf “*setup_screen()*” werden alle benötigten Eigenschaften definiert bzw. errechnet, wie z.B. die Abmaße bestimmter UI Elemente relativ zur Auflösung des aktuellen Bildschirms. _Screen_ hat keinen eigenen _thread_, dass heißt die Methodenaufrufe zum Verarbeiten von Benutzereingabe, sowie Aktualisierung der dargestellten UI Elemente erfolgen über den Aufruf “*update_screen()*”, über den zusätzlich das aktuelle Maze, die Spielerkoordinaten, und die render-Distanz (_dazu später mehr_) übergeben werden. Die Methoden, die somit jeden Frame aufgerufen werden, sind zum einen “_draw_”- Funktionen, die bestimme dynamische Darstellungen wie das Dialogfenster rechts neu “_zeichnen_”, und zum anderen listener - Funktionen, die auf Eingaben des Benutzers oder auf Antworten von ChatGPT reagieren.
 
 ##### setup_screen()
 
-Die bereits erwähnte Methode setup_screen startet die Pygame Application sowie Pygames Audio System 
-
+Die bereits erwähnte Methode *setup_screen()* startet die _Pygame_ Application sowie _Pygames Audio System_: 
+```python
     pygame.init()
     pygame.mixer.init()
-    
-und definiert alle konstanten und dynamischen Eigenschaften, mit denen Screen arbeitet. Manche UI Elemente passen sich der Auflösung des Displays an, dafür musszuerst die Größe des aktiven Monitor ausgelesen werden.
-
+ ```   
+und definiert alle konstanten und dynamischen Eigenschaften, mit denen _Screen_ arbeitet. Manche UI Elemente passen sich der Auflösung des Displays an, dafür muss zuerst die Größe des aktiven Monitor ausgelesen werden:
+```python
     # get size of all connected screens
     self.displaySizes = pygame.display.get_desktop_sizes()
             
@@ -279,26 +284,25 @@ und definiert alle konstanten und dynamischen Eigenschaften, mit denen Screen ar
     else:
         displaySizeX , displaySizeY = self.displaySizes[0]
         screenNumber = 0
+```
+Die Funktion *__resize_to_resolution(self, displaySizeX, displaySizeY, screenNumber)* passt die Applikation dann an die Auflösung des ausgewählten Monitors an und skaliert die einzelnen UI Elemente. 
 
-Die Funktion __resize_to_resolution(self, displaySizeX, displaySizeY, screenNumber) passt die Applikation dann an die Auflösung des ausgewählten Monitors an und skaliert die einzelnen UI Elemente. 
-
-Im Folgenden werden vier leere dynamische Strings erstellt, wobei self.user_text den Text, den der Spieler ins Textfeld eingibt repräsentiert. self.message speichert immer den Text der als letztes abgeschickt wurde, also als Nachricht im Chat zu sehen ist. Der String self.response_text enthält den Text den ChatGPT als Antwort auf eine Benutzereingabe generiert und self.last_response speichert jeweils die vorherige Antwort. So kann mithilfe der Methode 
-
+Im Folgenden werden vier leere dynamische Strings erstellt, wobei *self.user_text* den Text, den der Spieler ins Textfeld eingibt repräsentiert. _self.message_ speichert immer den Text der als letztes abgeschickt wurde, also als Nachricht im Chat zu sehen ist. Der String *self.response_text* enthält den Text den ChatGPT als Antwort auf eine Benutzereingabe generiert und *self.last_response* speichert jeweils die vorherige Antwort. So kann mithilfe der Methode:
+```python
     def __on_response_change(self):
         if self.response_text != self.last_response:
             self.last_response = self.response_text
             return True
         return False
-
+```
 erkannt werden, wann eine neue Antwort an den Spieler eingeht. Dies ist notwendig, da die Zeit der Verarbeitung meistens unterschiedlich lang dauert. Sobald eine Antwort eingeht, kann ein neuer Eintrag im Dialogfenster / Chat erstellt werden.
 
-Das Dictionary self.personality_to_color ordnet registrierten Absendern (Key), wie z.B. dem Spieler oder den verschiedenen Persönlichkeiten von ChatGPT Farben (Value) zu, mit denen sie im Dialogfenster dargestellt werden. Die verwendeten Farben sind in einer separaten Klasse class Colors(Enum) gespeichert. 
+Das Dictionary *self.personality_to_color* ordnet registrierten Absendern (_Key_), wie z.B. dem Spieler oder den verschiedenen Persönlichkeiten von ChatGPT Farben (_Value_) zu, mit denen sie im Dialogfenster dargestellt werden. Die verwendeten Farben sind in einer separaten Klasse _Colors_(_Enum_) gespeichert. 
 
 ##### update_screen()
 
-Die Funktion self.__trigger_game_events() enthält den Python Event Loop, so werden Inputs über die Pygame Applikation erkannt, wie z.B. Tasteneingabe oder Sprache. Sie ist so aufgebaut, dass ein for-Loop über jedes erkannte event aus pygame.event.get()
-iteriert. Dort sind alle events enthalten, die zur Zeit des Aufrufs ausgelöst wurden. Danach wird spezifiziert, um welches event es sich genau handelt und welche Bedingungen erfüllt sein müssen, um eine Reaktion zu triggern. So wird z.B self.__return_input() aufgerufen, falls innerhalb des Spiels ein “Enter” erkannt wird und self.active = True, was so viel bedeutet, wie Eingabefeld ist ausgewählt.
-
+Die Funktion *self.__trigger_game_events()* enthält den Python Event Loop, so werden Inputs über die Pygame Applikation erkannt, wie z.B. Tasteneingabe oder Sprache. Sie ist so aufgebaut, dass ein for-Loop über jedes erkannte event aus _pygame.event.get()_ iteriert. Dort sind alle events enthalten, die zur Zeit des Aufrufs ausgelöst wurden. Danach wird spezifiziert, um welches event es sich genau handelt und welche Bedingungen erfüllt sein müssen, um eine Reaktion zu triggern. So wird z.B *self.__return_input()* aufgerufen, falls innerhalb des Spiels ein “Enter” erkannt wird und _self.active = True_, was so viel bedeutet, wie Eingabefeld ist ausgewählt:
+```python
     for event in pygame.event.get():
     …
         if event.type == pygame.KEYDOWN:
@@ -307,46 +311,41 @@ iteriert. Dort sind alle events enthalten, die zur Zeit des Aufrufs ausgelöst w
                     self.__return_input()
                     break
     …
-
-Die Funktion self.__delete_input_listener() löscht den bereits eingegebenen Text in einem bestimmten Zeitintervall falls Backspace gehalten wird.
+```
+Die Funktion *self.__delete_input_listener()* löscht den bereits eingegebenen Text in einem bestimmten Zeitintervall falls Backspace gehalten wird.
 
 Als Nächstes werden die am Anfang erwähnten Draw-Funktionen aufgerufen. 
-self.__draw_maze(maze, player, render = n) zeichnet das Maze mit dem Spieler und einer gegebenen Renderdistanz n, dass heißt es werden nur die Felder des Maze gezeichnet, die maximal n Felder entfernt sind vom Feld des Spielers. Das Maze besteht im Prinzip aus einem verschachtelten Array, nach diesem Schema:  
-
-    maze = [[Wandkoordinaten], [Spielerkoordinaten], [Zielkoordinaten]]
-
+*self.__draw_maze(maze, player, render = n)* zeichnet das Maze mit dem Spieler und einer gegebenen Renderdistanz n, dass heißt es werden nur die Felder des Maze gezeichnet, die maximal n Felder entfernt sind vom Feld des Spielers. Das Maze besteht im Prinzip aus einem verschachtelten Array, nach diesem Schema:
+```python
+    maze = [[Wandkoordinaten], [Startkoordinaten], [Zielkoordinaten]]
+```
 Dabei haben die Wandkoordinaten die Form eines Zweidimensionalen Arrays, in dem jedes der 16x16 Felder als 0 oder 1 repräsentiert wird, also
-
-    maze[0][y][x]
-    
+```python
+    maze[0][y][x]    
+```
 hat entweder den Wert 0 oder 1.
 Es wird nun durch jedes Feld iteriert, dabei wird Zeile durch y und Spalte durch x dargestellt wie in einer Tabelle.
-
+```python
     …
     for y in range(16):
         for x in range(16):
     …
-
+```
 Es wird jeweils geprüft, ob eine Wand, der Spieler, oder das Ziel gezeichnet werden soll. Ziel und Wand können wie beschrieben nur gezeichnet werden, wenn sie innerhalb der Renderdistanz liegen. Die Bedingungen dafür sehen wie folgt aus:
-
-###### Wand zeichen:
-
+```python
+    # Wand zeichnen:
     maze[0][y][x] == 1
-
-###### Spieler zeichnen: 
-
+    # Spieler zeichnen: 
     [x, y] == player.currentPosition and (not player.isHidden)
-
-###### Ziel zeichnen:
-
+    # Ziel zeichnen:
     [x, y] == maze[2]
-
-Als nächstes wird der Chat gezeichnet mit self.__draw_chat_text(). Dabei wird über das Array self.chat[i] iteriert, was sozusagen die letzten self.chat_max_len Zeilen enthält. Sollten neue Einträge über add_chat_text() hinzukommen, werden die obersten Zeilen einfach von den jeweils nächsten überschrieben. Das Array ist also so lang wie self.chat_max_len. Jede Zeile des Chats, bzw. String im Array mit dem Index i wird untereinander gezeichnet mit einem bestimmten Abstand self.chat_line_offset. self.chat_max_len wird bei setup_screen() ebenfalls der Auflösung angepasst.
-
+```
+Als nächstes wird der Chat gezeichnet mit *self.__draw_chat_text()*. Dabei wird über das Array _self.chat[i]_ iteriert, was sozusagen die letzten *self.chat_max_len* Zeilen enthält. Sollten neue Einträge über *add_chat_text()* hinzukommen, werden die obersten Zeilen einfach von den jeweils nächsten überschrieben. Das Array ist also so lang wie *self.chat_max_len*. Jede Zeile des Chats, bzw. String im Array mit dem Index i wird untereinander gezeichnet mit einem bestimmten Abstand *self.chat_line_offset*. *self.chat_max_len* wird bei *setup_screen()* ebenfalls der Auflösung angepasst.
+```python
     self.screen.blit(self.text_response, (self.chat_horizontal_offset, (self.maze_offset_y + i * self.chat_line_offset)))
-
-Das Hinzufügen eines neuen Textes erfolgt unter anderem beim return einer Benutzereingabe oder nachdem eine Antwort von ChatGPT über self.__chatgpt_response_listener() erkannt wurde. Es wird dann add_chat_text(self, raw_text, author = "") aufgerufen. Es kann auch vorgefertigter Text beispielsweise vom System hinzugefügt werden, in dem Zeilenumbrüche “|” enthalten sind. Sollte das der Fall sein wird der Text so in Paragraphen unterteilt, die jeweils in weitere Paragraphen unterteilt werden, sollten sie eine bestimmte Zeichenlänge überschreiten. 
-
+```
+Das Hinzufügen eines neuen Textes erfolgt unter anderem beim return einer Benutzereingabe oder nachdem eine Antwort von ChatGPT über *self.__chatgpt_response_listener()* erkannt wurde. Es wird dann *add_chat_text(self, raw_text, author = "")* aufgerufen. Es kann auch vorgefertigter Text beispielsweise vom System hinzugefügt werden, in dem Zeilenumbrüche “|” enthalten sind. Sollte das der Fall sein, wird der Text so in Paragraphen unterteilt, die jeweils in weitere Paragraphen unterteilt werden, sollten sie eine bestimmte Zeichenlänge überschreiten:
+```python
     if author == "":
         paragraphs = str(raw_text).split("|") 
     else:
@@ -355,16 +354,17 @@ Das Hinzufügen eines neuen Textes erfolgt unter anderem beim return einer Benut
     # paragraphs are created by line breaks "|" in the handed over text
     for paragraph in paragraphs:
     
-        # each paragraph is splitted in 45 chars long parts
+        # each paragraph is split in 45 chars long parts
         lines = textwrap.wrap(paragraph, 45)
 …
-Es wird abhängig vom Autor immer die jeweilige Farbe zwischengespeichert, die für die neu hinzugefügten Zeilen bei der Überschreibung verwendet wird. 
-
+```
+Es wird abhängig vom Autor immer die jeweilige Farbe zwischengespeichert, die für die neu hinzugefügten Zeilen bei der Überschreibung verwendet wird:
+```python
     color = self.personality_to_color.get(author, Colors.GREY.value)
-
-lines enthält also nun alle Zeilen die zum Chat hinzugefügt werden sollen. Jetzt muss für jede neue Zeile jeweils jede alte Zeile einen Index nach unten rutschen, sodass oben immer eine Zeile gelöscht wird und unten immer eine neue hinzukommt.
-
-    irst_line = True
+```
+_lines_ enthält also nun alle Zeilen die zum Chat hinzugefügt werden sollen. Jetzt muss für jede neue Zeile jeweils jede alte Zeile einen Index nach unten rutschen, sodass oben immer eine Zeile gelöscht wird und unten immer eine neue hinzukommt:
+```python
+    first_line = True
     …
     for line in lines:
         for i in range(0, self.chat_max_len - 1):
@@ -377,28 +377,28 @@ lines enthält also nun alle Zeilen die zum Chat hinzugefügt werden sollen. Jet
             self.chat[self.chat_max_len - 1] = line
             self.chat_color[self.chat_max_len - 1] = color
         first_line = False
-
-Als nächstes in der screen_update() wird die Methode  self.__draw_input_text() aufgerufen, welche den Text darstellt die gerade vom Benutzer eingegeben wird. Dabei wird der rohe Text self.user_text wieder in Zeilen unterteilt falls er eine gewisse Länge überschreitet. 
-
+```
+Als nächstes in der *screen_update()* wird die Methode *self.__draw_input_text()* aufgerufen, welche den Text darstellt die gerade vom Benutzer eingegeben wird. Dabei wird der rohe Text *self.user_text* wieder in Zeilen unterteilt falls er eine gewisse Länge überschreitet:
+```python
     lines = textwrap.wrap(self.user_text, 45)
         if lines == []:
             lines = [""]
         max_line = len(lines) - 1
-
+```
 Die Zeilen werden ebenfalls untereinander angeordnet. Zusätzlich wird ein Cursor gezeichnet
-self.__draw_input_cursor(current_line, max_line) der current_line (gerendert) als Referenz für die horizontale und max_line als Referenz für die vertikale Position nutzt. Am Schluss wird noch der Rahmen self.input_rect an die gerenderte Höhe und Breite des Eingabetextes angepasst. 
-
+*self.__draw_input_cursor(current_line, max_line)* der *current_line* (_gerendert_) als Referenz für die horizontale und *max_line* als Referenz für die vertikale Position nutzt. Am Schluss wird noch der Rahmen *self.input_rect* an die gerenderte Höhe und Breite des Eingabetextes angepasst:
+```python
     self.input_rect.width = max(200, first_line.get_width() + 15)
     self.input_rect.height = self.input_rect_normal_height * (max_line + 1) + 5
-
+```
 ## Spieleinstellungen
 
 ### Steuerung (TODO)
 
 ### Schwierigkeitsgrade
 
-Alle Schwierigkeitsgrade werden in der Klasse GameHandler gespeichert und verwendet. Mit der Methode set_level() kann man einen vom Benutzer ausgewählten Grad aus anderen Klassen in diese übergeben. Alle Schwierigkeitsgrade werden im Konstruktor von GameHandler wie folgt 
-
+Alle Schwierigkeitsgrade werden in der Klasse _GameHandler_ gespeichert und verwendet. Mit der Methode *set_level()* kann man einen vom Benutzer ausgewählten Grad aus anderen Klassen in diese übergeben. Alle Schwierigkeitsgrade werden im Konstruktor von _GameHandler_ wie folgt definiert:
+```python
     _DIFFICULTY = {
     # name : [maze_preset_number, debuffs amount, debuffs’ duration]
         "TEST"  :   [0, 1, 1],
@@ -406,19 +406,19 @@ Alle Schwierigkeitsgrade werden in der Klasse GameHandler gespeichert und verwen
         "NORMAL":   [2, 1, 5],
         "HARD"  :   [3, 3, 10]
     }
+```
+Jeder Grad hat also _einen Namen_ und folgende Eigenschaften:
 
-Jeder Grad hat also einen Namen und folgende Eigenschaften:
-
-1. maze_preset_number - Die Gruppe, aus der ein Labyrinth ausgewählt werden muss.
-2. debuffs amount - Die Anzahl von Strafen, die beim Bestrafen angewendet werden.
-3. debuffs’ duration - Die Dauer von angewendeten Strafen (Anzahl der Bewegungen bis die Strafen ablaufen).
+1. *maze_preset_number* - Die Gruppe, aus der ein Labyrinth ausgewählt werden muss.
+2. _debuffs amount_ - Die Anzahl von Strafen, die beim Bestrafen angewendet werden.
+3. _debuffs’ duration_ - Die Dauer von angewendeten Strafen (_Anzahl der Bewegungen bis die Strafen ablaufen_).
 
 Die Namen werden lediglich zur Lesbar- und Verständlichkeit implementiert, insbesondere für einfachere und anschauliche Unterteilung von Prompts.
 
 ### Prompts 
 
-Alle Prompts werden (manuell) serialisiert und in prompts.json Datei folgendermaßen gespeichert:
-
+Alle Prompts werden (_manuell_) serialisiert und in **_prompts.json_** Datei folgendermaßen gespeichert:
+```python
     {
       "DIFFICULTY 1": {
           "Name1" : "Prompt line 1"
@@ -431,24 +431,24 @@ Alle Prompts werden (manuell) serialisiert und in prompts.json Datei folgenderma
           "Name2" : "Prompt line 2"
       }
     }
-
-Hierbei ist zu erwähnen, dass den Namen von Prompts in der Screen Klasse (Feld personaliy_to_color) eine Farbe zugewiesen werden kann, mit der sie im Chat angezeigt werden. Nachdem ein Schwierigkeitsgrad ausgewählt wurde, wird vom GameHandler durch __set_random_prompt() ein zufälliger Prompt aus ausgewählter Gruppe genommen und als Liste [name, prompt_line] gespeichert, weil sie in dieser Form einfacher zuzugreifen sind. Auf ähnliche Art werden alle Labyrinthe gespeichert.
+```
+Hierbei ist zu erwähnen, dass den Namen von Prompts in der _Screen_ Klasse (_Feld personality_to_color_) eine Farbe zugewiesen werden kann, mit der sie im Chat angezeigt werden. Nachdem ein Schwierigkeitsgrad ausgewählt wurde, wird vom _GameHandler_ durch *__set_random_prompt()* ein zufälliger Prompt aus ausgewählter Gruppe genommen und als Liste [*name, prompt_line*] gespeichert, weil sie in dieser Form einfacher zuzugreifen sind. Auf ähnliche Art werden alle Labyrinthe gespeichert.
 
 ### Maze-Aufbau
 
 #### Kleine Labyrinthe
 
-Genauso wie alle Prompts, werden alle Labyrinthe serialisiert und in maze_presets.json Datei gespeichert. Es sind folgende Punkte beim Erstellen von einfachen (kleinen)Labyrinthen einzuhalten:
+Genauso wie alle Prompts, werden alle Labyrinthe serialisiert und in **_maze_presets.json_** Datei gespeichert. Es sind folgende Punkte beim Erstellen von einfachen (_kleinen_) Labyrinthen einzuhalten:
 
-- Größe - 16x16 Felder.
-- Rahmen - vorhanden. Ausnahmsweise kann der Endpunkt am Rand sein.
-- Start- und Endpunkte - jeweils genau ein.
-- Anfang - immer innerhalb der Sektion “0”.
-- Finish ist mit implementierter Bewegungsmethode (Lauf bis zur nächsten Wand) erreichbar.
-- Jeder Name folgt dem Muster: “maze_<difficulty>.<preset>”
+1. Größe - 16x16 Felder.
+2. Rahmen - vorhanden. Ausnahmsweise kann der Endpunkt am Rand sein.
+3. Start- und Endpunkte - jeweils genau ein.
+4. Anfang - immer innerhalb der Sektion “0”.
+5. Finish ist mit implementierter Bewegungsmethode (Lauf bis zur nächsten Wand) erreichbar.
+6. Jeder Name folgt dem Muster: `maze_<difficulty>.<preset>`
 
-Ein einfaches Labyrinth muss somit folgendermaßen 
-
+Ein einfaches Labyrinth muss somit folgendermaßen aussehen:
+```python
     "maze_1.1": {
         "0": [
           [
@@ -476,20 +476,20 @@ Ein einfaches Labyrinth muss somit folgendermaßen
             [ 15, 14 ]
           ]
         },
-
-wobei Felder mit dem Wert “1” als ein Wandblock und mit dem Wert “0” als ein freies Feld betrachtet werden sollen. Labyrinthe dieser Größe eignen sich sehr gut für “EASY” und “NORMAL” Schwierigkeitsgrade. Damit das Spiel ein bisschen interessanter (und gleichzeitig schwerer) wird, wurden komplexe Labyrinthe und deren Verbindungen implementiert.
+```
+wobei Felder mit dem Wert “1” als ein Wandblock und mit dem Wert “0” als ein freies Feld betrachtet werden sollen. Labyrinthe dieser Größe eignen sich sehr gut für “EASY” und “NORMAL” Schwierigkeitsgrade. Damit das Spiel ein bisschen interessanter (_und gleichzeitig schwerer_) wird, wurden komplexe Labyrinthe und deren Verbindungen implementiert.
 
 #### Größere Labyrinthe
 
-Um den Horizont zu erweitern, werden einfachere Labyrinthe zusammengebunden. Größere Labyrinthe müssen somit zusätzliche generelle Eigenschaften besitzen:
+Um den Horizont zu erweitern, werden einfachere Labyrinthe zusammengebunden. Größere Labyrinthe müssen somit _zusätzliche_ generelle Eigenschaften besitzen:
 
 - Größe: n x (16x16) Felder.
 - Zwischen jeder Sektion besteht mindestens eine Verbindung.
-- Beide Start- und Endpunkte müssen in jeder Sektion definiert (jedoch nicht unbedingt erreichbar) sein.
+- Beide Start- und Endpunkte müssen in jeder Sektion definiert (_jedoch nicht unbedingt erreichbar_) sein.
 - Es gibt mindestens einen erreichbaren Endpunkt.
 
-Alle Verbindungen (bridges) werden unter Schlüsselwort “connections” in jedem Preset gespeichert. Jede dieser Verbindungen ist wie folgt aufgebaut:
-
+Alle Verbindungen (_bridges_) werden unter Schlüsselwort “connections” in jedem Preset gespeichert. Jede dieser Verbindungen ist wie folgt aufgebaut:
+```python
     "connections": {
         "<start_section_1>": [
             [
@@ -503,9 +503,9 @@ Alle Verbindungen (bridges) werden unter Schlüsselwort “connections” in jed
               <target_point_in_target_section>
             ]
         ]
-
-Mit dieser Struktur sind tatsächlich Übergänge aus jedem Punkt zu jeweils einem anderen implementierbar. Der Übergang zwischen einzelnen Sektionen erfolgt in move_until_wall() der Klasse GameLoop beim Aufruf von switch_section() vom GameHandler:
-
+```
+Mit dieser Struktur sind tatsächlich Übergänge aus jedem Punkt zu jeweils einem anderen implementierbar. Der Übergang zwischen einzelnen Sektionen erfolgt in *move_until_wall()* der Klasse _GameLoop_ beim Aufruf von *switch_section()* vom _GameHandler_:
+```python
     def switch_section(self, player: Player):
         """
         Switches active maze according to preset's connection
@@ -530,13 +530,13 @@ Mit dieser Struktur sind tatsächlich Übergänge aus jedem Punkt zu jeweils ein
             for i in range(rotationCounter):
                 # Rotating target_section by same angle as start_section
                 __maze_rotation(player= player, debuffApplied= False)
-
-switch_section() sucht also unter einer Liste von Bridges, die aus aktueller Sektion (Key im graph Dictionary) anfangen, einen Startpunkt (Index 1), der mit aktueller Position von Figur übereinstimmt und wechselt aktuelles Labyrinth zu in Bridge gegebener Sektion (Index 0).
+```
+*switch_section()* sucht also unter einer Liste von Bridges, die aus aktueller Sektion (_Key im graph Dictionary_) anfangen, einen Startpunkt (_Index 1_), der mit aktueller Position von Figur übereinstimmt und wechselt aktuelles Labyrinth zu in Bridge gegebener Sektion (_Index 0_).
 
 #### Animationen
 
-Auf eine ähnliche einfachere Weise werden die Animationen gebaut. Jede Animation besteht aus einzelnen Frames, die nichts anderes als weitere Labyrinthe für eine bestimmte Zeit angezeigt werden. Jeder dieser Frames hat einen Link auf den nächsten, wobei der letzte Frame auf den ersten (0-en) Frame verweist. Da hier kein Spieler bewegt wird, kann man die Verweise (sowie Anzeigedauer) direkt in Sektionen speichern, was das Erstellen und Verwalten von Animationen sehr erleichtert. Somit müssen diese spezielle Labyrinthe wie im Folgenden Code aussehen:
-
+Auf eine ähnliche einfachere Weise werden die Animationen gebaut. Jede Animation besteht aus einzelnen Frames, die nichts anderes als weitere Labyrinthe für eine bestimmte Zeit angezeigt werden. Jeder dieser Frames hat einen Link auf den nächsten, wobei der letzte Frame auf den ersten (_0-en_) Frame verweist. Da hier kein Spieler bewegt wird, kann man die Verweise (_sowie Anzeigedauer_) direkt in Sektionen speichern, was das Erstellen und Verwalten von Animationen sehr erleichtert. Somit müssen diese spezielle Labyrinthe wie im Folgenden Code aussehen:
+```python
     "IDLE_0": {
       "0": [
           # Frame
@@ -568,9 +568,9 @@ Auf eine ähnliche einfachere Weise werden die Animationen gebaut. Jede Animatio
           1
       ],
     }
-
-Jede Animation beginnt mit einem Startframe mit dem Namen “FINISH_<preset_number>”, der einmalig nach Bestehen vom Labyrinth gezeigt wird. So muss man zum o.g. Beispiel einen Startframe mit dem Namen “FINISH_0” hinzufügen, damit GameHandler seine Methode switch_idle_maze() ausführen kann:
-
+```
+Jede Animation beginnt mit einem Startframe mit dem Namen “`FINISH_<preset_number>`”, der einmalig nach Bestehen vom Labyrinth gezeigt wird. So muss man zum o.g. Beispiel einen Startframe mit dem Namen “FINISH_0” hinzufügen, damit _GameHandler_ seine Methode *switch_idle_maze()* ausführen kann:
+```python
     def switch_idle_maze(self):
         """
         Switches the current idle maze to the next one connected to it.
@@ -582,11 +582,11 @@ Jede Animation beginnt mit einem Startframe mit dem Namen “FINISH_<preset_numb
         
         _activeMazePreset = f"IDLE_{preset}.{nextFrame}"
         maze = _mazeGenerator.get_preset(_activeMazePreset)
-
-Alle Frames werden durch die Methode run_idle() im GameLoop gewechselt, indem ein Timer-Thread mit der Methode switch_idle_frame() gestartet wird. Dieser Thread führt seine Funktion erst nach einer vorgegebenen Zeit aus, die bereits im aktuellen Labyrinth (unter Index 3) vorhanden ist.
+```
+Alle Frames werden durch die Methode *run_idle()* im _GameLoop_ gewechselt, indem ein Timer-Thread mit der Methode *switch_idle_frame()* gestartet wird. Dieser Thread führt seine Funktion erst nach einer vorgegebenen Zeit aus, die bereits im aktuellen Labyrinth (_unter Index 3_) vorhanden ist.
 
 ## Links 
 
-[OpenAI](https://platform.openai.com/docs/overview)  
-[pyGame](https://www.pygame.org/docs/)  
-[KI_Wekstatt](https://kiwerkstatt.f2.htw-berlin.de/)  
+[OpenAI Dokumentation](https://platform.openai.com/docs/overview)  
+[pyGame Dokumentation](https://www.pygame.org/docs/)  
+[KI_Werkstatt Website](https://kiwerkstatt.f2.htw-berlin.de/)
