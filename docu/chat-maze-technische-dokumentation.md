@@ -24,14 +24,14 @@ In Erklärungen können folgende Begriffe auftauchen, die zum ersten Mal verwirr
 - Eine Rolle - ein Verhandlungsmuster, das dem ChatGPT vor jedem Spiel übergeben wird.
 
 Es werden ab und zu Code-Beispiele gegeben, die auf echtem Code von diesem Projekt basieren. Diese stellen eine einfachere und manchmal die erste Implementation von zu besprechenden Features dar, damit man eine Vorstellung bekommt, was im wirklichen Code vorkommt.
-In diesem Projekt wurden mehrere externe Bibliotheken wie OpenAI und pygame verwendet, die hier nicht ausführlich erklärt werden, weil sie bereits eigene Dokumentationen besitzen (siehe Abschnitt “Links”).
+In diesem Projekt wurden mehrere externe Bibliotheken wie _OpenAI_ und _pygame_ verwendet, die hier nicht ausführlich erklärt werden, weil sie bereits eigene Dokumentationen besitzen (_siehe Abschnitt “Links”_).
 
 ## Spezifikation (TODO)
 
 Für das Projekt sind folgende Anwendungen erforderlich:
 - Python 3
-- Anaconda Environment (installation guide in User-Doku)
-- Chat GPT API-Key (als config.json in /src zu speichern)
+- Anaconda Environment (_installation guide in User-Doku_)
+- Chat GPT API-Key (_als config.json in /src zu speichern_)
 
 ## Spielablauf
 
@@ -45,10 +45,10 @@ Da für jedes Feature oft mehrere Klassen zuständig sind, wäre es zunächst to
 
 Folgendes Diagramm stellt den in diesem Projekt implementierten Kernprozess dar:
 
-# TODO
+![alt-text](docu/prozess-diagramm.png "Kernprozes")
 
-Wie es schon wahrscheinlich aufgefallen ist, ist das ganze Spiel eine dauerhafte Schleife. Diese Schleife kann sowohl beim Erreichen vom Ende des gespielten Labyrinths, als auch manuell durch ein Restart-Kommando (/restart oder /newgame) unterbrochen werden.Damit man sehen kann, was überhaupt im Spiel passiert, gibt es eine Methode update_screen() der Klasse Screen, die für eigentliches Zeichnen des GUIs zuständig ist. Diese wird dauerhaft nebenläufig dem o.b. Kernprozess ausgeführt. Wenn das Spiel zu Ende ist, wird ein der vorhandenen Endscreens (auch animierte) gezeigt, wo man einen Schwierigkeitsgrad auswählen und somit ein neues Spiel starten kann.
-Die Hauptklasse, die alle Bausteine des Projekts zusammenführt, ist GameLoop. Der o.g. Kernprozess läuft innerhalb der run() Methode dieser Klasse ab. Sobald das Spielfenster geschlossen wird, wird die Schleife in run() nach laufender Iteration unterbrochen und alle verwendete Threads mit close() geschlossen.
+Wie es schon wahrscheinlich aufgefallen ist, ist das ganze Spiel eine dauerhafte Schleife. Diese Schleife kann sowohl beim Erreichen vom Ende des gespielten Labyrinths, als auch manuell durch ein Restart-Kommando (_/restart oder /newgame_) unterbrochen werden.Damit man sehen kann, was überhaupt im Spiel passiert, gibt es eine Methode _update_screen()_ der Klasse _Screen_, die für eigentliches Zeichnen des GUIs zuständig ist. Diese wird dauerhaft nebenläufig dem o.b. Kernprozess ausgeführt. Wenn das Spiel zu Ende ist, wird ein der vorhandenen Endscreens (_auch animierte_) gezeigt, wo man einen Schwierigkeitsgrad auswählen und somit ein neues Spiel starten kann.
+Die Hauptklasse, die alle Bausteine des Projekts zusammenführt, ist _GameLoop_. Der o.g. Kernprozess läuft innerhalb der _run()_ Methode dieser Klasse ab. Sobald das Spielfenster geschlossen wird, wird die Schleife in _run()_ nach laufender Iteration unterbrochen und alle verwendete Threads mit _close()_ geschlossen.
 
 ## Aufbau des Projekts 
 
@@ -56,24 +56,24 @@ Die Hauptklasse, die alle Bausteine des Projekts zusammenführt, ist GameLoop. D
 
 #### API-Anfragen
 
-Um eine Verbindung mit [OpenAIs API](https://platform.openai.com/docs/overview) herzustellen und somit mit ChatGPT, wird ein HTTPS-Client benötigt. Dieser lässt sich sehr einfach über die Python-Bibliothek „openai“ von OpenAI erstellen. Für genauere Details siehe die [API-Referenz](https://platform.openai.com/docs/api-reference/introduction) von OpenAI.
+Um eine Verbindung mit [OpenAIs API](https://platform.openai.com/docs/overview) herzustellen und somit mit ChatGPT, wird ein HTTPS-Client benötigt. Dieser lässt sich sehr einfach über die Python-Bibliothek „_openai_“ von OpenAI erstellen. Für genauere Details siehe die [API-Referenz](https://platform.openai.com/docs/api-reference/introduction) von OpenAI.
 
-Die Aufgabe der Client-Erstellung übernimmt die Klasse „ApiClientCreator“ mit der Methode „getclient“. Dem Client muss ein gültiger [API-Key](https://platform.openai.com/docs/quickstart) übergeben werden. Dieser wird aus einer JSON-Datei geladen. Der Standardname der Datei ist „config.json“. Möchte man die Datei anders benennen, muss der neue Dateiname beim Aufruf von „getclient“ als Argument übergeben werden. Des Weiteren kann optional auch noch eine Timeout-Zeit für die HTTPS-Anfrage mitübergeben werden. Der Standard hier ist 60 Sekunden.
-Nun, da uns ein [API-Client](https://platform.openai.com/docs/api-reference/authentication) zur Verfügung steht, können wir uns der Kommunikation mit der API widmen. Die API stellt mehrere Möglichkeiten und Funktionen zur Verfügung, um mit den einzelnen Sprachmodellen zu interagieren. In unserem Spiel verwenden wir die [Text-zu-Text](https://platform.openai.com/docs/guides/chat-completions)-, sowie die [Text-zu-Audio](https://platform.openai.com/docs/guides/text-to-speech)- und die [Audio-zu-Text](https://platform.openai.com/docs/guides/speech-to-text)-Funktionen der einzelnen Modelle von OpenAI. Verwaltet und durchgeführt werden die einzelnen Anfragen von der „ChatGPT“-Klasse in „ChatGPT_Controller.py“. Dieser Klasse muss beim Aufrufen der zuvor erstellte Client übergeben werden. In einer Liste wird der Kommunikationsverlauf mit dem Text-zu-Text-Modell gespeichert. Standardmäßig werden nur fünf Nachrichten gespeichert. Dabei ist eine Nachricht die Anfrage des Users plus die Antwort des Modells. Die Nachrichten werden im [Response-Format der API](https://platform.openai.com/docs/guides/chat-completions/response-format) gespeichert, wobei nur die „content“- und „role“-Informationen gespeichert werden. Wenn mehr als fünf Nachrichten gespeichert werden sollen, kann beim Aufruf als zweites Argument die maximale Nachrichtenanzahl mitübergeben werden.
+Die Aufgabe der Client-Erstellung übernimmt die Klasse „_ApiClientCreator_“ mit der Methode „_getclient()_“. Dem Client muss ein gültiger [API-Key](https://platform.openai.com/docs/quickstart) übergeben werden. Dieser wird aus einer JSON-Datei geladen. Der Standardname der Datei ist „_config.json_“. Möchte man die Datei anders benennen, muss der neue Dateiname beim Aufruf von „_getclient()_“ als Argument übergeben werden. Des Weiteren kann optional auch noch eine Timeout-Zeit für die HTTPS-Anfrage mitübergeben werden. Der Standard hier ist 60 Sekunden.
+Nun, da uns ein [API-Client](https://platform.openai.com/docs/api-reference/authentication) zur Verfügung steht, können wir uns der Kommunikation mit der API widmen. Die API stellt mehrere Möglichkeiten und Funktionen zur Verfügung, um mit den einzelnen Sprachmodellen zu interagieren. In unserem Spiel verwenden wir die [Text-zu-Text](https://platform.openai.com/docs/guides/chat-completions)-, sowie die [Text-zu-Audio](https://platform.openai.com/docs/guides/text-to-speech)- und die [Audio-zu-Text](https://platform.openai.com/docs/guides/speech-to-text)-Funktionen der einzelnen Modelle von OpenAI. Verwaltet und durchgeführt werden die einzelnen Anfragen von der „_ChatGPT_“-Klasse in „_ChatGPT_Controller.py_“. Dieser Klasse muss beim Aufrufen der zuvor erstellte Client übergeben werden. In einer Liste wird der Kommunikationsverlauf mit dem Text-zu-Text-Modell gespeichert. Standardmäßig werden nur fünf Nachrichten gespeichert. Dabei ist eine Nachricht die Anfrage des Users plus die Antwort des Modells. Die Nachrichten werden im [Response-Format der API](https://platform.openai.com/docs/guides/chat-completions/response-format) gespeichert, wobei nur die „_content_“- und „_role_“-Informationen gespeichert werden. Wenn mehr als fünf Nachrichten gespeichert werden sollen, kann beim Aufruf als zweites Argument die maximale Nachrichtenanzahl mitübergeben werden.
 
-Schauen wir uns zuerst den [Text-zu-Text](https://platform.openai.com/docs/guides/chat-completions)-Aufruf an. Dieser erfolgt in „texttotext()“. Die Methode hat vier Argumente, von denen zwei optional sind. Das „_retry“-Argument ist für das Error-Handling beim API-Call vonnöten. Der Methode kann als Argument der Name des zu verwendenden [ChatGPT-Modells](https://platform.openai.com/docs/models) übergeben werden, das Standardmodell ist „[gpt-3.5-turbo](https://platform.openai.com/docs/models/gpt-3-5-turbo)“. Der Rückgabewert ist das [Response-Objekt der API](https://platform.openai.com/docs/guides/chat-completions/response-format). Das einzige nicht optionale Argument ist die zu sendende Nachricht. Diese Nachricht muss in einem bestimmten Format sein. Um einen gegebenen String in ein für die API nutzbares [Format](https://platform.openai.com/docs/api-reference/chat/create) zu bringen, gibt es die „construct_message()“-Methode. In dieser Methode wird die aktuelle Eingabe des Nutzers, der System-Prompt und der Kommunikationsverlauf in einem Dictionary zusammengeführt, wobei die Keys den entsprechenden Rollen in Bezug auf die API entsprechen. Die möglichen Rollen sind: „system“, „user“ und „assistant“.
+Schauen wir uns zuerst den [Text-zu-Text](https://platform.openai.com/docs/guides/chat-completions)-Aufruf an. Dieser erfolgt in „_texttotext()_“. Die Methode hat vier Argumente, von denen zwei optional sind. Das „_retry_“-Argument ist für das Error-Handling beim API-Call vonnöten. Der Methode kann als Argument der Name des zu verwendenden [ChatGPT-Modells](https://platform.openai.com/docs/models) übergeben werden, das Standardmodell ist „[gpt-3.5-turbo](https://platform.openai.com/docs/models/gpt-3-5-turbo)“. Der Rückgabewert ist das [Response-Objekt der API](https://platform.openai.com/docs/guides/chat-completions/response-format). Das einzige nicht optionale Argument ist die zu sendende Nachricht. Diese Nachricht muss in einem bestimmten Format sein. Um einen gegebenen String in ein für die API nutzbares [Format](https://platform.openai.com/docs/api-reference/chat/create) zu bringen, gibt es die „construct_message()“-Methode. In dieser Methode wird die aktuelle Eingabe des Nutzers, der System-Prompt und der Kommunikationsverlauf in einem Dictionary zusammengeführt, wobei die Keys den entsprechenden Rollen in Bezug auf die API entsprechen. Die möglichen Rollen sind: „_system_“, „user“ und „_assistant_“.
 
 **(Wichtig! Diese Rollen haben nichts mit den Charakteren/Rollen unseres Spieles zu tun, sondern sind von der API vorgeschrieben.)**
 
-Der [Text-zu-Audio](https://platform.openai.com/docs/guides/text-to-speech) ist im Grunde nicht sehr unterschiedlich zum [Text-zu-Text](https://platform.openai.com/docs/guides/chat-completions)-Aufruf. Dieser wird durch die „texttoaudio()“-Methode durchgeführt. Auch hier kann wieder der Name eines [Modells](https://platform.openai.com/docs/models) angegeben werden. OpenAI hat hierfür zwei Modelle zur Verfügung: „[tts-1](https://platform.openai.com/docs/models/tts)“ und „[tts-1-hd](https://platform.openai.com/docs/models/tts)“. Zudem kann die Stimme, mit der der Text synthetisiert werden soll, angegeben werden. OpenAI hat hier sechs [Stimmen](https://platform.openai.com/docs/guides/text-to-speech/overview) zur Auswahl. Im Gegensatz zum Text-zu-Text-Aufruf muss für den Text-zu-Audio-Aufruf der zu synthetisierender Text nicht in einem bestimmten Format sein. Entsprechend kann ein einfacher String übergeben werden. Auch hier ist das „retry“-Argument für das Error-Handling beim API-Call vonnöten. Der API-Call gibt ein Audio-Objekt zurück, welches mit der „writeaudiotofile()“-Methode in eine .wav-Datei namens „tts_out.wav“ geschrieben wird. Die Datei wird im /src-Ordner abgelegt. Wenn die Datei nicht existiert, wird sie beim Initialisieren der Klasse erstellt.  
+Der [Text-zu-Audio](https://platform.openai.com/docs/guides/text-to-speech) ist im Grunde nicht sehr unterschiedlich zum [Text-zu-Text](https://platform.openai.com/docs/guides/chat-completions)-Aufruf. Dieser wird durch die „_texttoaudio()_“-Methode durchgeführt. Auch hier kann wieder der Name eines [Modells](https://platform.openai.com/docs/models) angegeben werden. OpenAI hat hierfür zwei Modelle zur Verfügung: „[_tts-1_](https://platform.openai.com/docs/models/tts)“ und „[_tts-1-hd_](https://platform.openai.com/docs/models/tts)“. Zudem kann die Stimme, mit der der Text synthetisiert werden soll, angegeben werden. OpenAI hat hier sechs [Stimmen](https://platform.openai.com/docs/guides/text-to-speech/overview) zur Auswahl. Im Gegensatz zum Text-zu-Text-Aufruf muss für den Text-zu-Audio-Aufruf der zu synthetisierender Text nicht in einem bestimmten Format sein. Entsprechend kann ein einfacher String übergeben werden. Auch hier ist das „_retry_“-Argument für das Error-Handling beim API-Call vonnöten. Der API-Call gibt ein Audio-Objekt zurück, welches mit der „_writeaudiotofile()_“-Methode in eine .wav-Datei namens „_tts_out.wav_“ geschrieben wird. Die Datei wird im "_/src_"-Ordner abgelegt. Wenn die Datei nicht existiert, wird sie beim Initialisieren der Klasse erstellt.  
 
-Der [Audio-zu-Text](https://platform.openai.com/docs/guides/speech-to-text)-Aufruf in der „audiototext()“-Methode verwendet den „[transcription“-Endpoint](https://platform.openai.com/docs/api-reference/audio/createTranscription) der API. Auch hier kann wieder ein Modell angegeben werden, auch wenn nur eines zur Verfügung steht, „[whisper-1](https://platform.openai.com/docs/models/whisper)“. Des Weiteren kann ein optionaler Prompt mitübergeben werden, um dem [Modell](https://platform.openai.com/docs/models) einen Kontext der Transkription zu geben und diese potenziell zu verbessern. Auch diese Methode hat das Error-Handling-Argument „retry“. Die Audiodaten werden aus der im /src-Ordner liegenden „userinput.wav“-Datei gelesen. Diese Datei wird, wenn nicht vorhanden, auch beim Initialisieren der Klasse erstellt. Die Methode gibt den transkribierten Text als String zurück.
+Der [Audio-zu-Text](https://platform.openai.com/docs/guides/speech-to-text)-Aufruf in der „_audiototext()_“-Methode verwendet den ["transcription“-Endpoint](https://platform.openai.com/docs/api-reference/audio/createTranscription) der API. Auch hier kann wieder ein Modell angegeben werden, auch wenn nur eines zur Verfügung steht, ["whisper-1"](https://platform.openai.com/docs/models/whisper). Des Weiteren kann ein optionaler Prompt mitübergeben werden, um dem [Modell](https://platform.openai.com/docs/models) einen Kontext der Transkription zu geben und diese potenziell zu verbessern. Auch diese Methode hat das Error-Handling-Argument „_retry_“. Die Audiodaten werden aus der im "_/src_"-Ordner liegenden „_userinput.wav_“-Datei gelesen. Diese Datei wird, wenn nicht vorhanden, auch beim Initialisieren der Klasse erstellt. Die Methode gibt den transkribierten Text als String zurück.
 
 #### API-Antworten 
 
-Die chatgpt_movment Klasse Implementiert nun die Oben erklärten Konzepte. Wie in der Doku schon erkläret, gibt ChatGPT neben einem passenden Antworttext auch eine Richtung für die Bewegung der Spielfigur zurück. Entsprechend wird die Antwort in zwei Teile geteilt und die Richtung mithilfe eines Dictionary in einen Vektor umgewandelt: 
-
-    self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "weird": [0, 0], "deny": [-1, -1]}
+Die _chatgpt_movment_ Klasse Implementiert nun die Oben erklärten Konzepte. Wie in der Doku schon erkläret, gibt ChatGPT neben einem passenden Antworttext auch eine Richtung für die Bewegung der Spielfigur zurück. Entsprechend wird die Antwort in zwei Teile geteilt und die Richtung mithilfe eines Dictionary in einen Vektor umgewandelt: 
+```python
+self.move_options = {"up": [0, -1], "down": [0, 1], "left": [-1, 0], "right": [1, 0], "weird": [0, 0], "deny": [-1, -1]}
 
     content = chat_response.choices[0].message.content
     
@@ -88,9 +88,9 @@ Die chatgpt_movment Klasse Implementiert nun die Oben erklärten Konzepte. Wie i
         move_vector = self.move_options[direction]
     else:
         move_vector = self.move_options["deny"]
-
-Anschließend werden all die Funktionalitäten in der __get_chatgpt_response() Methode in GameLoop.py zusammengefasst und ausgeführt. Um ein einfrieren und stocken der UI zu verhindern läuft diese Methode auf einem separaten Thread.  
-
+```
+Anschließend werden all die Funktionalitäten in der ___get_chatgpt_response()_ Methode in _GameLoop.py_ zusammengefasst und ausgeführt. Um ein einfrieren und stocken der UI zu verhindern läuft diese Methode auf einem separaten Thread:
+```python
     movmentChatGPT = chatgpt_movment(chatgpt=chatgpt, model=gpt_model)
 
     while not self._gameOver_event.is_set():
@@ -107,37 +107,38 @@ Anschließend werden all die Funktionalitäten in der __get_chatgpt_response() M
             
             data["role"] = "GPT-4o" 
             self._chatgpt_queue.put(data)
-
-Hier werden Instanzen der einzelnen Klassen erstellt und die Aufrufe getätigt, sowie das Finale Error-Handling und Informieren des Users. Des weiteren werden hier die Antworten von ChatGPT in Queues gelegt um eine Thread Sichere Kommunikation zu gewährleisten. Dies wird unterstützt durch Events wie „self.audio_event“, um auf bestimmte Stadien korrekt reagieren zu können.
+```
+Hier werden Instanzen der einzelnen Klassen erstellt und die Aufrufe getätigt, sowie das Finale Error-Handling und Informieren des Users. Des weiteren werden hier die Antworten von ChatGPT in Queues gelegt um eine Thread Sichere Kommunikation zu gewährleisten. Dies wird unterstützt durch Events wie „_self.audio_event_“, um auf bestimmte Stadien korrekt reagieren zu können.
 
 #### Prompting (TODO)
 
 ### Verarbeitung von Antworten
 
-Dieses Feature wird durch Kombination verschiedener Klassen und deren Methoden realisiert. Als zentrale Klasse, mit der hier operiert wird, kommt Player vor:
+#### Bewegung der Figur
 
-##### Player
-
+Dieses Feature wird durch Kombination verschiedener Klassen und deren Methoden realisiert. Als zentrale Klasse, mit der hier operiert wird, kommt _Player_ vor:
+```python
+class Player():
      + currentPosition: list[int]
      + name: string
      + isHidden: bool
+     ----------------
      + move (mVector: list[int]): None
      + set_position (point: list[int]): None
      + get_rotated_position (count: int): list[int]
      + hide (request: bool): None
      + change_name (newName: string): None
+```
+Hier werden zunächst das Feld _currentPosition_ und die Methode _move()_ betrachtet. _CurrentPosition_ repräsentiert aktuelle Position einer Figur im Labyrinth, während die _move()_ Methode einen Bewegungsvektor dazu addiert.
+Die eigentliche Verschiebung der Figuren erfolgt innerhalb der _move_untill_wall()_ Methode der _GameLoop_ Klasse. Bei jeder Bewegung werden folgende Punkte eingehalten:
 
+1. Jede Figur kann in **4 Richtungen** (_nach oben/unten/links/rechts_) laufen.
+2. Bewegung wird **unterbrochen**, sobald die Figur vor einer Wand steht oder das Finish erreicht wird.
+3. Bewegung wird **nicht unterbrochen**, wenn die Figur aus einem Labyrinth in ein anderes läuft (_mehr dazu im Maze-Aufbau_).
 
-Hier werden zunächst das Feld currentPosition und die Methode move() betrachtet. CurrentPosition repräsentiert aktuelle Position einer Figur im Labyrinth, während die move() Methode einen Bewegungsvektor dazu addiert.
-Die eigentliche Verschiebung der Figuren erfolgt innerhalb der move_untill_wall() Methode der GameLoop Klasse. Bei jeder Bewegung werden folgende Punkte eingehalten:
-
-1. Jede Figur kann in 4 Richtungen (nach oben/unten/links/rechts) laufen.
-2. Bewegung wird unterbrochen, sobald die Figur vor einer Wand steht oder das Finish erreicht wird.
-3. Bewegung wird nicht unterbrochen, wenn die Figur aus einem Labyrinth in ein anderes läuft (mehr dazu im Maze-Aufbau).
-
-Der Bewegungsvektor wird von der Klasse ChatGPT_Movement_Controller anhand der vom ChatGPT gewonnenen Antwort ermittelt. Die Überprüfung eines Feldes auf eine Wand erfolgt durch die Methode check_wall() Klasse GameHandler (mehr zu der Klasse im folgenden Abschnitt “Anwendung von Strafen”). Diese Klasse verfügt außerdem über Methoden check_finish() und check_border(), die ähnlich wie check_wall() funktionieren und zum Erfüllen von 2. und 3. der o.g. Kriterien verwendet werden.
+Der Bewegungsvektor wird von der Klasse _ChatGPT_Movement_Controller_anhand der vom ChatGPT gewonnenen Antwort ermittelt. Die Überprüfung eines Feldes auf eine Wand erfolgt durch die Methode _check_wall()_ Klasse _GameHandler_ (_mehr zu der Klasse im folgenden Abschnitt “Anwendung von Strafen”_). Diese Klasse verfügt außerdem über Methoden _check_finish()_ und _check_border()_, die ähnlich wie _check_wall()_ funktionieren und zum Erfüllen von 2. und 3. der o.g. Kriterien verwendet werden.
 Im folgenden Beispiel wird eine einfache Implementierung der Bewegungsfunktion bis zur nächsten Wand nach unten vorgestellt:
-
+```python
     # Running till a wall
     mVector = [0, 1]
     while True:
@@ -153,10 +154,10 @@ Im folgenden Beispiel wird eine einfache Implementierung der Bewegungsfunktion b
             break
             
         player.move(mVector)
-
-Falls das Labyrinth gedreht wurde und das Spiel plötzlich abstürzt (z.B. wegen einer fehlenden Verbindung zwischen Labyrinthen), wäre es hilfreich, die Position der Figur in demselben nicht gedrehten Labyrinth zu kennen, damit man schnell die Fehlstelle beseitigen kann. Genau dafür gibt es die Methode get_rotated_position(), die die “normale” Position einer Figur zurückliefert, indem man die Rotation mit fehlenden Drehungen um 90° im Gegenuhrzeigersinn vervollständigt, bis das Labyrinth zur initiale Ausrichtung kommt (mehr dazu im folgenden Abschnitt “Anwendung von Strafen”).
+```
+Falls das Labyrinth gedreht wurde und das Spiel plötzlich abstürzt (_z.B. wegen einer fehlenden Verbindung zwischen Labyrinthen_), wäre es hilfreich, die Position der Figur in demselben nicht gedrehten Labyrinth zu kennen, damit man schnell die Fehlstelle beseitigen kann. Genau dafür gibt es die Methode _get_rotated_position()_, die die “normale” Position einer Figur zurückliefert, indem man die Rotation mit fehlenden Drehungen um 90° im Gegenuhrzeigersinn vervollständigt, bis das Labyrinth zur initiale Ausrichtung kommt (_mehr dazu im folgenden Abschnitt “Anwendung von Strafen”_).
 Wird das vorherige Beispiel um Logging von Position nach jeder Bewegung erweitert, so bekommt man folgenden Code:
-
+```python
     # Running till a wall with position logging
     mVector = [0, 1]
     rotationCounter = 2
@@ -177,11 +178,11 @@ Wird das vorherige Beispiel um Logging von Position nach jeder Bewegung erweiter
     
         player.move(mVector)
 
-# Logging end position into console                    
-position = player.get_rotated_position(4 - rotationCounter)
-print(f"[Movement stopped]\nPlayer position: {position}")
-
-Bis dahin kann man seine Figur nur bewegen und zuschauen. Um das Spiel ein wenig interessanter zu machen, wurden verschiedene Rollen von ChatGPT hinzugefügt, von denen jede auf eigene Weise angesprochen werden will. Sind die Figuren  mit der Ansprache zufrieden, so folgen sie gegebenen Anweisungen. Sei das nicht der Fall, werden eine oder mehrere Strafen angewendet.
+    # Logging end position into console                    
+    position = player.get_rotated_position(4 - rotationCounter)
+    print(f"[Movement stopped]\nPlayer position: {position}")
+```
+Bis dahin kann man seine Figur nur bewegen und zuschauen. Um das Spiel ein wenig interessanter zu machen, wurden verschiedene Rollen von ChatGPT hinzugefügt, von denen jede auf eigene Weise angesprochen werden will. Sind die Figuren  mit der Ansprache zufrieden, so folgen sie gegebenen Anweisungen. _Sei das nicht der Fall,_ werden eine oder mehrere Strafen angewendet.
 
 ### Anwendung von Strafen
 
