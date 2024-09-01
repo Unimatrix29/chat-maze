@@ -1,4 +1,3 @@
-from math import isqrt
 from ChatGPT_Client import ApiClientCreator
 from ChatGPT_Controller import ChatGPT
 from CommandHandler import Command
@@ -10,19 +9,19 @@ import queue, threading, time, openai
 
 class Game():
     """
-    Game class is a general class that combines all other classes
-    together in one single restart- and resetable session.
+    Game class is a general class that combines all other classes\n
+    together in one single restart- and resettable session.
 
     Attributes
     ----------
     screen : Screen
-        An instance of the Screen class that is responsible for
+        An instance of the Screen class that is responsible for\n
         drawing the GUI and receiving user inputs (voice and text).
     chatGPT : ChatGPT
-        An instance of the ChatGPT_Controller class that is responsible
+        An instance of the ChatGPT_Controller class that is responsible\n
         for processing the conversation between user and OpenAI's GPT models.
     prompt : list[str]
-        The current prompt to set a ChatGPT model onto.
+        The current prompt to set a ChatGPT model onto.\n
         Contains the name of the associated character at [0] and the prompt line at [1].
     maze : list[list[int]]
         The current maze preset's section the player is on.
@@ -194,11 +193,12 @@ class Game():
 
     def __move_until_wall(self, mVector: list[int]):
         """
-        Moves the player towards the given move vector till the next wall
-        or finish point. If the player runs out of maze, it'll be switched to
+        Moves the player towards the given move vector till the next wall\n
+        or finish point. If the player runs out of maze, it'll be switched to\n
         the next one according to maze preset's connection.
         
-        Parameters:
+        Parameters
+        ----------
             mVector : list[int]
                 The movement vector to add to player's position.
         
@@ -218,8 +218,7 @@ class Game():
             
             nextStep = [self.player.currentPosition[0] + mVector[0], self.player.currentPosition[1] + mVector[1]]
 
-            # Going to the next section
-            # of the maze preset if reached the border
+            # Going to the next section of the maze preset if reached the border
             if self._gameHandler.check_border(nextStep):
                 self._gameHandler.switch_section(self.player)
                 self.__update_game_stats()
@@ -246,7 +245,6 @@ class Game():
         Returns:
             None : Doesn't return any value.
         """
-        # Applying debuffs in case of rough request
         debuffInfos = self._gameHandler.apply_debuffs(self.player)
         for debuff in debuffInfos:
             self.screen.add_chat_text(debuff, "System")
@@ -387,8 +385,8 @@ class Game():
        
     def __choose_difficulty(self):
         """
-        Lets the user choose the next difficulty and start a new game.
-        The choice is given to GameHandler instance to recieve
+        Lets the user choose the next difficulty and start a new game.\n
+        The choice is given to GameHandler instance to receive\n
         a ChatGPT prompt and selected maze.
 
         Returns:
@@ -409,7 +407,7 @@ class Game():
             if level == "":
                 continue
             if not level in options:
-                self.screen.add_chat_text("A vaild one, please.", "System")
+                self.screen.add_chat_text("A valid one, please.", "System")
                 level = ""
                 print(f"<{level}>")
         
@@ -491,7 +489,7 @@ class Game():
             
     def __run_idle(self):
         """
-        Updates idleTimer if expired according to time stamp
+        Updates idleTimer if expired according to time stamp\n
         of current idle frame.
         
         Returns:
@@ -519,9 +517,9 @@ class Game():
     
     def __switch_idle_frame(self):
         """
-        Switches active maze (idle frame) to the next one.
-        !Only used in idleTimer threads!
-        !Only used with FINISH and IDLE presets!
+        Switches active maze (idle frame) to the next one.\n
+        ! **Only used in idleTimer threads** !\n
+        ! **Only used with FINISH and IDLE presets** !
         
         Returns:
             None : Doesn't return any value.
@@ -532,7 +530,7 @@ class Game():
     
     def __update_game_stats(self):
         """
-        Gets new gameStats[] with active(switched/rotated) maze
+        Gets new gameStats[] with active(switched/rotated) maze\n
         as well as debuff's infos.
                 
         Returns:
