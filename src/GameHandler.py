@@ -75,7 +75,7 @@ class GameHandler():
         self._DEBUFF_INFOS = {}
         
         # Loading debuffs' descriptions
-        _file_debuffsTexts = Path(__file__).parent / "debuffs_texts.json"
+        _file_debuffsTexts = Path(__file__).parent / "assets" / "debuffs_texts.json"
         _file_debuffsTexts.resolve()       
         with open(_file_debuffsTexts) as json_file:
             data = json.load(json_file)
@@ -86,7 +86,7 @@ class GameHandler():
         self.prompt = [] # [name, promptLine]
         
         # Loading prompt library and choosing a start ChatGPT prompt
-        _file_prompts = Path(__file__).parent / "prompts.json"
+        _file_prompts = Path(__file__).parent / "assets" / "prompts.json"
         _file_prompts.resolve()
         with open(_file_prompts) as json_file:
             data = json.load(json_file)
