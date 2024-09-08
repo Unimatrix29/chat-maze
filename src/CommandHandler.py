@@ -28,6 +28,7 @@ class Command():
             "/audio on"  :   self.__audio_on,
             "/audio off" :   self.__audio_off,
             "/quack"     :   self.__quack,
+            "/exit"      :   self.__exit,
             "__/start"   :   self.__print_start_message,
             "__/finish"  :   self.__print_end_message
         }
@@ -110,6 +111,9 @@ class Command():
     
     def __quack(self):
         self.game.screen.add_chat_text(self.quack_txt, "System")
+
+    def __exit(self):
+        self.game.screen.isQuit = True
     
     
     def __get_command_txt_from_json(self):

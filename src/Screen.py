@@ -19,7 +19,6 @@ class Screen():
         self.q = queue.Queue()
 
     def update_screen(self, maze=None, player=None, render = 17):
-        self.isQuit = False
         self.record = False
         
         # makes background black
@@ -191,6 +190,7 @@ class Screen():
             "Error" : Colors.RED.value
         }
         self.audio_mode = False
+        self.isQuit = False
 
     def __resize_to_resolution(self, res_x, res_y, monitorNumber):
 
