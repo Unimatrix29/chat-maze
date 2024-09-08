@@ -10,7 +10,6 @@
       - [setup_screen()](./chat-maze-technische-dokumentation.md#setup_screen)
       - [update_screen()](./chat-maze-technische-dokumentation.md#update_screen)
 - Spieleinstellungen
-    - [Steuerung](./chat-maze-technische-dokumentation.md#steuerung-todo)
     - [Schwierigkeitsgrade](./chat-maze-technische-dokumentation.md#schwierigkeitsgrade)
     - [Prompts](./chat-maze-technische-dokumentation.md#prompts)
     - [Maze-Aufbau](./chat-maze-technische-dokumentation.md#maze-aufbau)
@@ -31,13 +30,31 @@ In Erklärungen können folgende Begriffe auftauchen, die zum ersten Mal verwirr
 Es werden ab und zu Code-Beispiele gegeben, die auf echtem Code von diesem Projekt basieren. Diese stellen eine einfachere und manchmal die erste Implementation von zu besprechenden Features dar, damit man eine Vorstellung bekommt, was im wirklichen Code vorkommt.
 In diesem Projekt wurden mehrere externe Bibliotheken wie _OpenAI_ und _pygame_ verwendet, die hier nicht ausführlich erklärt werden, weil sie bereits eigene Dokumentationen besitzen (_siehe Abschnitt “Links”_).
 
-## Spezifikation (TODO)
+## Spezifikation
 
 Für das Projekt sind folgende Anwendungen erforderlich:
-- Python 3
-- Anaconda Environment (_installation guide in User-Doku_)
-- Chat GPT API-Key (_als **config.json** in /src zu speichern_)
+- [Python 3.12.3](https://www.python.org/downloads/) 
+- [Anaconda 24.5.0](https://www.anaconda.com/) (_oder höher_)
+- [OpenAI API key](https://platform.openai.com/api-keys) (_**nicht kostenfrei**_)
 
+### Vorbereitung
+
+Wenn alle Anwendungen installiert worden sind, gehen Sie folgende Schritte durch:
+1. Im Verzeichnis `../chat-leap/src` erstellen Sie eine Datei **config.json** und kopieren Sie folgende Zeile dahin, wobei anstatt **YOUR API KEY** Ihr OpenAI API Key zwischen Anführungsstrichen `""` gespeichert wird:
+```
+    {
+        "api_key" : "YOUR API KEY"
+    }
+```
+2. Öffnen Sie Anaconda Prompt und wechseln Sie zum Hauptverzeichnis vom Projekt: `../chat-leap`.
+3. Geben Sie folgenden Befehl ein, um das vorbereitete Environment (_lndw_) zu erstellen:   
+```
+    conda env create -f environment.yml
+```
+4. Öffnen Sie das Projekt in Ihrem Code Editor und wechseln Sie das voreingestellte Environment zum gerade eben erstellten (_lndw_).
+
+Nun können Sie den Code selber modifizieren und ausführen.
+   
 ## Spielablauf
 
 Da für jedes Feature oft mehrere Klassen zuständig sind, wäre es zunächst total sinnvoll, sich den gesamten Spielablauf anzuschauen. Man kann alle Aktivitäten in folgenden Kategorien unterteilen:
@@ -114,8 +131,6 @@ Anschließend werden all die Funktionalitäten in der *__get_chatgpt_response()*
             self._chatgpt_queue.put(data)
 ```
 Hier werden Instanzen der einzelnen Klassen erstellt und die Aufrufe getätigt, sowie das Finale Error-Handling und Informieren des Users. Des weiteren werden hier die Antworten von ChatGPT in Queues gelegt um eine Thread Sichere Kommunikation zu gewährleisten. Dies wird unterstützt durch Events wie „*self.audio_event*“, um auf bestimmte Stadien korrekt reagieren zu können.
-
-#### Prompting (TODO)
 
 ### Verarbeitung von Antworten
 
@@ -393,8 +408,6 @@ Die Zeilen werden ebenfalls untereinander angeordnet. Zusätzlich wird ein Curso
 ```
 ## Spieleinstellungen
 
-### Steuerung (TODO)
-
 ### Schwierigkeitsgrade
 
 Alle Schwierigkeitsgrade werden in der Klasse _GameHandler_ gespeichert und verwendet. Mit der Methode *set_level()* kann man einen vom Benutzer ausgewählten Grad aus anderen Klassen in diese übergeben. Alle Schwierigkeitsgrade werden im Konstruktor von _GameHandler_ wie folgt definiert:
@@ -417,7 +430,7 @@ Die Namen werden lediglich zur Lesbar- und Verständlichkeit implementiert, insb
 
 ### Prompts 
 
-Alle Prompts werden (_manuell_) serialisiert und in **_prompts.json_** Datei folgendermaßen gespeichert:
+Alle Prompts werden (_manuell_) serialisiert und unter **_/assets/prompts.json_** Datei folgendermaßen gespeichert:
 ```python
     {
       "DIFFICULTY 1": {
@@ -438,7 +451,7 @@ Hierbei ist zu erwähnen, dass den Namen von Prompts in der _Screen_ Klasse (_Fe
 
 #### Kleine Labyrinthe
 
-Genauso wie alle Prompts, werden alle Labyrinthe serialisiert und in **_maze_presets.json_** Datei gespeichert. Es sind folgende Punkte beim Erstellen von einfachen (_kleinen_) Labyrinthen einzuhalten:
+Genauso wie alle Prompts, werden alle Labyrinthe serialisiert und unter **_/assets/maze_presets.json_** Datei gespeichert. Es sind folgende Punkte beim Erstellen von einfachen (_kleinen_) Labyrinthen einzuhalten:
 
 1. Größe - 16x16 Felder.
 2. Rahmen - vorhanden. Ausnahmsweise kann der Endpunkt am Rand sein.
