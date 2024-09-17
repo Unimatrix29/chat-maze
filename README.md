@@ -19,7 +19,7 @@ Wir sind ein kleines, aber feines Team aus dem Studiengang Ingenieursinformatik 
 | :---------------: | :---: | :------------------------------------------------------------------- |
 |    Oskar Fulde    |  -->  | Hat eine vernünftige Verbindung mit ChatGPT über OpenAI eingesetzt   |
 |  Nealjade Laluna  |  -->  | Hat all die Persönlichkeiten ausgedacht und ihre Prompts geschrieben |
-| Louis Schmolinske |  -->  | Hat komplette UI/UX Schicht gebastelt und angepasst                  |
+| Louis Schmolinske |  -->  | Hat das komplette Interface gebastelt und angepasst                  |
 |    Robert Koch    |  -->  | Hat alle Strafen, Schwierigkeitsgrade und Maze Features angelegt     |
 
 # Welcome to Chat Maze 
