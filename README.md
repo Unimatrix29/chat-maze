@@ -37,7 +37,7 @@ Hier sind ein paar hilfreiche Befehle:
 ## Über das Projekt
 
 Wir sind ein kleines, aber feines Team aus dem Studiengang Ingenieursinformatik der HTW Berlin. Mit Unterschtützung und Betreuung von _Prof. Dr. Erik Rodner_ und _Nils Harnischmacher_ haben an diesem Projekt ganz stark gearbeitet:
-|                   |       |                                                                      |
+|        Wer        |  hat  | was gemacht?                                                         |
 | :---------------: | :---: | :------------------------------------------------------------------- |
 |    Oskar Fulde    |  -->  | Hat eine vernünftige Verbindung mit ChatGPT über OpenAI eingesetzt   |
 |  Nealjade Laluna  |  -->  | Hat all die Persönlichkeiten ausgedacht und ihre Prompts geschrieben |
@@ -81,9 +81,9 @@ Here are some useful utility commands you may need:
 ## About the project
 
 We are a small but fine Team from Computational Science and Engineering course at HTW Berlin. With all the support and guidance from _Prof. Dr. Erik Rodner_ and _Nils Harnischmacher_ in this project was put decent effort and many hard work by:
-|                   |       |                                                              |
-| :---------------: | :---: | :----------------------------------------------------------- |
-|    Oskar Fulde    |  -->  | Got along with communicating with ChatGPT via OpenAI API     |
-|  Nealjade Laluna  |  -->  | Wrote all the personalities and their prompts                |
-| Louis Schmolinske |  -->  | Researched and made all the UI/UX elements                   |
-|    Robert Koch    |  -->  | Figured out penalties, difficulties and mazes' features      |
+|        Who        |  did  | what?                                                    |
+| :---------------: | :---: | :------------------------------------------------------- |
+|    Oskar Fulde    |  -->  | Got along with communicating with ChatGPT via OpenAI API |
+|  Nealjade Laluna  |  -->  | Wrote all the personalities and their prompts            |
+| Louis Schmolinske |  -->  | Researched and made all the UI/UX elements               |
+|    Robert Koch    |  -->  | Figured out penalties, difficulties and mazes' features  |
