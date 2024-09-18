@@ -28,9 +28,7 @@ jobs:
         run: python -m pip install --upgrade pip pyinstaller
 
       - name: Pack to Executable
-        run: pyinstaller --noconfirm --clean \
-              --name "Chat Maze" --noconsole \
-              --disable-windowed-traceback
+        run: pyinstaller --noconfirm --clean --name "Chat Maze"
       
       - name: Upload package
         uses: actions/upload-artifact@v4
