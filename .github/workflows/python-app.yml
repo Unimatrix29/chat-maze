@@ -18,7 +18,7 @@ jobs:
       - name: Pack to Executable
         uses: Martin005/pyinstaller-action@v1.2.0
         with:      
-          spec: Main.py
+          spec: ./src/Main.py
           options: --noconfirm
           python_ver: 3.12.3
           upload_exe_with_name: "Chat Maze"
