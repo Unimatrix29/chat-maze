@@ -8,11 +8,17 @@ on:
     branches:
       - main
       - Robert35-dll-yaml-testing
+  workflow_dispatch:
 
 jobs:
   deployment:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     environment: production
     steps:
-      - name: deploy
-        run: echo "Deployment script is running..."
+      - name: Pack to Executable
+        uses: Martin005/pyinstaller-action@v1.2.0
+        with:      
+          spec: Main.py
+          options: --noconfirm
+          python_ver: 3.12.3
+          upload_exe_with_name: "Chat Maze"
