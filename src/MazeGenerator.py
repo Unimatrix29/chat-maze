@@ -1,46 +1,86 @@
-import json, math, random
 from pathlib import Path
+import json, math, random
 
 class MazeGenerator():
-
+    """
+    MazeGenerator provides an access to maze preset library along with
+    rotation and searching points of mazes.
+    
+    Methods
+    -----------
+        get_preset (preset_id : str = "maze_0.1.0") -> list[list[int]]
+            Returns a maze preset with the given id.
+        get_preset_connections (preset_id : str = "maze_0.1.0") -> dict[str, list[int]]
+            Returns all connections of the given maze preset.
+        rotate_maze (maze : list[list[int]]) -> list[list[int]]
+            Rotates the given maze 1x90° counterclockwise.
+        get_random_point (maze : list[list[int]]) -> list[int]
+            Searches and returns a random point of the given maze
+            that isn't too close to the finish point.
+    """
     def __init__(self):
-        self.PRESET_LIBRARY = []
-        
-        file_maze_preset = Path(__file__).parent / "maze_presets.json"
-        file_maze_preset.resolve()
-        
-        with open(file_maze_preset) as preset_file:
+        self._PRESET_LIBRARY = []
+        # Loading maze presets' library
+        _file_maze_preset = Path(__file__).parent / "assets" / "maze_presets.json"
+        _file_maze_preset.resolve()
+        with open(_file_maze_preset) as preset_file:
             data = json.load(preset_file)
+            self._PRESET_LIBRARY = data
             
-            self.PRESET_LIBRARY = data
+    def get_preset(self, preset_id: str = "maze_0.1.0") -> list[list[int]]:
+        """
+        Returns a maze preset according to given id.
 
-    def random_maze(self):
-        maze = [[[random.choice([0, 1]) for _ in range(16)] for _ in range(16)], [0,0], [15, 15]]
-        return maze
+        Parameters:
+            preset_id : str = "maze_0.1.0"
+                An id of wished preset.
 
-    def get_preset(self, preset_id: str = "maze_0.1.0"):
+        Raises:
+            KeyError if the given id isn't in the preset library.
+                
+        Returns:
+            maze_preset : list[list[int]]
+                The requested maze preset.
+        """
         section = preset_id[-1]
         preset = preset_id[:-2]
 
-        return self.PRESET_LIBRARY[preset][section]
+        return self._PRESET_LIBRARY[preset][section]
     
-    def get_random_preset(self, difficulty: int = 1):
-        randomPreset = f"maze_{difficulty}.{random.randint(0, 0)}"
+    def get_preset_connections(self, preset_id: str = "maze_0.1.0") -> dict[str, list[list[int]]]:
+        """
+        Returns all connections of the given maze preset
         
-        return self.PRESET_LIBRARY[randomPreset]["0"]
-    
-    def get_preset_connections(self, preset_id: str = "maze_0.0.0"):
-        section = preset_id[-1]
+        Parameters:
+            preset_id : str = "maze_0.1.0"
+                An id of preset to get connections for.
+            
+        Returns:
+            graph : dict[str, list[list[int]]]]
+                A connection graph of the requested preset. The key is the start
+                section, the value is a list of available bridges from the key.
+        """
         preset = preset_id[:-2]
         
-        graph = self.PRESET_LIBRARY[preset]["connections"]
+        graph = self._PRESET_LIBRARY[preset]["connections"]
 
         return graph
-    """
-    Rotates maze by 90° counterclockwise
-    """
-    def rotate_maze(self, maze):
-        rotatedMaze = self.random_maze()
+    
+    def rotate_maze(self, maze: list[list[int]]) -> list[list[int]]:
+        """
+        Rotates maze by 1x90° counterclockwise.
+        
+        Parameters:
+            maze : list[list[int]]
+                A maze to rotate.
+                
+        Returns:
+            rotatedMaze : list[list[int]]
+                A new maze created by rotation every point including start and
+                finish of the given maze.
+        """
+        # Generating an empty maze
+        rotatedMaze = [[[0 for _ in range(16)] for _ in range(16)], [0, 0], [0, 0]]
 
         for i in range(0, 16):
             for j in range(0, 16):
@@ -50,11 +90,20 @@ class MazeGenerator():
         rotatedMaze[2] = [maze[2][1], 15 - maze[2][0]]
         
         return rotatedMaze
-    """
-    Returns a random point of maze
-    that isn't too close to finish
-    """
-    def get_random_point(self, maze):
+    
+    def get_random_point(self, maze: list[list[int]]) -> list[int]:
+        """
+        Returns a random point of the maze that isn't too close to finish.
+        
+        Parameters:
+            maze : list[list[int]]
+                A maze to search a point in.
+
+        Returns:
+            point : list[int]
+                A random point of the given maze with distance to the finish
+                not less than 7.
+        """
         finish = maze[2]
         searching = True
         point = [0, 0]
@@ -64,13 +113,25 @@ class MazeGenerator():
             point[1] = random.randrange(0, 16)
             
             distance = self.__get_distance(finish, point)
-            searching = distance < 7 or maze[0][point[1]][point[0]] == 1    # (reverse)End of searching
+            # (reversed)End of searching
+            searching = distance < 7 or maze[0][point[1]][point[0]] == 1
             
         return point
-    """
-    Returns the floor distance between two 2D points as int
-    """
-    def __get_distance(self, a, b):
+    
+    def __get_distance(self, a: list[int], b: list[int]) -> int:
+        """
+        Returns the floor distance between two 2D points as int.
+        
+        Parameters:
+            a : list[int]
+                The start point of the line.
+            b : list[int]
+                The end point of the line.
+        
+        Returns:
+            distance : int
+                The floor distance between the given two points.
+        """
         x = b[0] - a[0]
         y = b[1] - a[1]
 

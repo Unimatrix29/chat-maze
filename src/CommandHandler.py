@@ -8,7 +8,7 @@ class Command():
         self.chatgpt = self.game.chatgpt
         
         self.info_txt = "This is a info text, it texts infos"
-        self.command_list = "This is a help texts , it texts hepls"
+        self.command_list = "This is a help texts , it texts helps"
         self.help_txt = {"placeholder" : "This is a help text, it texts helps"}
         self.welcome_txt = "Text to show at the start screen"
         self.start_txt = "Text to show after a game has started"
@@ -28,6 +28,7 @@ class Command():
             "/audio on"  :   self.__audio_on,
             "/audio off" :   self.__audio_off,
             "/quack"     :   self.__quack,
+            "/exit"      :   self.__exit,
             "__/start"   :   self.__print_start_message,
             "__/finish"  :   self.__print_end_message
         }
@@ -110,10 +111,13 @@ class Command():
     
     def __quack(self):
         self.game.screen.add_chat_text(self.quack_txt, "System")
+
+    def __exit(self):
+        self.game.screen.isQuit = True
     
     
     def __get_command_txt_from_json(self):
-        display_texts_file = Path(__file__).parent / "command_texts.json"
+        display_texts_file = Path(__file__).parent / "assets" / "command_texts.json"
         display_texts_file.resolve()
         
         try:
@@ -132,10 +136,10 @@ class Command():
             print("display_texts.json was not found")
             print(e)
         except json.JSONDecodeError as e: 
-            print("There was an Erorr while decoding command_texts.json")
+            print("There was an Error while decoding command_texts.json")
             print(e)
         except OSError as e: 
-            print("There was an Erorr while reading a File")
+            print("There was an Error while reading a File")
             print(e)
         
     def __get_help_txt_from_chatgpt(self):

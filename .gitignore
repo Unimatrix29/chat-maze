@@ -2,7 +2,7 @@
 **/*.mp3
 **/*.wav
 **/*.pdf 
-DONT LEAK RODNERS API KEY :D
+# *DONT LEAK RODNERS API KEY :D
 src/config.json
 
 # Byte-compiled / optimized / DLL files
@@ -167,3 +167,11 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# Visual Studio and Visual Studio Code
+.vs/
+.vscode/
+# Local History for Visual Studio Code
+.history/
+# Built Visual Studio Code Extensions
+*.vsix
