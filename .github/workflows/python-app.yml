@@ -15,4 +15,4 @@ jobs:
     environment: production
     steps:
       - name: deploy
-      - run: echo "Deployment script is running..."
+        run: echo "Deployment script is running..."
