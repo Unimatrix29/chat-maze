@@ -4,6 +4,9 @@
 name: Python application packaging      
 
 on:
+  push:
+    branches:
+      - "Robert35-dll-yaml-testing"
   workflow_dispatch:
 
 jobs:
