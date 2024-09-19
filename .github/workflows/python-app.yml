@@ -1,23 +1,16 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
 name: Python application packaging      
 
 on:
   push:
     branches:
       - "Robert35-dll-yaml-testing"
-  workflow_dispatch:
 
 jobs:
-  build:
+  build-and-upload:
     runs-on: windows-2022
     
     steps:
       - uses: actions/checkout@v4
-      - name: List current directory
-        run: dir
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -33,17 +26,7 @@ jobs:
           python -m pip install -r requirements.txt
       
       - name: Pack to Executable
-        run: pyinstaller --noconfirm --clean --name "Chat Maze" --add-data ./src/*.json:. ./src/Main.py
-
-      #- name: PyInstaller Action
-      #  uses: Martin005/pyinstaller-action@v1.2.0
-      #  with:
-      #      spec: ./src/Main.py
-      #      requirements: ./requirements.txt
-      #      options: --noconfirm, --clean, --noconsole, --disable-windowed-traceback
-      #      python_ver: 3.12
-      #      # If passed, uploads executable artifact  with this name. Else, artifact won't be uploaded.
-      #      upload_exe_with_name: "Chat Maze"  
+        run: pyinstaller --log-level ERROR --noconfirm --clean --name "Chat Maze" --add-data ./src/*.json:. ./src/Main.py  
       
       - name: Upload package
         uses: actions/upload-artifact@v4
