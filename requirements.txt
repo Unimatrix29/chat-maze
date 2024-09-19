@@ -4,3 +4,4 @@ setuptools==74.1.2
 sounddevice==0.4.7
 soundfile==0.12.1
 wheel==0.43.0
+openai==1.46.0
