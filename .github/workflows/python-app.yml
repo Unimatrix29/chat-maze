@@ -28,9 +28,9 @@ jobs:
         run: python -c "import sys; print(sys.version)"
 
       - name: Install dependences
-        #run: |
-        run: python -m pip install --upgrade pip pyinstaller
-        #  python -m pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip pyinstaller
+          python -m pip install -r requirements.txt
       
       #- name: Pack to Executable
       #  run: pyinstaller --noconfirm --clean --name "Chat Maze" ./src/Main.py
@@ -39,7 +39,7 @@ jobs:
         uses: Martin005/pyinstaller-action@v1.2.0
         with:
             spec: ./src/Main.py
-            requirements: D:\a\chat-maze\chat-maze\requirements.txt
+            requirements: ./requirements.txt
             options: --noconfirm, --clean, --noconsole, --disable-windowed-traceback
             python_ver: 3.12
             # If passed, uploads executable artifact  with this name. Else, artifact won't be uploaded.
