@@ -32,18 +32,18 @@ jobs:
           python -m pip install --upgrade pip pyinstaller
           python -m pip install -r requirements.txt
       
-      #- name: Pack to Executable
-      #  run: pyinstaller --noconfirm --clean --name "Chat Maze" ./src/Main.py
+      - name: Pack to Executable
+        run: pyinstaller --noconfirm --clean --name "Chat Maze" ./src/Main.py
 
-      - name: PyInstaller Action
-        uses: Martin005/pyinstaller-action@v1.2.0
-        with:
-            spec: ./src/Main.py
-            requirements: ./requirements.txt
-            options: --noconfirm, --clean, --noconsole, --disable-windowed-traceback
-            python_ver: 3.12
-            # If passed, uploads executable artifact  with this name. Else, artifact won't be uploaded.
-            upload_exe_with_name: "Chat Maze"  
+      #- name: PyInstaller Action
+      #  uses: Martin005/pyinstaller-action@v1.2.0
+      #  with:
+      #      spec: ./src/Main.py
+      #      requirements: ./requirements.txt
+      #      options: --noconfirm, --clean, --noconsole, --disable-windowed-traceback
+      #      python_ver: 3.12
+      #      # If passed, uploads executable artifact  with this name. Else, artifact won't be uploaded.
+      #      upload_exe_with_name: "Chat Maze"  
       
       - name: Upload package
         uses: actions/upload-artifact@v4
