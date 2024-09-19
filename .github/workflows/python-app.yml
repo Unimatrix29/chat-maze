@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12.3"
+          python-version: "3.12.x"
           cache: "pip"
           
       - name: Display Python version
@@ -32,8 +32,8 @@ jobs:
         run: python -m pip install --upgrade pip pyinstaller
         #  python -m pip install -r requirements.txt
       
-      - name: Pack to Executable
-        run: pyinstaller --noconfirm --clean --name "Chat Maze" ./src/Main.py
+      #- name: Pack to Executable
+      #  run: pyinstaller --noconfirm --clean --name "Chat Maze" ./src/Main.py
 
       - name: PyInstaller Action
         uses: Martin005/pyinstaller-action@v1.2.0
@@ -41,7 +41,7 @@ jobs:
             spec: ./src/Main.py
             requirements: D:\a\chat-maze\chat-maze\requirements.txt
             options: --noconfirm, --clean, --noconsole, --disable-windowed-traceback
-            python_ver: 3.12.3
+            python_ver: 3.12
             # If passed, uploads executable artifact  with this name. Else, artifact won't be uploaded.
             upload_exe_with_name: "Chat Maze"  
       
