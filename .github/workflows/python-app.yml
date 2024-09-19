@@ -26,6 +26,9 @@ jobs:
       - name: Install dependences
         run: python -m pip install --upgrade pip pyinstaller
 
+      - name: List current directory
+        run: dir
+
       #- name: Pack to Executable
       # run: pyinstaller --noconfirm --clean --name "Chat Maze" ./src/Main.py
 
