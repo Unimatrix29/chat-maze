@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['Main.py'],
+    ['./src/Main.py'],
     pathex=[],
     binaries=[],
     datas=[('./assets', 'assets')],
@@ -26,8 +26,8 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,
-    disable_windowed_traceback=False,
+    console=False,
+    disable_windowed_traceback=True,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
