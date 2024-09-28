@@ -3,7 +3,7 @@ name: Python application packaging
 on:
   push:
     branches:
-      - "Robert35-dll-yaml-testing"
+      - "deployment-branch"
 
 jobs:
   build-and-upload:
@@ -20,7 +20,7 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
 
-      - name: Install dependences
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip pyinstaller
           python -m pip install -r requirements.txt
