@@ -19,20 +19,21 @@ class Screen():
         self.q = queue.Queue()
 
     def update_screen(self, maze=None, player=None, render = 17):
-        
-        self.restart_request = False
-        self.reset_request = False
+        self.isQuit = False
         self.record = False
+        
+        # makes background black
+        self.screen.fill(Colors.BLACK.value)
 
         self.__trigger_game_events()
         self.__delete_input_listener()
         self.__chatgpt_response_listener()
         self.__draw_maze(maze, player, render)  
+        self.__draw_maze_border()
         self.__draw_chat_text()
         self.__draw_input_text()
 
-        # makes background black
-        self.screen.fill(Colors.BLACK.value)
+
 
         # updates pygame
         pygame.display.flip()
@@ -60,7 +61,7 @@ class Screen():
         # pygame event loop that detects the ingame-inputs from the user, than triggers associated methods
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.__quit_game()
+                self.isQuit = True
                 
             if event.type == pygame.KEYDOWN:
                 if self.audio_mode:
@@ -78,10 +79,10 @@ class Screen():
                 if event.key == pygame.K_BACKSPACE: 
                     self.__on_backspace(False)
     
-    def __quit_game(self):
+    def quit_game(self):
 
         # quits pygame app and game logic
-        self.__quit_screen()
+        pygame.quit()
         sys.exit()
 
     def add_char_to_input(self, char):
@@ -115,12 +116,12 @@ class Screen():
             self.last_response = self.response_text
 
             # displays returned input in chat
-            self.add_chat_text(self.user_text, "You")
+            # self.add_chat_text(self.user_text, "You")
 
             # resets input field
             self.user_text = ""
 
-    def __callback(self,indata, frames, time, status):
+    def callback(self,indata, frames, time, status):
 
         # This is called (from a separate thread) for each audio block
         if status:
@@ -167,10 +168,9 @@ class Screen():
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
         # sets up state systems for event-methods and overlap prevention
+        self.audio_return = False
         self.return_text = False
         self.active = True
-        self.restart_request = False
-        self.reset_request = False
         self.backspace_hold = False
 
         # text above Input Box
@@ -207,8 +207,8 @@ class Screen():
         self.screen.blit(self.text_title,(self.input_rect.x, self.input_rect.y - 15))
     
     def __record_audio(self):
-
-        # writes recorded audio in push-to-talk file
+        
+        #records audio in push-to-talk file
         print("ptt")
         self.record = True
         with sf.SoundFile(self.file_user_input, mode='wb', samplerate=44100,channels=2) as file:
@@ -219,7 +219,7 @@ class Screen():
                         if event.type == pygame.KEYUP:
                             print("end ptt")
                             self.record = False    
-        self.return_text = True                     
+        self.audio_return = True                     
                     
     def __draw_maze(self, maze, player, render=17):
         
@@ -317,10 +317,6 @@ class Screen():
     def clear_chat_text(self):
         self.chat = ["  " for x in range(self.chat_max_len)]
 
-
-    def __quit_screen(self): 
-        pygame.quit()
-
     # transfers stored message after return to chatgpt and resets it 
     def get_user_input(self):
         return_message = self.message
@@ -328,16 +324,23 @@ class Screen():
         self.return_text = False
         return return_message
 
-    def __ppt(self):
+    def ptt(self):
         if not self.record:
             return True
 
     # true in the moment in which input is returned / enter pressed
-    def __on_return(self):
+    def on_return(self):
         if self.return_text:
             self.return_text = False
             return True
         return False 
+    
+    # true in the moment the pus to talk key is released
+    def on_audio_return(self):
+        if self.audio_return:
+            self.audio_return = False
+            return True
+        return False
     
     # true in the moment in which chatgpts response is changed
     def __on_response_change(self):
@@ -347,7 +350,7 @@ class Screen():
         return False
 
     # triggers text_to_speech on the current response 
-    def __play(self):
+    def play(self):
         file_tts_out = Path(__file__).parent / "tts_out.wav"
         file_tts_out.resolve()
         
