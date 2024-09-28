@@ -149,6 +149,7 @@ class Screen():
         pygame.display.set_caption("Chat_Leap")
 
         # declares fonts
+        self.base_font_size = 12
         self.title_font = pygame.font.SysFont('monospace821', 14)
         self.base_font = pygame.font.SysFont('monospace821', 16)
         self.response_font = pygame.font.SysFont('monospace821', 16)
@@ -163,6 +164,7 @@ class Screen():
         self.chat_line_offset = 18
         self.chat = ["  " for x in range(self.chat_max_len)]
         self.chat_color = [Colors.GREY.value for x in range(self.chat_max_len)]
+        self.input_rect_normal_height = self.base_font_size + 8
         self.input_rect_normal_height = 20
         self.input_rect = pygame.Rect(self.chat_horizontal_offset, self.maze_offset_y + 16 * self.CELL_SIZE - self.input_rect_normal_height, 140, self.input_rect_normal_height)
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
