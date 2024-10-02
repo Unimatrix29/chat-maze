@@ -21,7 +21,7 @@ class MazeGenerator():
     def __init__(self):
         self._PRESET_LIBRARY = []
         # Loading maze presets' library
-        _file_maze_preset = Path(__file__).parent / "maze_presets.json"
+        _file_maze_preset = Path(__file__).parent / "assets" / "maze_presets.json"
         _file_maze_preset.resolve()
         with open(_file_maze_preset) as preset_file:
             data = json.load(preset_file)

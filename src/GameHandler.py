@@ -5,59 +5,54 @@ import json, random
 
 class GameHandler():
     """
-    GameHandler class implies debuffing functionality,
-    difficulty selection based on user input and
-    maze presets' transition including start and end presets screens.
+    GameHandler class implies debuffing functionality, difficulty selection\n
+    based on user input and maze presets' transition including start and end\n
+    presets screens.
 
     Attributes
     -----------
-        prompt : [name : str, prompt_line : str]
-            A prompt with name and role description for ChatGPT setup.
-        maze : [maze_map : list[16x16 int],
-                    start_point : [int, int],
-                    finish_point : [int, int],
-                    next_frame : int (optional)
-                    frame_duration : int (optional)]
+        prompt : list[str]
+            A prompt with name at [0] and role description at [1] for ChatGPT setup.
+        maze : [list[list[int]]]
             A maze object represented as list of lists of int.
-            Optional indexes are used in idle frames.
         debuffDuration : int = 0
-            Applied debuffs last this amount of moves.
+            Applied debuffs last this amount of moves.\n
             Updates every time a new debuff is applied (doesn't stack).
         renderDistance : int = 17
             A range of tiles around player to be displayed.
         rotationCounter : int = 0
-            Amount of rotations by 90 degrees counterclockwise
+            Amount of rotations by 90 degrees counterclockwise\n
             applied to the current maze.
         isGameOver : bool = False
             A flag to be set when finish is arrived.
 
     Methods
     -----------
-        set_level (player : Player, level : str = "TEST")
+        **set_level** (player, level)
             Sets a maze preset and prompt according to given level (difficulty).
-        check_wall (position : [int, int]) -> bool
+        **check_wall** (position) -> *bool*
             Checks if there's a wall on the given position.
-        check_finish (position : [int, int]) -> bool
+        **check_finish** (position) -> *bool*
             Checks if the given position is the finish of the maze.
-        check_border (position : [int, int]) -> bool
+        **check_border** (position) -> *bool*
             Checks if the given position lays outside the maze.
-        switch_section (player : Player)
+        **switch_section** (player)
             Switches active maze to another one according to pre-defined
             preset connections.
-        apply_debuffs (player : Player) -> list[str]
+        **apply_debuffs** (player) -> *list[str]*
             Applies single or multiple debuffs to the given player instance
             depending on selected difficulty.
-        reduce_debuffs (player : Player)
-            Reduces current debuffDuration by 1 and clears all temporary debuffs
-            applied by their expiration.
-        get_game_stats () -> list[list[int]]
+        **reduce_debuffs** (player)
+            Reduces current debuffDuration by 1 and clears all temporary\n
+            debuffs applied by their expiration.
+        **get_game_stats** () -> *list[list[int]]*
             Returns all game related variables such as active maze and debuffs. 
-        restart_game (player : Player)
-            Restarts current game session without changing selected
+        **restart_game** (player)
+            Restarts current game session without changing selected\n
             difficulty, maze or ChatGPT prompt.
-        reset_game (player : Player, isFinished : bool = False)
+        **reset_game** (player, isFinished)
             Sets the current session to initial/end state.
-        switch_idle_maze (nextFrame : int)
+        **switch_idle_maze** (nextFrame)
             Returns (the next) idle screen's frame.
     """
     
@@ -80,7 +75,7 @@ class GameHandler():
         self._DEBUFF_INFOS = {}
         
         # Loading debuffs' descriptions
-        _file_debuffsTexts = Path(__file__).parent / "debuffs_texts.json"
+        _file_debuffsTexts = Path(__file__).parent / "assets" / "debuffs_texts.json"
         _file_debuffsTexts.resolve()       
         with open(_file_debuffsTexts) as json_file:
             data = json.load(json_file)
@@ -91,7 +86,7 @@ class GameHandler():
         self.prompt = [] # [name, promptLine]
         
         # Loading prompt library and choosing a start ChatGPT prompt
-        _file_prompts = Path(__file__).parent / "prompts.json"
+        _file_prompts = Path(__file__).parent / "assets" / "prompts.json"
         _file_prompts.resolve()
         with open(_file_prompts) as json_file:
             data = json.load(json_file)
@@ -124,11 +119,11 @@ class GameHandler():
     
     def set_level(self, player: Player, level: str = "TEST"):
         """
-        Sets difficulty to a given level, maze preset
-        and ChatGPT prompt as well as configures the player
-        according to selections.
+        Sets difficulty to a given level, maze preset and ChatGPT prompt as well\n
+        as configures the player according to selections.
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player to configure.
             level : str = "TEST"
@@ -177,11 +172,13 @@ class GameHandler():
         """
         Checks if there's a wall on the given position.
         
-        Parameters:
+        Parameters
+        ----------
             position: [int, int]
                 The point of the maze to be checked.
         
-        Returns:
+        Returns
+        ----------
             bool : True if there's a wall on a given position, False otherwise.
         """
         return self.maze[0][position[1]][position[0]] == 1
@@ -190,11 +187,13 @@ class GameHandler():
         """
         Checks if the given position is the finish of the maze.
         
-        Parameters:
+        Parameters
+        ----------
             position: [int, int]
                 The point of the maze to be checked.
         
-        Returns:
+        Returns
+        ----------
             bool : True if the given position is the finish, False otherwise.
         """
         return self.maze[2] == position
@@ -203,11 +202,13 @@ class GameHandler():
         """
         Checks if the given position is inside the maze.
         
-        Parameters:
+        Parameters
+        ----------
             position: [int, int]
                 The point to be checked.
         
-        Returns:
+        Returns
+        ----------
             bool : True if both coordinates of the given position,
                        are in range of 0 to 15, False otherwise.
         """
@@ -215,11 +216,12 @@ class GameHandler():
     
     def switch_section(self, player: Player):
         """
-        Switches active maze according to preset's connection
-        setting (graph) to the next one. Works only if the player
+        Switches active maze according to preset's connection\n
+        setting (graph) to the next one. Works only if the player\n
         is on a key point of a connection.
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player, that went to the next section.
         
@@ -262,15 +264,17 @@ class GameHandler():
      
     def apply_debuffs(self, player: Player) -> list[str]:
         """
-        Applies debuffs to a player. The amount of applied debuffs 
-        is defined by selected difficulty. Every debuff can be applied
+        Applies debuffs to a player. The amount of applied debuffs \n
+        is defined by selected difficulty. Every debuff can be applied\n
         maximum 1 time pro this function's call.
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player to apply debuffs onto.
         
-        Returns:
+        Returns
+        ----------
             debuffInfosList : list[str]
                 A list with applied debuffs' descriptions.
         """
@@ -299,11 +303,12 @@ class GameHandler():
     
     def reduce_debuffs(self, player: Player):
         """
-        Reduces debuffs' duration by 1 and clearing them if expired.
-        Only player visibility and render distance will be restored by
+        Reduces debuffs' duration by 1 and clearing them if expired.\n
+        Only player visibility and render distance will be restored by\n
         this method.
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player to clear from debuffs.
         
@@ -322,21 +327,23 @@ class GameHandler():
         
     def get_game_stats(self):
         """
-        Access function for getting all game related variables such as
+        Access function for getting all game related variables such as\n
         active maze and debuffs.
         
-        Returns:
-            list[maze, [debuffDuration : int, renderDistance : int, rotationCounter : int]]
+        Returns
+        ----------
+            list[maze, [debuffDuration, renderDistance, rotationCounter]]
                 List of all by debuffs affected variables.
         """
         return [self.maze, [self.debuffDuration, self.renderDistance, self.rotationCounter]]    
     
     def __maze_rotation(self, player: Player, debuffApplied: bool = True):
         """
-        Rotates active maze 1 time using MazeGenerator.rotate_maze()
+        Rotates active maze 1 time using MazeGenerator.rotate_maze()\n
         including setting new player position.
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player to rotate with the maze.
             debuffApplied : bool = True
@@ -354,9 +361,10 @@ class GameHandler():
     
     def __blind(self, player: Player = None):
         """
-        Reduces render distance and updates current debuffDuration.
+        Reduces render distance and updates current debuffDuration.\n
         
-        Parameters:
+        Parameters
+        ----------
             player : Player = None
                 Optional. Used to fit in delegate calls in apply_debuffs().
         
@@ -368,10 +376,11 @@ class GameHandler():
     
     def __random_move(self, player: Player):
         """
-        Moves the player in a random direction onto the next field
+        Moves the player in a random direction onto the next field\n
         that's not a wall.
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player to move.
         
@@ -393,7 +402,8 @@ class GameHandler():
         """
         Sets the player's current position to a random point of the maze.
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player to teleport.
         
@@ -404,10 +414,11 @@ class GameHandler():
     
     def __set_invisible(self, player: Player):
         """
-        Hides the player so it won't be rendered and updates
+        Hides the player so it won't be rendered and updates\n
         the current debuffDuration.
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player to hide.
         
@@ -424,11 +435,12 @@ class GameHandler():
         
     def restart_game(self, player: Player):
         """
-        Restarts current session without changing difficulty, maze
-        or ChatGPT prompt. Removes all debuffs including maze rotations
+        Restarts current session without changing difficulty, maze\n
+        or ChatGPT prompt. Removes all debuffs including maze rotations\n
         and returns the player to the beginning of the maze.
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player in current session to reset.
         
@@ -449,11 +461,12 @@ class GameHandler():
     
     def reset_game(self, player: Player, isFinished: bool = False):
         """
-        Restarts the game an sets the current maze to an idle frame.
-        Removes all debuffs including maze rotations.
-        Doesn't clear chosen difficulty or ChatGPT prompt.
+        Restarts the game an sets the current maze to an idle frame.\n
+        Removes all debuffs including maze rotations.\n
+        Doesn't clear chosen difficulty or ChatGPT prompt.\n
         
-        Parameters:
+        Parameters
+        ----------
             player : Player
                 An instance of a player in current session to reset.
             isFinished : bool = False
@@ -477,8 +490,8 @@ class GameHandler():
     
     def switch_idle_maze(self):
         """
-        Switches the current idle maze to the next one connected to it.
-        !Used with FINISH and IDLE presets only!
+        Switches the current idle maze to the next one connected to it.\n
+        ! **Used with FINISH and IDLE presets only** !
         
         Returns:
             None : Doesn't return any value.
@@ -488,5 +501,4 @@ class GameHandler():
         
         self._activeMazePreset = f"IDLE_{preset}.{nextFrame}"
         self.maze = self._mazeGenerator.get_preset(self._activeMazePreset)
-    
     # endregion

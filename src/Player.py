@@ -1,7 +1,7 @@
 class Player:
     """
     Player class represents a ChatGPT
-    character on a playfield.
+    character on a play field.
     
     Attributes
     -----------
@@ -14,15 +14,15 @@ class Player:
             
     Methods
     -----------
-        move (vector : [int, int])
+        **move** (vector)
             Adds a vector to player's currentPosition.
-        set_position (point : [int, int])
+        **set_position** (point)
             Sets player's currentPosition to a point.
-        get_rotated_position (count : int = 1)
+        **get_rotated_position** (count)
             Returns player's currentPosition after rotating it <count> times.
-        hide (request : bool)
+        **hide** (request)
             Changes player's render visibility.
-        change_name (newName : str)
+        **change_name** (newName)
             Changes player's name to a new one.
     """
     
@@ -30,14 +30,12 @@ class Player:
         """
         The constructor of the Player class.
         
-        Parameters:
+        Parameters
+        ----------
             startPosition : [int, int] = [0, 0]
                 The start point of a maze.
             name : str = ""
                 The name of a player/ChatGPT role.
-
-        Returns:
-            Player : An instance of the Player class.
         """
         self.currentPosition = list(startPosition)
         self.name = name
@@ -47,7 +45,8 @@ class Player:
         """
         Moves the player towards given vector.
         
-        Parameters:
+        Parameters
+        ----------
             mVector : [int, int]
                 The moving vector to be added to player's currentPosition.
                 
@@ -61,7 +60,8 @@ class Player:
         """
         Sets currentPosition to a given point.
         
-        Parameters:
+        Parameters
+        ----------
             point : [int, int]
                 The point of a maze to place the player onto.
                 
@@ -76,11 +76,13 @@ class Player:
         Calculates currentPosition of the player
         as if the maze would get rotated <count> times.
 
-        Parameters:
+        Parameters
+        ----------
             count : int = 1
                 The amount of applied rotations to use in calculation.
                 
-        Returns:
+        Returns
+        ----------
             rotatedPosition : [int, int]
                 The position in <count> rotated maze.
         """
@@ -94,7 +96,8 @@ class Player:
         """
         Changes player's visibility flag to <request>.
         
-        Parameters:
+        Parameters
+        ----------
             request : bool
                 The value to set the visibility flag onto.
                 True = the player is hidden, False = the player is visible.
@@ -108,7 +111,8 @@ class Player:
         """
         Changes player's name.
         
-        Parameters:
+        Parameters
+        ----------
             newName : str
                 The new name of the player.
                 
