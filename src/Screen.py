@@ -19,7 +19,6 @@ class Screen():
         self.q = queue.Queue()
 
     def update_screen(self, maze=None, player=None, render = 17):
-        self.isQuit = False
         self.record = False
         
         # makes background black
@@ -165,7 +164,6 @@ class Screen():
         self.chat = ["  " for x in range(self.chat_max_len)]
         self.chat_color = [Colors.GREY.value for x in range(self.chat_max_len)]
         self.input_rect_normal_height = self.base_font_size + 8
-        self.input_rect_normal_height = 20
         self.input_rect = pygame.Rect(self.chat_horizontal_offset, self.maze_offset_y + 16 * self.CELL_SIZE - self.input_rect_normal_height, 140, self.input_rect_normal_height)
         self.maze_rect = pygame.Rect(self.maze_offset_x - 4, self.maze_offset_y - 4, 16 * self.CELL_SIZE + 6, 16 * self.CELL_SIZE + 6)
         
@@ -193,6 +191,7 @@ class Screen():
             "Error" : Colors.RED.value
         }
         self.audio_mode = False
+        self.isQuit = False
 
     def __resize_to_resolution(self, res_x, res_y, monitorNumber):
 
@@ -314,6 +313,7 @@ class Screen():
                     self.chat[self.chat_max_len - 1] = line
                     self.chat_color[self.chat_max_len - 1] = color
                 first_line = False
+
 
 
     def clear_chat_text(self):
