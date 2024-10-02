@@ -315,6 +315,7 @@ class Screen():
                 first_line = False
 
 
+
     def clear_chat_text(self):
         self.chat = ["  " for x in range(self.chat_max_len)]
 
