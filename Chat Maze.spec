@@ -32,7 +32,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['./assets/Chat_Maze_Icon.ico'],
+    icon=['./src/assets/Chat_Maze_Icon.ico'],
     contents_directory='data',
     hide_console='hide-early',
 )
